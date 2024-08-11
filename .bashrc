@@ -39,7 +39,7 @@ alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
 [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
 
 # open existing tmux or create new one
-alias tmux='tmux a &> /dev/null || tmux &> /dev/null'
+# alias tmux='tmux a &> /dev/null || tmux &> /dev/null'
 
 # zoxide setup
 eval "$(zoxide init bash)"
@@ -61,3 +61,18 @@ source <(fzf --bash)
 export PATH=~/scripts/bin:$PATH
 
 # source ~/.bashrc.d/systemd
+. "$HOME/.cargo/env"
+
+alias nvim-lazy="NVIM_APPNAME=LazyVim nvim"
+
+function nvims() {
+    items=("LazyVim" "default")
+    config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config" --height=~50% --layout=reverse --border --exit-0)
+    if [[ -z $config ]]; then
+        echo "Nothing selected"
+        return 0
+    elif [[ $config == "default" ]]; then
+        config=""
+    fi
+    NVIM_APPNAME=$config nvim $@
+}

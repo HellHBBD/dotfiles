@@ -21,3 +21,4 @@ export PAGER='less'
 ## Completion scripts setup. Remove the following line to uninstall
 [ -f /home/hellhbbd/.dart-cli-completion/bash-config.bash ] && . /home/hellhbbd/.dart-cli-completion/bash-config.bash || true
 ## [/Completion]
+. "$HOME/.cargo/env"

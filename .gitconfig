@@ -1,0 +1,22 @@
+[user]
+	email = paulyu602@gmail.com
+	name = Hell HBBD
+[core]
+	editor = nvim
+	pager = delta
+	fsmonitor = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	side-by-side = true
+[color]
+	ui = auto
+[rerere]
+	enabled = true
+[column]
+	ut = auto
+[fetch]
+	writeCommitGraph = true
+[commit]
+	gpgsign = true
