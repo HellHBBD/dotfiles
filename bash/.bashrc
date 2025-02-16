@@ -46,13 +46,13 @@ eval "$(zoxide init bash)"
 
 # atuin setup
 export PROMPT_COMMAND="history -a; history -n"
-export HISTSIZE=50
-export HISTFILESIZE=50
+export HISTSIZE=500
+export HISTFILESIZE=500
 # [[ $- == *i* ]] && source /usr/share/blesh/ble.sh
-eval "$(atuin init bash)" &> /dev/null
+# eval "$(atuin init bash)" &>/dev/null
 # source .sync-history.sh
-atuin import bash &> /dev/null
-bind -x '"\C-r": __atuin_history'
+# atuin import bash &>/dev/null
+bind -x '"\C-r": atuin import bash &>/dev/null && __atuin_history'
 
 # fzf setup
 source <(fzf --bash)

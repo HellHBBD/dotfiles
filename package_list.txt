@@ -1,0 +1,64 @@
+# You can add '#' to comment
+
+### Bash ###
+stow
+zoxide
+atuin
+fzf
+eza
+bat
+
+### Neovim ###
+neovim
+npm
+wl-clipboard
+xclip
+xsel
+luarocks
+fd
+lazygit
+tree-sitter
+nodejs
+
+### Tools ###
+tmux
+git-delta
+bluez-utils
+btop
+reflector
+man-db
+man-pages
+tree
+eletron28-bin
+brightnessctl
+
+### Chewing ###
+fcitx5-im
+fcitx5-chewing
+fcitx5-configtool
+fcitx5-chinese-addons
+noto-fonts-cjk
+noto-fonts-emoji
+
+### Login ###
+
+### Firmware ###
+#aic94xx-firmware
+ast-firmware
+linux-firmware-qlogic
+linux-firmware-bnx2x
+linux-firmware-liquidio
+linux-firmware-mellanox
+linux-firmware-nfp
+wd719x-firmware
+upd72020x-fw
+
+### App ###
+zen-browser-bin
+spotify
+prismlauncher
+remnote
+rustdesk-bin
+localsend
+discord
+obs-studio
