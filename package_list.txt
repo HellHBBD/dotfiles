@@ -29,8 +29,11 @@ reflector
 man-db
 man-pages
 tree
-eletron28-bin
+# dependency of remnote
+electron28-bin
 brightnessctl
+# adjust brightness in humanized way
+brillo
 
 ### Chewing ###
 fcitx5-im
