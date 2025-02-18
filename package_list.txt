@@ -3,7 +3,6 @@
 ### Bash ###
 stow
 zoxide
-atuin
 fzf
 eza
 bat

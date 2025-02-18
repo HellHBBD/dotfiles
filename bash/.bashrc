@@ -41,18 +41,12 @@ alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
 # open existing tmux or create new one
 # alias tmux='tmux a &> /dev/null || tmux &> /dev/null'
 
-# zoxide setup
-eval "$(zoxide init bash)"
-
-# atuin setup
-export PROMPT_COMMAND="history -a; history -n"
-export HISTSIZE=500
-export HISTFILESIZE=500
-# [[ $- == *i* ]] && source /usr/share/blesh/ble.sh
-# eval "$(atuin init bash)" &>/dev/null
-# source .sync-history.sh
-# atuin import bash &>/dev/null
-bind -x '"\C-r": atuin import bash &>/dev/null && __atuin_history'
+# history setup
+export HISTCONTROL=ignoredups:erasedups
+export HISTSIZE=5000
+export HISTFILESIZE=10000
+shopt -s histappend
+PROMPT_COMMAND="history -a; history -c; history -n; history -r; $PROMPT_COMMAND"
 
 # fzf setup
 source <(fzf --bash)
@@ -76,3 +70,27 @@ function nvims() {
     fi
     NVIM_APPNAME=$config nvim $@
 }
+
+bind -x '"\e[A": search_history'
+function search_history() {
+    local selection cmd
+    selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
+
+    # 解析輸出，第一行是鍵值（tab 或 enter），第二行是選擇的命令
+    local key=$(echo "$selection" | head -n1)
+    cmd=$(echo "$selection" | tail -n1)
+
+    if [[ -n $cmd ]]; then
+        if [[ $key == "tab" ]]; then
+            # Tab 鍵 -> 把命令貼到命令列，不執行
+            READLINE_LINE="$cmd"
+            READLINE_POINT=${#READLINE_LINE}
+        else
+            # Enter 鍵 -> 直接執行命令
+            eval "$cmd"
+        fi
+    fi
+}
+
+# zoxide setup (keep at bottom of .bashrc)
+eval "$(zoxide init bash)"
