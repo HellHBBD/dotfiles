@@ -33,6 +33,8 @@ electron28-bin
 brightnessctl
 # adjust brightness in humanized way
 brillo
+# diff gui tool
+meld
 
 ### Chewing ###
 fcitx5-im

@@ -76,17 +76,17 @@ function search_history() {
     local selection cmd
     selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
 
-    # 解析輸出，第一行是鍵值（tab 或 enter），第二行是選擇的命令
+    # Parse the input, The first line is the key value (tab or enter), The second line is the selected command.
     local key=$(echo "$selection" | head -n1)
     cmd=$(echo "$selection" | tail -n1)
 
     if [[ -n $cmd ]]; then
         if [[ $key == "tab" ]]; then
-            # Tab 鍵 -> 把命令貼到命令列，不執行
+            # Tab -> paste command
             READLINE_LINE="$cmd"
             READLINE_POINT=${#READLINE_LINE}
         else
-            # Enter 鍵 -> 直接執行命令
+            # Enter -> execute command
             eval "$cmd"
         fi
     fi
