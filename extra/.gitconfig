@@ -1,22 +1,78 @@
 [user]
-	email = paulyu602@gmail.com
-	name = Hell HBBD
+email = "paulyu602@gmail.com"
+name = "Hell HBBD"
+
 [core]
-	editor = nvim
-	pager = delta
-	fsmonitor = true
+editor = "nvim"
+pager = "delta"
+fsmonitor = true
+untrackedCache = true
+
 [interactive]
-	diffFilter = delta --color-only
+diffFilter = "delta --color-only"
+
 [delta]
-	navigate = true
-	side-by-side = true
+navigate = true
+side-by-side = true
+
 [color]
-	ui = auto
+ui = "auto"
+
 [rerere]
-	enabled = true
+enabled = true
+autoupdate = true
+
 [column]
-	ut = auto
+ui = "auto"
+
 [fetch]
-	writeCommitGraph = true
+writeCommitGraph = true
+parallel = 20
+all = true
+
 [commit]
-	gpgsign = true
+gpgsign = true
+
+[protocol]
+version = 2
+
+[pack]
+threads = 20
+
+[alias]
+st = "status -s"
+lol = "log --oneline --graph --all"
+
+[branch]
+sort = "-committerdate"
+
+[tag]
+sort = "version:refname"
+
+[init]
+defaultBranch = "main"
+
+[diff]
+algorithm = "histogram"
+colorMoved = "plain"
+mnemonicPrefix = true
+renames = true
+
+[push]
+default = "simple"
+autoSetupRemote = true
+followTags = true
+
+[rebase]
+autoSquash = true
+autoStash = true
+updateRefs = true
+
+[help]
+autocorrect = "prompt"
+
+[merge]
+conflictstyle = "zdiff3"
+
+[pull]
+rebase = true

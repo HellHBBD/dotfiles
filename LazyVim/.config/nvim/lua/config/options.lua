@@ -20,7 +20,7 @@ vim.opt.shiftwidth = 4
 -- disable temp file
 vim.opt.swapfile = true
 vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undodir = os.getenv("HOME") .. "/.cache/vim/undo"
 vim.opt.undofile = true
 
 -- when to show tab (0: never, 1: at least 2, 2: always)

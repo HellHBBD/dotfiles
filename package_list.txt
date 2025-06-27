@@ -47,7 +47,7 @@ noto-fonts-emoji
 ### Login ###
 
 ### Firmware ###
-#aic94xx-firmware
+aic94xx-firmware
 ast-firmware
 linux-firmware-qlogic
 linux-firmware-bnx2x
