@@ -22,3 +22,5 @@ export PAGER='less'
 [ -f /home/hellhbbd/.dart-cli-completion/bash-config.bash ] && . /home/hellhbbd/.dart-cli-completion/bash-config.bash || true
 ## [/Completion]
 . "$HOME/.cargo/env"
+
+export PATH=$PATH:/home/hellhbbd/.spicetify
