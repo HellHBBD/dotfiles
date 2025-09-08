@@ -18,13 +18,13 @@ alias pacman='sudo pacman --color always'
 alias yay='yay --color always --sudoloop'
 
 function update() {
-	if [[ $# -eq 0 ]]; then
-		# echo "正在更新系統..."
-		yay -Syu --sudoloop --noconfirm
-	else
-		# echo "正在安裝軟件包: $*"
-		yay -S "$@" --sudoloop --noconfirm
-	fi
+    if [[ $# -eq 0 ]]; then
+        # echo "正在更新系統..."
+        yay -Syu --sudoloop --noconfirm
+    else
+        # echo "正在安裝軟件包: $*"
+        yay -S "$@" --sudoloop --noconfirm
+    fi
 }
 
 alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
@@ -42,6 +42,7 @@ alias cls='clear'
 alias su='sudo -s'
 alias logout='sudo pkill -SIGKILL -u '
 alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
+alias ip6="ip a | grep -Eo '(2[0-9a-fA-F]{0,3}:)([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}'"
 
 # ssh in kitty
 [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
@@ -61,50 +62,53 @@ source <(fzf --bash)
 
 # Append our default paths
 export PATH=~/shs/:$PATH
+# export PATH=~/shs/:~/scripts/bin:$PATH
 
 # source ~/.bashrc.d/systemd
-. "$HOME/.cargo/env"
 
 alias nvim-lazy="NVIM_APPNAME=LazyVim nvim"
 
 function nvims() {
-	items=("LazyVim" "default")
-	config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config" --height=~50% --layout=reverse --border --exit-0)
-	if [[ -z $config ]]; then
-		echo "Nothing selected"
-		return 0
-	elif [[ $config == "default" ]]; then
-		config=""
-	fi
-	NVIM_APPNAME=$config nvim $@
+    items=("LazyVim" "default")
+    config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config" --height=~50% --layout=reverse --border --exit-0)
+    if [[ -z $config ]]; then
+        echo "Nothing selected"
+        return 0
+    elif [[ $config == "default" ]]; then
+        config=""
+    fi
+    NVIM_APPNAME=$config nvim $@
 }
 
 if [[ $- == *i* ]]; then
-	bind -x '"\e[A": search_history'
+    bind -x '"\e[A": search_history'
 fi
 function search_history() {
-	local selection cmd
-	selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
+    local selection cmd
+    selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
 
-	# Parse the input, The first line is the key value (tab or enter), The second line is the selected command.
-	local key=$(echo "$selection" | head -n1)
-	cmd=$(echo "$selection" | tail -n1)
+    # Parse the input, The first line is the key value (tab or enter), The second line is the selected command.
+    local key=$(echo "$selection" | head -n1)
+    cmd=$(echo "$selection" | tail -n1)
 
-	if [[ -n $cmd ]]; then
-		if [[ $key == "tab" ]]; then
-			# Tab -> paste command
-			READLINE_LINE="$cmd"
-			READLINE_POINT=${#READLINE_LINE}
-		else
-			# Enter -> execute command
-			eval "echo -e '$(tput setaf 3)▶ $(tput setaf 6)$cmd$(tput sgr0)'; $cmd"
-		fi
-	fi
+    if [[ -n $cmd ]]; then
+        if [[ $key == "tab" ]]; then
+            # Tab -> paste command
+            READLINE_LINE="$cmd"
+            READLINE_POINT=${#READLINE_LINE}
+        else
+            # Enter -> execute command
+            eval "echo -e '$(tput setaf 3)▶ $(tput setaf 6)$cmd$(tput sgr0)'; $cmd"
+        fi
+    fi
 }
+. "$HOME/.cargo/env"
+
+. "$HOME/.local/bin/env"
 
 function cddir() {
-	mkdir -p $1
-	cd $1
+    mkdir -p $1
+    cd $1
 }
 
 # cuda path

@@ -29,5 +29,7 @@ export PATH=$PATH:/home/hellhbbd/.spicetify
 
 tmux_running=$(pgrep tmux)
 if [[ -z $tmux_running ]]; then
-	./shs/tmux-init.sh
+    ./shs/tmux-init.sh
 fi
+
+. "$HOME/.local/bin/env"
