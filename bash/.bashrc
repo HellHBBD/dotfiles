@@ -16,7 +16,16 @@ alias clsmem='sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"'
 
 alias pacman='sudo pacman --color always'
 alias yay='yay --color always --sudoloop'
-alias update='yay --color always --noconfirm --sudoloop --needed'
+
+function update() {
+	if [[ $# -eq 0 ]]; then
+		# echo "正在更新系統..."
+		yay -Syu --sudoloop --noconfirm
+	else
+		# echo "正在安裝軟件包: $*"
+		yay -S "$@" --sudoloop --noconfirm
+	fi
+}
 
 alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
 alias clean='yay -Scc'
@@ -51,7 +60,7 @@ PROMPT_COMMAND="history -a; history -c; history -n; history -r; $PROMPT_COMMAND"
 source <(fzf --bash)
 
 # Append our default paths
-export PATH=~/scripts/bin:$PATH
+export PATH=~/shs/:$PATH
 
 # source ~/.bashrc.d/systemd
 . "$HOME/.cargo/env"
@@ -59,36 +68,43 @@ export PATH=~/scripts/bin:$PATH
 alias nvim-lazy="NVIM_APPNAME=LazyVim nvim"
 
 function nvims() {
-    items=("LazyVim" "default")
-    config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config" --height=~50% --layout=reverse --border --exit-0)
-    if [[ -z $config ]]; then
-        echo "Nothing selected"
-        return 0
-    elif [[ $config == "default" ]]; then
-        config=""
-    fi
-    NVIM_APPNAME=$config nvim $@
+	items=("LazyVim" "default")
+	config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config" --height=~50% --layout=reverse --border --exit-0)
+	if [[ -z $config ]]; then
+		echo "Nothing selected"
+		return 0
+	elif [[ $config == "default" ]]; then
+		config=""
+	fi
+	NVIM_APPNAME=$config nvim $@
 }
 
-bind -x '"\e[A": search_history'
+if [[ $- == *i* ]]; then
+	bind -x '"\e[A": search_history'
+fi
 function search_history() {
-    local selection cmd
-    selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
+	local selection cmd
+	selection=$(history | awk '{$1=""; print substr($0,2)}' | tac | fzf --prompt="󰆔 Command History > " --border --exit-0 --expect=tab,enter)
 
-    # Parse the input, The first line is the key value (tab or enter), The second line is the selected command.
-    local key=$(echo "$selection" | head -n1)
-    cmd=$(echo "$selection" | tail -n1)
+	# Parse the input, The first line is the key value (tab or enter), The second line is the selected command.
+	local key=$(echo "$selection" | head -n1)
+	cmd=$(echo "$selection" | tail -n1)
 
-    if [[ -n $cmd ]]; then
-        if [[ $key == "tab" ]]; then
-            # Tab -> paste command
-            READLINE_LINE="$cmd"
-            READLINE_POINT=${#READLINE_LINE}
-        else
-            # Enter -> execute command
-            eval "echo -e '$(tput setaf 3)▶ $(tput setaf 6)$cmd$(tput sgr0)'; $cmd"
-        fi
-    fi
+	if [[ -n $cmd ]]; then
+		if [[ $key == "tab" ]]; then
+			# Tab -> paste command
+			READLINE_LINE="$cmd"
+			READLINE_POINT=${#READLINE_LINE}
+		else
+			# Enter -> execute command
+			eval "echo -e '$(tput setaf 3)▶ $(tput setaf 6)$cmd$(tput sgr0)'; $cmd"
+		fi
+	fi
+}
+
+function cddir() {
+	mkdir -p $1
+	cd $1
 }
 
 # cuda path
@@ -100,17 +116,4 @@ export LD_LIBRARY_PATH=/opt/cuda/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 export PATH=$PATH:/home/hellhbbd/.spicetify
 
-# Paul
-# export GOOGLE_CLOUD_PROJECT="sound-berm-466214-e2"
-
-# mulworld
-export GOOGLE_CLOUD_PROJECT="coral-melody-466214-n2"
-
-# school
-# export GOOGLE_CLOUD_PROJECT="black-burner-466213-u4"
-
-# Jim
-# export GOOGLE_CLOUD_PROJECT="jovial-duality-466209-r7"
-
-# family
-# export GOOGLE_CLOUD_PROJECT="enhanced-skill-466600-k2"
+export BROWSER=zen-browser

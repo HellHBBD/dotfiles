@@ -20,7 +20,14 @@ export PAGER='less'
 ## [Completion]
 ## Completion scripts setup. Remove the following line to uninstall
 [ -f /home/hellhbbd/.dart-cli-completion/bash-config.bash ] && . /home/hellhbbd/.dart-cli-completion/bash-config.bash || true
+
 ## [/Completion]
 . "$HOME/.cargo/env"
 
+## [/Completion]
 export PATH=$PATH:/home/hellhbbd/.spicetify
+
+tmux_running=$(pgrep tmux)
+if [[ -z $tmux_running ]]; then
+	./shs/tmux-init.sh
+fi
