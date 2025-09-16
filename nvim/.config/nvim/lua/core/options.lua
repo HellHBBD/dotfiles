@@ -35,8 +35,6 @@ vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 8
 
-vim.opt.termguicolors = true
-
 vim.opt.number = true
 vim.opt.relativenumber = true
 
