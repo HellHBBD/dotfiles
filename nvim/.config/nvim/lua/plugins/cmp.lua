@@ -8,9 +8,7 @@ return { -- Autocompletion
 				-- Build Step is needed for regex support in snippets.
 				-- This step is not supported in many windows environments.
 				-- Remove the below condition to re-enable on windows.
-				if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-					return
-				end
+				if vim.fn.has('win32') == 1 or vim.fn.executable('make') == 0 then return end
 				return 'make install_jsregexp'
 			end)(),
 			dependencies = {
@@ -19,9 +17,7 @@ return { -- Autocompletion
 				--    https://github.com/rafamadriz/friendly-snippets
 				{
 					'rafamadriz/friendly-snippets',
-					config = function()
-						require('luasnip.loaders.from_vscode').lazy_load()
-					end,
+					config = function() require('luasnip.loaders.from_vscode').lazy_load() end,
 				},
 			},
 		},
@@ -36,8 +32,8 @@ return { -- Autocompletion
 	},
 	config = function()
 		-- See `:help cmp`
-		local cmp = require 'cmp'
-		local luasnip = require 'luasnip'
+		local cmp = require('cmp')
+		local luasnip = require('luasnip')
 		luasnip.config.setup({})
 
 		local kind_icons = {
@@ -69,9 +65,7 @@ return { -- Autocompletion
 		}
 		cmp.setup({
 			snippet = {
-				expand = function(args)
-					luasnip.lsp_expand(args.body)
-				end,
+				expand = function(args) luasnip.lsp_expand(args.body) end,
 			},
 			completion = { completeopt = 'menu,menuone,noinsert' },
 
@@ -114,14 +108,10 @@ return { -- Autocompletion
 				-- <c-l> will move you to the right of each of the expansion locations.
 				-- <c-h> is similar, except moving you backwards.
 				['<C-l>'] = cmp.mapping(function()
-					if luasnip.expand_or_locally_jumpable() then
-						luasnip.expand_or_jump()
-					end
+					if luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump() end
 				end, { 'i', 's' }),
 				['<C-h>'] = cmp.mapping(function()
-					if luasnip.locally_jumpable(-1) then
-						luasnip.jump(-1)
-					end
+					if luasnip.locally_jumpable(-1) then luasnip.jump(-1) end
 				end, { 'i', 's' }),
 
 				-- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:

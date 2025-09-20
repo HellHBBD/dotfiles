@@ -14,10 +14,16 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
 -- disable temp file
-vim.opt.swapfile = true
-vim.opt.backup = false
-vim.opt.undodir = os.getenv 'HOME' .. '/.cache/vim/undo'
+local home = os.getenv('HOME') or os.getenv('USERPROFILE')
+vim.opt.undodir = home .. '/.cache/nvim/undo'
 vim.opt.undofile = true
+
+vim.opt.swapfile = true
+vim.opt.directory = home .. '/.cache/nvim/swap'
+
+vim.opt.backup = true
+vim.opt.writebackup = true
+vim.opt.backupdir = home .. '/.cache/nvim/backup'
 
 -- when to show tab (0: never, 1: at least 2, 2: always)
 vim.opt.showtabline = 2

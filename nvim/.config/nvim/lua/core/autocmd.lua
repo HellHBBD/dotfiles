@@ -13,6 +13,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_user_command('HtmlPreview', function()
-	local file = vim.fn.expand '%:p:h'
+	local file = vim.fn.expand('%:p:h')
 	vim.fn.jobstart({ 'live-server', file }, { detach = true })
 end, {})

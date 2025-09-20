@@ -8,14 +8,12 @@ return {
 
 			build = 'make',
 
-			cond = function()
-				return vim.fn.executable 'make' == 1
-			end,
+			cond = function() return vim.fn.executable('make') == 1 end,
 		},
 	},
 
 	config = function()
-		local telescope = require 'telescope'
+		local telescope = require('telescope')
 		-- local themes = require 'telescope.themes'
 
 		telescope.setup({
@@ -29,10 +27,10 @@ return {
 			},
 		})
 
-		telescope.load_extension 'fzf'
+		telescope.load_extension('fzf')
 
 		local keymap = vim.keymap.set
-		local builtin = require 'telescope.builtin'
+		local builtin = require('telescope.builtin')
 		keymap('n', '<Leader>ff', builtin.find_files, { desc = 'Telescope: find files' })
 		keymap('n', '<Leader>gf', builtin.git_files, { desc = 'Telescope: find git files' })
 		keymap('n', '<Leader>fg', builtin.live_grep, { desc = 'Telescope: live grep' })

@@ -1,0 +1,16 @@
+indent_type = "Tabs"
+indent_width = 4
+
+column_width = 100
+
+# 單引號/雙引號風格
+quote_style = "AutoPreferSingle"  
+# 可選: "AutoPreferDouble", "AutoPreferSingle", "ForceDouble", "ForceSingle"
+
+# 呼叫參數的括號風格
+call_parentheses = "Always"
+# 可選: "Always", "NoSingleTable"
+
+# 表格風格
+collapse_simple_statement = "Always"
+# 可選: "Always", "Never"
