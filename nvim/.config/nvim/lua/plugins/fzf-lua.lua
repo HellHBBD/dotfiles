@@ -4,12 +4,53 @@ return {
 	config = function()
 		local fzf = require('fzf-lua')
 
+		local exclude = {
+			'.git',
+			'node_modules',
+			'dist',
+			'build',
+			'*.lock',
+			'mariadb',
+			'.venv',
+		}
+
+		local function build_fd_opts()
+			local opts = { '--color=always', '--type', 'f', '--hidden', '--follow' }
+			for _, pat in ipairs(exclude) do
+				table.insert(opts, '--exclude')
+				table.insert(opts, pat)
+			end
+			return table.concat(opts, ' ')
+		end
+
+		local function build_rg_opts()
+			local opts = { '--hidden' }
+			for _, pat in ipairs(exclude) do
+				table.insert(opts, '--igblob')
+				table.insert(opts, pat)
+			end
+			return table.concat(opts, ' ')
+		end
+
 		fzf.setup({
-			winopts = {
-				height = 0.85,
-				width = 0.80,
-				row = 0.35,
-				col = 0.50,
+			defaults = {
+				file_icons = 'mini', -- 全域設定使用 mini.icons
+				copen = 'topleft copen', -- quickfix 視窗預設打開在上面
+			},
+			files = {
+				fd_opts = build_fd_opts(),
+			},
+			grep = {
+				grep_opts = build_rg_opts(),
+				rg_opts = '--hidden --no-ignore -n --column',
+				fzf_opts = {
+					['--exact'] = '', -- 搜索时优先精确匹配
+				},
+			},
+			keymap = {
+				fzf = {
+					['ctrl-q'] = 'select-all+accept',
+				},
 			},
 		})
 

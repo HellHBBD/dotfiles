@@ -3,8 +3,8 @@ vim.g.mapleader = ' '
 
 -- reload init.lua
 keymap('n', '<F5>', function()
-    vim.cmd('source $MYVIMRC')
-    print('reload nvim config')
+	vim.cmd('source $MYVIMRC')
+	print('reload nvim config')
 end, { desc = 'Reload nvim config' })
 
 -- indent shorcut
@@ -40,18 +40,18 @@ keymap('n', '<leader>Y', [["+Y]], { desc = 'Yank entire line to clipboard' })
 
 -- Replace current word throughout file
 keymap(
-    'n',
-    '<leader>s',
-    [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-    { desc = 'Search and replace current word (interactive)' }
+	'n',
+	'<leader>s',
+	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+	{ desc = 'Search and replace current word (interactive)' }
 )
 
 -- Make current file executable
 keymap(
-    'n',
-    '<leader>x',
-    '<cmd>!chmod +x %<CR>',
-    { desc = 'Make current file executable', silent = true }
+	'n',
+	'<leader>x',
+	'<cmd>!chmod +x %<CR>',
+	{ desc = 'Make current file executable', silent = true }
 )
 
 -- neovim native plugins manager
@@ -65,6 +65,7 @@ keymap('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Cancel search highlights' 
 
 -- Quickfix list
 keymap('n', '<c-n>', '<cmd>cnext<CR>', { desc = 'Next Quickfix' })
+keymap('n', '<c-p>', '<cmd>cprev<CR>', { desc = 'Prev Quickfix' })
 
 -- Diagnostic keymaps
 keymap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -72,27 +73,27 @@ keymap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q
 local opts = { noremap = true, silent = true }
 opts.desc = 'Run or Preview depending on filetype'
 keymap('n', '<leader>r', function()
-    local ft = vim.bo.filetype -- 取得當前檔案類型
-    local fname = vim.fn.expand('%') -- 取得檔案名稱
-    local outname = fname:gsub('%.%w+$', '') -- 去掉副檔名做輸出檔名
+	local ft = vim.bo.filetype -- 取得當前檔案類型
+	local fname = vim.fn.expand('%') -- 取得檔案名稱
+	local outname = fname:gsub('%.%w+$', '') -- 去掉副檔名做輸出檔名
 
-    if ft == 'c' then
-        vim.cmd('!gcc ' .. fname .. ' -o ' .. outname .. ' && ./' .. outname)
-    elseif ft == 'cpp' then
-        vim.cmd('!g++ ' .. fname .. ' -o ' .. outname .. ' && ./' .. outname)
-    elseif ft == 'python' then
-        vim.cmd('!python ' .. fname)
-    elseif ft == 'lua' then
-        vim.cmd('!lua ' .. fname)
-    elseif ft == 'go' then
-        vim.cmd('!go run ' .. fname)
-    elseif ft == 'markdown' then
-        vim.cmd(':MarkdownPreviewToggle')
-    elseif ft == 'typst' then
-        vim.cmd(':TypstPreview')
-    elseif ft == 'html' then
-        vim.cmd(':HtmlPreview')
-    else
-        print('No run/preview command for filetype: ' .. ft)
-    end
+	if ft == 'c' then
+		vim.cmd('!gcc ' .. fname .. ' -o ' .. outname .. ' && ./' .. outname)
+	elseif ft == 'cpp' then
+		vim.cmd('!g++ ' .. fname .. ' -o ' .. outname .. ' && ./' .. outname)
+	elseif ft == 'python' then
+		vim.cmd('!python ' .. fname)
+	elseif ft == 'lua' then
+		vim.cmd('!lua ' .. fname)
+	elseif ft == 'go' then
+		vim.cmd('!go run ' .. fname)
+	elseif ft == 'markdown' then
+		vim.cmd(':MarkdownPreviewToggle')
+	elseif ft == 'typst' then
+		vim.cmd(':TypstPreview')
+	elseif ft == 'html' then
+		vim.cmd(':HtmlPreview')
+	else
+		print('No run/preview command for filetype: ' .. ft)
+	end
 end, opts)
