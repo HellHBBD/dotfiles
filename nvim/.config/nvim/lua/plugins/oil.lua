@@ -14,7 +14,6 @@ return {
 		---@type oil.SetupOpts
 		opts = {},
 		dependencies = { { 'nvim-mini/mini.icons', opts = {} } },
-		lazy = false,
 		keys = {
 			{
 				'<F2>',

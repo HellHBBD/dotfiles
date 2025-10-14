@@ -1,6 +1,28 @@
 return {
 	'ibhagwan/fzf-lua',
 	dependencies = { 'nvim-tree/nvim-web-devicons' },
+	keys = {
+		{
+			'<Leader>ff',
+			function() require('fzf-lua').files() end,
+			desc = 'FzfLua: find files',
+		},
+		{
+			'<Leader>fg',
+			function() require('fzf-lua').live_grep() end,
+			desc = 'FzfLua: live grep',
+		},
+		{
+			'<Leader>fb',
+			function() require('fzf-lua').buffers() end,
+			desc = 'FzfLua: list buffers',
+		},
+		{
+			'<Leader>fh',
+			function() require('fzf-lua').help_tags() end,
+			desc = 'FzfLua: help tags',
+		},
+	},
 	config = function()
 		local fzf = require('fzf-lua')
 
@@ -34,8 +56,8 @@ return {
 
 		fzf.setup({
 			defaults = {
-				file_icons = 'mini', -- 全域設定使用 mini.icons
-				copen = 'topleft copen', -- quickfix 視窗預設打開在上面
+				file_icons = 'mini',
+				copen = 'topleft copen',
 			},
 			files = {
 				fd_opts = build_fd_opts(),
@@ -44,7 +66,7 @@ return {
 				grep_opts = build_rg_opts(),
 				rg_opts = '--hidden --no-ignore -n --column',
 				fzf_opts = {
-					['--exact'] = '', -- 搜索时优先精确匹配
+					['--exact'] = '',
 				},
 			},
 			keymap = {
@@ -52,12 +74,9 @@ return {
 					['ctrl-q'] = 'select-all+accept',
 				},
 			},
+			preview = {
+				layout = 'horizontal',
+			},
 		})
-
-		local keymap = vim.keymap.set
-		keymap('n', '<Leader>ff', fzf.files, { desc = 'FzfLua: find files' })
-		keymap('n', '<Leader>fg', fzf.live_grep, { desc = 'FzfLua: live grep' })
-		keymap('n', '<Leader>fb', fzf.buffers, { desc = 'FzfLua: list buffers' })
-		keymap('n', '<Leader>fh', fzf.help_tags, { desc = 'FzfLua: help tags' })
 	end,
 }

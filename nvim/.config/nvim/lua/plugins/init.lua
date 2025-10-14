@@ -17,39 +17,23 @@ local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
 require('lazy').setup({
-	-- require('plugins.nerdtree'),
+	{ import = 'plugins.tokyonight', lazy = false },
 
-	require('plugins.tokyonight'),
-	require('plugins.lualine'),
+	{ import = 'plugins.lualine', event = 'VeryLazy' },
+	{ import = 'plugins.treesitter', event = { 'BufReadPost', 'BufNewFile' } },
+	{ import = 'plugins.lsp', event = { 'BufReadPre', 'BufNewFile' } },
+	{ import = 'plugins.cmp', event = 'InsertEnter' },
+	{ import = 'plugins.format', event = 'BufWritePre' },
+	{ import = 'plugins.indent-blankline', event = 'BufReadPost' },
+	{ import = 'plugins.which-key', event = 'VeryLazy' },
+	{ import = 'plugins.fzf-lua', cmd = 'FzfLua' },
+	{ import = 'plugins.harpoon', keys = { '<leader>a', '<leader>h' } },
+	{ import = 'plugins.render-markdown', ft = 'markdown' },
+	{ import = 'plugins.colorizer', event = 'BufReadPost' },
+	{ import = 'plugins.oil' },
 
-	-- require('plugins.telescope'),
-	require('plugins.fzf-lua'),
-	require('plugins.harpoon'),
-	require('plugins.treesitter'),
-
-	require('plugins.lsp'),
-	require('plugins.cmp'),
-	require('plugins.format'),
-
-	require('plugins.indent-blankline'),
-
-	require('plugins.which-key'),
-
-	{
-		'ThePrimeagen/vim-be-good',
-	},
-
-	require('plugins.render-markdown'),
-	require('plugins.colorizer'),
-
-	{
-		'chomosuke/typst-preview.nvim',
-		ft = 'typst',
-		version = '1.*',
-		opts = {}, -- lazy.nvim will implicitly calls `setup {}`
-	},
-
-	require('plugins.oil'),
+	{ 'ThePrimeagen/vim-be-good', cmd = 'VimBeGood' },
+	{ 'chomosuke/typst-preview.nvim', ft = 'typst', version = '1.*', opts = {} },
 })
 
 -- require('plugins.rose-pine')
