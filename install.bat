@@ -8,6 +8,8 @@ scoop install git neovim fd fzf ripgrep gcc nodejs
 
 cd %USERPROFILE%
 git clone https://github.com/HellHBBD/dotfiles.git
+cd dotfiles
+git checkout exam
 
 :: 刪掉舊設定
 if exist "%USERPROFILE%\AppData\Local\nvim" rmdir /s /q "%USERPROFILE%\AppData\Local\nvim"

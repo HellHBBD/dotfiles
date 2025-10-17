@@ -231,10 +231,11 @@ return {
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
+				-- comment some lsp out
 				clangd = {},
-				gopls = {},
-				ruff = {},
-				pylsp = {},
+				-- gopls = {},
+				-- ruff = {},
+				-- pylsp = {},
 				rust_analyzer = {},
 				tinymist = {
 					settings = {
@@ -279,16 +280,17 @@ return {
 			-- You can add other tools here that you want Mason to install
 			-- for you, so that they are available from within Neovim.
 			local ensure_installed = vim.tbl_keys(servers or {})
+			-- comment some lsp out
 			vim.list_extend(ensure_installed, {
 				-- Typst
 				'tinymist',
 
 				-- C/C++/C#/Java/JS/JSON
-				'clang-format',
+				-- 'clang-format',
 				'clangd',
 
 				-- Go
-				'gopls',
+				-- 'gopls',
 
 				-- Lua
 				'lua-language-server',
@@ -298,8 +300,8 @@ return {
 				'prettier',
 
 				-- Python
-				'python-lsp-server',
-				'ruff',
+				-- 'python-lsp-server',
+				-- 'ruff',
 
 				-- Rust
 				'rust-analyzer',
