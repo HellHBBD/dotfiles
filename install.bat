@@ -4,7 +4,7 @@ powershell -Command "irm get.scoop.sh -outfile 'install.ps1'"
 powershell -Command ".\install.ps1 -RunAsAdmin"
 
 :: install apps
-scoop install git neovim fd fzf ripgrep gcc nodejs
+scoop install git neovim fd fzf ripgrep gcc nodejs luarocks
 
 cd %USERPROFILE%
 git clone https://github.com/HellHBBD/dotfiles.git
@@ -15,3 +15,5 @@ git checkout exam
 if exist "%USERPROFILE%\AppData\Local\nvim" rmdir /s /q "%USERPROFILE%\AppData\Local\nvim"
 
 mklink /D "%USERPROFILE%\AppData\Local\nvim" "%USERPROFILE%\dotfiles\nvim\.config\nvim"
+
+npm -g install live-server
