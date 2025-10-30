@@ -4,7 +4,7 @@ powershell -Command "irm get.scoop.sh -outfile 'install.ps1'"
 powershell -Command ".\install.ps1 -RunAsAdmin"
 
 :: install apps
-scoop install git neovim fd fzf ripgrep gcc nodejs luarocks
+scoop install git neovim powertoys fd fzf ripgrep gcc nodejs luarocks
 
 cd %USERPROFILE%
 git clone https://github.com/HellHBBD/dotfiles.git
