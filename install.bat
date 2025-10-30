@@ -4,6 +4,7 @@ powershell -Command "irm get.scoop.sh -outfile 'install.ps1'"
 powershell -Command ".\install.ps1 -RunAsAdmin"
 
 :: install apps
+scoop add extras
 scoop install git neovim powertoys fd fzf ripgrep gcc nodejs luarocks
 
 cd %USERPROFILE%
