@@ -6,7 +6,6 @@ Write-Host "🔧 開始建立三個批次檔..." -ForegroundColor Cyan
 
 # --- Script 1 ---
 @'
-:: 1 - Install Scoop
 powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force"
 powershell -Command "irm get.scoop.sh -outfile 'install.ps1'"
 powershell -Command ".\install.ps1 -RunAsAdmin"
@@ -17,9 +16,7 @@ Write-Host "✅ 已建立 script1.bat" -ForegroundColor Green
 
 # --- Script 2 ---
 @'
-:: 2 - Install apps
-scoop bucket add extras
-scoop install git neovim fd fzf ripgrep gcc nodejs luarocks
+scoop install git nodejs neovim fd fzf ripgrep gcc luarocks
 pause
 '@ | Out-File -Encoding UTF8 -FilePath "script2.bat"
 
@@ -27,13 +24,11 @@ Write-Host "✅ 已建立 script2.bat" -ForegroundColor Green
 
 # --- Script 3 ---
 @'
-:: 3 - Setup dotfiles
 cd %USERPROFILE%
 git clone https://github.com/HellHBBD/dotfiles.git
 cd dotfiles
 git checkout exam
 
-:: 刪掉舊設定
 if exist "%USERPROFILE%\AppData\Local\nvim" rmdir /s /q "%USERPROFILE%\AppData\Local\nvim"
 
 mklink /D "%USERPROFILE%\AppData\Local\nvim" "%USERPROFILE%\dotfiles\nvim\.config\nvim"
