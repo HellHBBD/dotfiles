@@ -1,0 +1,139 @@
+// Waybar configuration for Hyprland.
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "spacing": 6,
+
+  "modules-left": [
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+  "modules-center": [
+    "custom/mpris"
+  ],
+  "modules-right": [
+    "group/system",
+    "custom/wifi",
+    "custom/bluetooth",
+    "pulseaudio",
+    "battery",
+    "custom/clock",
+    "tray",
+    "custom/notifications"
+  ],
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "active": "",
+      "urgent": ""
+    },
+    "sort-by": "number",
+    "enable-bar-scroll": false,
+    "persistent-workspaces": {
+      "*": 5
+    }
+  },
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 60,
+    "separate-outputs": true
+  },
+  "group/system": {
+    "orientation": "horizontal",
+    "modules": ["cpu", "memory", "temperature"]
+  },
+  "cpu": {
+    "interval": 5,
+    "format": "󰍛 {usage}%",
+    "tooltip": false
+  },
+  "memory": {
+    "interval": 5,
+    "format": "󰘚 {percentage}%",
+    "tooltip-format": "{used:0.1f} GiB / {total:0.1f} GiB"
+  },
+  "temperature": {
+    "critical-threshold": 85,
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": ["󰔏", "󰔐", "󰸁"],
+    "tooltip": false
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟 Muted",
+    "format-icons": {
+      "headphone": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  },
+  "battery": {
+    "interval": 30,
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip-format": "{timeTo} remaining"
+  },
+  "tray": {
+    "spacing": 8
+  },
+  "custom/mpris": {
+    "return-type": "json",
+    "exec": "bash ~/.config/hypr/scripts/waybar-mpris.sh",
+    "interval": 2,
+    "format": "{text}",
+    "escape": true,
+    "max-length": 50,
+    "on-click": "playerctl play-pause",
+    "on-click-right": "playerctl next"
+  },
+  "custom/wifi": {
+    "return-type": "json",
+    "exec": "bash ~/.config/hypr/scripts/wifi-status.sh",
+    "interval": 5,
+    "format": "{text}",
+    "on-click": "bash ~/.config/hypr/scripts/wifi-menu.sh",
+    "on-click-right": "nmcli radio wifi off; sleep 1; nmcli radio wifi on"
+  },
+  "custom/bluetooth": {
+    "return-type": "json",
+    "exec": "bash ~/.config/hypr/scripts/bt-status.sh",
+    "interval": 5,
+    "format": "{text}",
+    "on-click": "bash ~/.config/hypr/scripts/bluetooth-menu.sh",
+    "on-click-right": "bluetoothctl power off; sleep 1; bluetoothctl power on"
+  },
+  "custom/clock": {
+    "return-type": "json",
+    "exec": "bash ~/.config/hypr/scripts/waybar-clock.sh",
+    "interval": 30,
+    "format": "{text}",
+    "on-click": "swaync-client -t -sw"
+  },
+  "custom/notifications": {
+    "exec": "swaync-client -swb",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "",
+      "none": "󰂛",
+      "dnd-notification": "",
+      "dnd-none": "",
+      "inhibited-notification": "",
+      "inhibited-none": ""
+    },
+    "tooltip": true,
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw"
+  }
+}

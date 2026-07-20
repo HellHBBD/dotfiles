@@ -23,6 +23,7 @@ nodejs
 tmux
 git-delta
 bluez-utils
+bluez
 btop
 reflector
 man-db
@@ -35,6 +36,31 @@ brightnessctl
 brillo
 # diff gui tool
 meld
+
+### Hyprland ###
+hyprland
+uwsm
+hyprlock
+hypridle
+hyprpaper
+hyprpolkitagent
+waybar
+swaync
+fuzzel
+wlogout
+kitty
+dolphin
+cliphist
+grim
+slurp
+hyprpicker
+wireplumber
+playerctl
+libnotify
+networkmanager
+jq
+pavucontrol
+ttf-jetbrains-mono-nerd
 
 ### Chewing ###
 fcitx5-im
