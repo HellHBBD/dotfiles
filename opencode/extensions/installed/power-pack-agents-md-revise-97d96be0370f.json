@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "installationId": "power-pack-agents-md-revise-97d96be0370f",
+  "sourceUrl": "https://github.com/waybarrios/opencode-power-pack",
+  "requestedRef": "main",
+  "resolvedCommit": "97d96be0370f074400b6a5c13d98d5e421e99e7c",
+  "componentType": "command",
+  "originalSourcePath": "commands/agents-md-revise.md",
+  "targetPath": "C:\\Users\\USER\\.config\\opencode\\commands\\power-pack-agents-md-revise.md",
+  "originalName": "agents-md-revise",
+  "installedName": "power-pack-agents-md-revise",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installTimestamp": "2026-07-20T08:35:38.4354434Z",
+  "backupRevision": "baseline-97d96be0370f",
+  "backupPath": "C:\\Users\\USER\\.local\\share\\opencode-extension-manager\\backups\\power-pack-agents-md-revise-97d96be0370f\\baseline-97d96be0370f\\commands\\agents-md-revise.md"
+}

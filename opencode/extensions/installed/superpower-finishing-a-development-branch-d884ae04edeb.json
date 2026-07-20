@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "installationId": "superpower-finishing-a-development-branch-d884ae04edeb",
+  "sourceUrl": "https://github.com/obra/superpowers.git",
+  "requestedRef": "d884ae04edebef577e82ff7c4e143debd0bbec99",
+  "resolvedCommit": "d884ae04edebef577e82ff7c4e143debd0bbec99",
+  "componentType": "command",
+  "originalSourcePath": "skills/finishing-a-development-branch/SKILL.md",
+  "targetPath": "C:\\Users\\USER\\.config\\opencode\\commands\\superpower-finishing-a-development-branch.md",
+  "originalName": "finishing-a-development-branch",
+  "installedName": "superpower-finishing-a-development-branch",
+  "scope": "global",
+  "riskClassification": "low",
+  "installTimestamp": "2026-07-20T16:17:04+08:00",
+  "backupRevision": "baseline-d884ae04edeb",
+  "backupPath": "C:\\Users\\USER\\.local\\share\\opencode-extension-manager\\backups\\superpower-finishing-a-development-branch-d884ae04edeb\\baseline-d884ae04edeb\\superpower-finishing-a-development-branch.md"
+}

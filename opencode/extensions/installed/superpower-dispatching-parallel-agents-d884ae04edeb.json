@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "installationId": "superpower-dispatching-parallel-agents-d884ae04edeb",
+  "sourceUrl": "https://github.com/obra/superpowers.git",
+  "requestedRef": "d884ae04edeb",
+  "resolvedCommit": "d884ae04edebef577e82ff7c4e143debd0bbec99",
+  "componentType": "skill",
+  "originalSourcePath": "skills/dispatching-parallel-agents/SKILL.md",
+  "targetPath": "C:\\Users\\USER\\.config\\opencode\\skills\\superpower-dispatching-parallel-agents\\SKILL.md",
+  "originalName": "dispatching-parallel-agents",
+  "installedName": "superpower-dispatching-parallel-agents",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installTimestamp": "2026-07-20T14:52:40+08:00",
+  "backupRevision": "baseline-d884ae04edeb",
+  "backupPath": "C:\\Users\\USER\\.local\\share\\opencode-extension-manager\\backups\\superpower-dispatching-parallel-agents-d884ae04edeb\\baseline-d884ae04edeb"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "installationId": "superpower-requesting-code-review-d884ae04edeb",
+  "sourceUrl": "https://github.com/obra/superpowers.git",
+  "requestedRef": "d884ae04edeb",
+  "resolvedCommit": "d884ae04edebef577e82ff7c4e143debd0bbec99",
+  "componentType": "command",
+  "originalSourcePath": "skills/requesting-code-review/SKILL.md",
+  "targetPath": "C:\\Users\\USER\\.config\\opencode\\commands\\superpower-requesting-code-review.md",
+  "originalName": "requesting-code-review",
+  "installedName": "superpower-requesting-code-review",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installTimestamp": "2026-07-20T15:31:04+08:00",
+  "backupRevision": "baseline-d884ae04edeb",
+  "backupPath": "C:\\Users\\USER\\.local\\share\\opencode-extension-manager\\backups\\superpower-requesting-code-review-d884ae04edeb\\baseline-d884ae04edeb"
+}
