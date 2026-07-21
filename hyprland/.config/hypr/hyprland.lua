@@ -6,5 +6,8 @@
 --   3. custom   - machine-specific overrides loaded last
 
 require("hyprland.minimal")
-require("hyprland.optional")
+
+-- Enable after the base session passes Linux bring-up.
+-- require("hyprland.optional")
+
 require("custom.init")
