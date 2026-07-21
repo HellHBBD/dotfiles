@@ -1,4 +1,4 @@
--- Dialog and utility window rules.
+-- Dialog, settings and authentication windows.
 
 hl.window_rule({
     name = "modal-dialogs",
@@ -12,16 +12,16 @@ hl.window_rule({
     dim_around = true,
 })
 
--- Generic file chooser titles.
+-- Common GTK, Qt and browser file chooser titles.
 --
--- Class matching is intentionally avoided here because GTK and Qt portal
--- implementations may use different classes while keeping familiar titles.
+-- Static effects such as float, center and size use the window's initial
+-- properties, so this matches the initial title explicitly.
 
 hl.window_rule({
     name = "file-chooser-dialogs",
 
     match = {
-        title = "^(Open File|Select a File|Open Folder|Select Folder|Save As|File Upload|Choose wallpaper|.* wants to (open|save).*)$",
+        initial_title = [[^(Open File|Select a File|Open Folder|Select Folder|Save As|File Upload|Choose wallpaper|.* wants to (open|save).*)$]],
     },
 
     float = true,
@@ -35,13 +35,13 @@ hl.window_rule({
     persistent_size = true,
 })
 
--- KDE portal, KDialog and control-module windows.
+-- KDE portal, KDialog and System Settings modules.
 
 hl.window_rule({
     name = "kde-settings-and-portals",
 
     match = {
-        class = "^(xdg-desktop-portal-kde|org\\.kde\\.kdialog|org\\.kde\\.systemsettings|kcmshell6)$",
+        initial_class = [[^(xdg-desktop-portal-kde|org\.kde\.kdialog|org\.kde\.systemsettings|kcmshell6)$]],
     },
 
     float = true,
@@ -55,13 +55,13 @@ hl.window_rule({
     persistent_size = true,
 })
 
--- Audio settings.
+-- PipeWire / PulseAudio mixer.
 
 hl.window_rule({
     name = "pavucontrol",
 
     match = {
-        class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol)$",
+        initial_class = [[^(pavucontrol|org\.pulseaudio\.pavucontrol)$]],
     },
 
     float = true,
@@ -81,7 +81,7 @@ hl.window_rule({
     name = "network-connection-editor",
 
     match = {
-        class = "^(nm-connection-editor)$",
+        initial_class = "^nm-connection-editor$",
     },
 
     float = true,
@@ -95,13 +95,13 @@ hl.window_rule({
     persistent_size = true,
 })
 
--- KDE Bluetooth setup wizard.
+-- BlueDevil pairing wizard.
 
 hl.window_rule({
     name = "bluedevil-wizard",
 
     match = {
-        class = "^(org\\.kde\\.bluedevilwizard|bluedevil-wizard)$",
+        initial_class = [[^(org\.kde\.bluedevilwizard|bluedevil-wizard)$]],
     },
 
     float = true,
@@ -119,7 +119,7 @@ hl.window_rule({
     name = "pinentry-focus",
 
     match = {
-        class = "^(pinentry.*|org\\.gnupg\\.pinentry.*)$",
+        class = [[^(pinentry-.*|pinentry.*|org\.gnupg\.pinentry.*)$]],
     },
 
     float = true,
@@ -134,8 +134,8 @@ hl.window_rule({
     name = "zotero-dialogs",
 
     match = {
-        class = "^(Zotero|zotero)$",
-        title = "^(Zotero Preferences|Document Preferences|Add Citation|Add/Edit Citation|Add Note|Progress)$",
+        initial_class = "^(Zotero|zotero)$",
+        initial_title = [[^(Zotero Preferences|Document Preferences|Add Citation|Add/Edit Citation|Add Note|Progress)$]],
     },
 
     float = true,

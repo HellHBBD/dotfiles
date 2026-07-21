@@ -1,7 +1,10 @@
--- Global window rules.
+-- Global compatibility and layout rules.
+--
+-- Keep global rules conservative: application-specific behavior belongs in
+-- later files.
 
 hl.window_rule({
-    name = "suppress-maximize-requests",
+    name = "suppress-maximize-events",
 
     match = {
         class = ".*",
@@ -10,10 +13,10 @@ hl.window_rule({
     suppress_event = "maximize",
 })
 
--- Prevent empty XWayland drag surfaces from stealing focus.
+-- Official compatibility workaround for empty XWayland drag surfaces.
 
 hl.window_rule({
-    name = "fix-xwayland-drag-surfaces",
+    name = "fix-xwayland-drags",
 
     match = {
         class = "^$",
@@ -27,8 +30,7 @@ hl.window_rule({
     no_focus = true,
 })
 
--- Tiled windows do not need shadows because they already occupy the
--- compositor layout and touch adjacent gaps.
+-- Shadows are unnecessary for tiled windows and add rendering work.
 
 hl.window_rule({
     name = "no-shadow-for-tiled-windows",
@@ -38,16 +40,4 @@ hl.window_rule({
     },
 
     no_shadow = true,
-})
-
--- Prevent applications from disabling compositor shortcuts.
-
-hl.window_rule({
-    name = "prevent-shortcut-inhibit",
-
-    match = {
-        class = ".*",
-    },
-
-    no_shortcuts_inhibit = true,
 })

@@ -1,17 +1,20 @@
--- Application and content-specific window rules.
+-- Application and content-specific rules.
 
 -- Browser Picture-in-Picture windows.
+--
+-- The size and position are monitor-local expressions.
 
 hl.window_rule({
     name = "picture-in-picture",
 
     match = {
-        title = "^(Picture-in-Picture|Picture in picture|Picture in Picture)$",
+        initial_title = [[^(Picture-in-Picture|Picture in picture|Picture in Picture)$]],
     },
 
     float = true,
     pin = true,
-    keep_aspect_ratio = true,
+    center = false,
+    no_initial_focus = true,
 
     size = {
         "monitor_w*0.25",
@@ -23,10 +26,11 @@ hl.window_rule({
         "monitor_h-window_h-60",
     },
 
-    no_initial_focus = true,
+    keep_aspect_ratio = true,
 })
 
--- Prevent fullscreen video playback from triggering idle actions.
+-- Prevent sleep while fullscreen video content is active, including players
+-- that expose the video content type directly.
 
 hl.window_rule({
     name = "fullscreen-video-idle-inhibit",
@@ -39,10 +43,10 @@ hl.window_rule({
     idle_inhibit = "fullscreen",
 })
 
--- Steam game windows.
+-- Steam games.
 
 hl.window_rule({
-    name = "steam-games",
+    name = "steam-games-content",
 
     match = {
         class = "^steam_app_.*$",
@@ -50,46 +54,56 @@ hl.window_rule({
 
     content = "game",
     immediate = true,
+    focus_on_activate = true,
     idle_inhibit = "fullscreen",
 })
 
--- Minecraft instances may expose different class names depending on the
--- launcher and Java runtime.
+-- Minecraft windows.
+--
+-- Confirm the actual class after reinstalling with:
+--
+--     hyprctl clients
 
 hl.window_rule({
-    name = "minecraft",
+    name = "minecraft-content",
 
     match = {
-        class = "^(Minecraft.*|minecraft.*|java.*Minecraft.*)$",
+        initial_class = "^(Minecraft.*|minecraft.*)$",
     },
 
     content = "game",
     immediate = true,
+    focus_on_activate = true,
     idle_inhibit = "fullscreen",
 })
 
 -- Wine and Proton game executables.
 
 hl.window_rule({
-    name = "wine-executables",
+    name = "wine-game-content",
 
     match = {
-        class = [[.*\.exe]],
+        initial_class = [[.*\.[Ee][Xx][Ee]$]],
     },
 
     content = "game",
     immediate = true,
+    focus_on_activate = true,
     idle_inhibit = "fullscreen",
 })
 
--- Games should be able to request focus when launched.
+-- Prevent sleep while a common browser is fullscreen.
+--
+-- This does not classify every browser window as video; it only inhibits idle
+-- actions while the matching window is actually fullscreen.
 
 hl.window_rule({
-    name = "games-focus-on-activate",
+    name = "fullscreen-browser-idle-inhibit",
 
     match = {
-        content = "game",
+        class = [[^(firefox|zen|zen-browser|Brave-browser|brave-browser|chromium|google-chrome)$]],
+        fullscreen = true,
     },
 
-    focus_on_activate = true,
+    idle_inhibit = "fullscreen",
 })

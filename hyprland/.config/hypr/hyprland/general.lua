@@ -1,4 +1,4 @@
--- Shared window-management configuration.
+-- Shared compositor behavior.
 --
 -- Visual intensity is controlled separately by presets/current.lua.
 
@@ -34,6 +34,12 @@ hl.config({
 
     dwindle = {
         preserve_split = true,
+        smart_split = false,
+        smart_resizing = false,
+    },
+
+    binds = {
+        scroll_event_delay = 0,
     },
 
     misc = {

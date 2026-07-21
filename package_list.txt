@@ -39,6 +39,7 @@ meld
 
 ### Hyprland ###
 hyprland
+hyprshutdown
 uwsm
 hyprlock
 hypridle
@@ -47,6 +48,7 @@ hyprpolkitagent
 waybar
 swaync
 fuzzel
+ghostty
 wlogout
 kitty
 dolphin
@@ -55,12 +57,21 @@ grim
 slurp
 hyprpicker
 wireplumber
+pipewire
+pipewire-pulse
+xdg-desktop-portal
+xdg-desktop-portal-hyprland
+polkit
 playerctl
 libnotify
 networkmanager
 jq
 pavucontrol
 ttf-jetbrains-mono-nerd
+linux-headers
+nvidia-open-dkms
+nvidia-utils
+egl-wayland
 
 ### Chewing ###
 fcitx5-im

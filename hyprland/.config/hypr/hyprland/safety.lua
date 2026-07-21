@@ -1,50 +1,70 @@
 -- Permanent safety keybinds.
 --
--- These must remain usable even when optional desktop components fail.
+-- These must continue working even when Waybar, Fuzzel, SwayNC, Hypridle or
+-- other optional components fail.
 
 local terminal_command = [[
 for terminal in ghostty foot kitty alacritty; do
     if command -v "$terminal" >/dev/null 2>&1; then
-        exec "$terminal"
+        if command -v uwsm >/dev/null 2>&1 &&
+           systemctl --user is-active --quiet 'wayland-session@*.target'; then
+            exec uwsm app -- "$terminal"
+        else
+            exec "$terminal"
+        fi
     fi
 done
 
-notify-send "Hyprland" "No supported terminal was found"
+if command -v notify-send >/dev/null 2>&1; then
+    notify-send "Hyprland" "No supported terminal was found"
+fi
+
+exit 127
 ]]
 
 local exit_session_command = [[
 if command -v uwsm >/dev/null 2>&1 &&
-    systemctl --user is-active --quiet 'wayland-wm@*.service'; then
+   systemctl --user is-active --quiet 'wayland-session@*.target'; then
     exec uwsm stop
-elif command -v hyprshutdown >/dev/null 2>&1; then
-    exec hyprshutdown
-else
-    hyprctl dispatch 'hl.dsp.exit()'
 fi
+
+if command -v hyprshutdown >/dev/null 2>&1; then
+    exec hyprshutdown
+fi
+
+exec hyprctl dispatch exit
 ]]
 
 hl.bind(
     "SUPER + Return",
     hl.dsp.exec_cmd(terminal_command),
-    { description = "Open terminal" }
+    {
+        description = "Open terminal",
+    }
 )
 
 hl.bind(
     "SUPER + Q",
     hl.dsp.window.close(),
-    { description = "Close active window" }
+    {
+        description = "Close active window",
+    }
 )
 
 hl.bind(
     "SUPER + SHIFT + M",
     hl.dsp.exec_cmd(exit_session_command),
-    { description = "Exit graphical session" }
+    {
+        description = "Exit graphical session",
+    }
 )
 
 hl.bind(
     "SUPER + ALT + Space",
     hl.dsp.window.float({ action = "toggle" }),
-    { description = "Toggle floating" }
+    {
+        description = "Toggle floating",
+    }
 )
 
 hl.bind(
@@ -53,41 +73,57 @@ hl.bind(
         mode = "fullscreen",
         action = "toggle",
     }),
-    { description = "Toggle fullscreen" }
+    {
+        description = "Toggle fullscreen",
+    }
 )
 
 hl.bind(
     "SUPER + Left",
     hl.dsp.focus({ direction = "l" }),
-    { description = "Focus left" }
+    {
+        description = "Focus left",
+    }
 )
 
 hl.bind(
     "SUPER + Right",
     hl.dsp.focus({ direction = "r" }),
-    { description = "Focus right" }
+    {
+        description = "Focus right",
+    }
 )
 
 hl.bind(
     "SUPER + Up",
     hl.dsp.focus({ direction = "u" }),
-    { description = "Focus up" }
+    {
+        description = "Focus up",
+    }
 )
 
 hl.bind(
     "SUPER + Down",
     hl.dsp.focus({ direction = "d" }),
-    { description = "Focus down" }
+    {
+        description = "Focus down",
+    }
 )
 
 hl.bind(
     "SUPER + mouse:272",
     hl.dsp.window.drag(),
-    { mouse = true }
+    {
+        mouse = true,
+        description = "Move window with mouse",
+    }
 )
 
 hl.bind(
     "SUPER + mouse:273",
     hl.dsp.window.resize(),
-    { mouse = true }
+    {
+        mouse = true,
+        description = "Resize window with mouse",
+    }
 )
