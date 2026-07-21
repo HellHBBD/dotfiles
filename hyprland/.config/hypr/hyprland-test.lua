@@ -78,9 +78,17 @@ hl.bind(
     }
 )
 
+local exit_command = [[
+if command -v hyprshutdown >/dev/null 2>&1; then
+    exec hyprshutdown
+fi
+
+exec hyprctl dispatch exit
+]]
+
 hl.bind(
     "SUPER + SHIFT + M",
-    hl.dsp.exec_cmd("hyprshutdown"),
+    hl.dsp.exec_cmd(exit_command),
     {
         description = "Exit Hyprland",
     }

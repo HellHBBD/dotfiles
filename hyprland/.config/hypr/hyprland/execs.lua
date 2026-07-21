@@ -65,8 +65,8 @@ fi
 
 agent=""
 
-if command -v hyprpolkitagent >/dev/null 2>&1; then
-    agent="hyprpolkitagent"
+if [ -x /usr/lib/hyprpolkitagent/hyprpolkitagent ]; then
+    agent="/usr/lib/hyprpolkitagent/hyprpolkitagent"
 elif [ -x /usr/lib/polkit-kde-authentication-agent-1 ]; then
     agent="/usr/lib/polkit-kde-authentication-agent-1"
 fi
