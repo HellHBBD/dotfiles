@@ -58,9 +58,18 @@ systemctl --user import-environment \
 
 	-- Core desktop components.
 	start_once("waybar", "(^|/)waybar($| )", "waybar")
-	start_once("swaync", "(^|/)swaync($| )", "swaync")
-	-- start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
-	-- start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
+
+	-- SwayNC and the Polkit agent are owned by systemd user services.
+	hl.exec_cmd([[
+systemctl --user reset-failed swaync.service >/dev/null 2>&1 || true
+systemctl --user start swaync.service >/dev/null 2>&1 || true
+
+systemctl --user reset-failed hyprpolkitagent.service >/dev/null 2>&1 || true
+systemctl --user start hyprpolkitagent.service >/dev/null 2>&1 || true
+]])
+
+	start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
+	start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
 
 	-- Initialize the default tmux workspace once.
 	hl.exec_cmd([[
@@ -80,32 +89,5 @@ if tmux list-sessions >/dev/null 2>&1; then
 fi
 
 exec "$script" >/dev/null 2>&1
-]])
-
-	-- Prefer Hyprland's polkit agent, then fall back to KDE's agent.
-	hl.exec_cmd([[
-if pgrep -f -- '(^|/)(hyprpolkitagent|polkit-kde-authentication-agent-1)($| )' \
-    >/dev/null 2>&1; then
-    exit 0
-fi
-
-agent=""
-
-if [ -x /usr/lib/hyprpolkitagent/hyprpolkitagent ]; then
-    agent="/usr/lib/hyprpolkitagent/hyprpolkitagent"
-elif [ -x /usr/lib/polkit-kde-authentication-agent-1 ]; then
-    agent="/usr/lib/polkit-kde-authentication-agent-1"
-fi
-
-if [ -z "$agent" ]; then
-    exit 0
-fi
-
-if command -v uwsm >/dev/null 2>&1 &&
-   systemctl --user is-active --quiet 'wayland-session@*.target'; then
-    exec uwsm app -- "$agent"
-else
-    exec "$agent"
-fi
 ]])
 end)
