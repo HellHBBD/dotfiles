@@ -87,7 +87,7 @@ fi
 -- Applications
 
 hl.bind(
-    "SUPER + Space",
+    "SUPER + D",
     hl.dsp.exec_cmd(launcher_command),
     {
         description = "Application launcher",

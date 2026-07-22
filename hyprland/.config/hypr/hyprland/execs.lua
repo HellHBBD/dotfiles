@@ -5,9 +5,10 @@
 -- launched through `uwsm app --` for ordered shutdown.
 
 local function start_once(binary, process_pattern, command)
-    command = command or binary
+	command = command or binary
 
-    hl.exec_cmd(string.format([[
+	hl.exec_cmd(string.format(
+		[[
 if ! command -v %s >/dev/null 2>&1; then
     exit 0
 fi
@@ -22,12 +23,17 @@ if command -v uwsm >/dev/null 2>&1 &&
 else
     exec %s
 fi
-]], binary, process_pattern, command, command))
+]],
+		binary,
+		process_pattern,
+		command,
+		command
+	))
 end
 
 hl.on("hyprland.start", function()
-    -- UWSM already manages the graphical-session activation environment.
-    hl.exec_cmd([[
+	-- UWSM already manages the graphical-session activation environment.
+	hl.exec_cmd([[
 if command -v uwsm >/dev/null 2>&1 &&
    systemctl --user is-active --quiet 'wayland-session@*.target'; then
     exit 0
@@ -50,14 +56,34 @@ systemctl --user import-environment \
     XDG_SESSION_TYPE
 ]])
 
-    -- Core desktop components.
-    start_once("waybar", "(^|/)waybar($| )", "waybar")
-    start_once("swaync", "(^|/)swaync($| )", "swaync")
-    start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
-    start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
+	-- Core desktop components.
+	start_once("waybar", "(^|/)waybar($| )", "waybar")
+	start_once("swaync", "(^|/)swaync($| )", "swaync")
+	-- start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
+	-- start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
 
-    -- Prefer Hyprland's polkit agent, then fall back to KDE's agent.
-    hl.exec_cmd([[
+	-- Initialize the default tmux workspace once.
+	hl.exec_cmd([[
+if ! command -v tmux >/dev/null 2>&1; then
+    exit 0
+fi
+
+script="$HOME/shs/tmux-init.sh"
+
+if [ ! -x "$script" ]; then
+    exit 0
+fi
+
+# Do not recreate sessions when a tmux server already has sessions.
+if tmux list-sessions >/dev/null 2>&1; then
+    exit 0
+fi
+
+exec "$script" >/dev/null 2>&1
+]])
+
+	-- Prefer Hyprland's polkit agent, then fall back to KDE's agent.
+	hl.exec_cmd([[
 if pgrep -f -- '(^|/)(hyprpolkitagent|polkit-kde-authentication-agent-1)($| )' \
     >/dev/null 2>&1; then
     exit 0

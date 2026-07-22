@@ -28,7 +28,7 @@ require('lazy').setup({
 	{ import = 'plugins.which-key', event = 'VeryLazy' },
 	{ import = 'plugins.fzf-lua', cmd = 'FzfLua' },
 	{ import = 'plugins.harpoon', keys = { '<leader>a', '<leader>h' } },
-	{ import = 'plugins.render-markdown', ft = 'markdown' },
+	-- { import = 'plugins.render-markdown', ft = 'markdown' },
 	{ import = 'plugins.colorizer', event = 'BufReadPost' },
 	{ import = 'plugins.oil' },
 
