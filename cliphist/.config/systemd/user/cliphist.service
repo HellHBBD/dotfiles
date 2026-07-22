@@ -1,0 +1,8 @@
+[Unit]
+Description=Cliphist clipboard watcher
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/wl-paste --watch /usr/bin/cliphist store
+Restart=on-failure
+RestartSec=1

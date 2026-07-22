@@ -59,20 +59,23 @@ systemctl --user import-environment \
 	-- Core desktop components.
 	start_once("waybar", "(^|/)waybar($| )", "waybar")
 
-	-- SwayNC and the Polkit agent are owned by systemd user services.
+	-- Desktop services are owned by systemd user services.
 	hl.exec_cmd([[
-systemctl --user reset-failed swaync.service >/dev/null 2>&1 || true
-systemctl --user start swaync.service >/dev/null 2>&1 || true
+systemctl --user reset-failed \
+    swaync.service \
+    hyprpolkitagent.service \
+    cliphist.service \
+    >/dev/null 2>&1 || true
 
-systemctl --user reset-failed hyprpolkitagent.service >/dev/null 2>&1 || true
-systemctl --user start hyprpolkitagent.service >/dev/null 2>&1 || true
+systemctl --user start \
+    swaync.service \
+    hyprpolkitagent.service \
+    cliphist.service \
+    >/dev/null 2>&1 || true
 ]])
 
 	start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
 	start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
-
-	-- Clipboard history.
-	start_once("wl-paste", "wl-paste.*cliphist[[:space:]]+store", "wl-paste --watch cliphist store")
 
 	-- Initialize the default tmux workspace once.
 	hl.exec_cmd([[
