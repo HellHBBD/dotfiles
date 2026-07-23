@@ -67,8 +67,12 @@ swaync:
     just stow swaync
 
 waybar: swaync
+    @command -v yay >/dev/null || { \
+        printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
+        exit 1; \
+    }
+    yay -S --needed waybar-git
     sudo pacman -S --needed \
-        waybar \
         jq \
         playerctl \
         networkmanager \

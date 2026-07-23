@@ -78,9 +78,23 @@ fi
 
 if command -v uwsm >/dev/null 2>&1 &&
    systemctl --user is-active --quiet 'wayland-session@*.target'; then
-    exec uwsm app -- wlogout -p layer-shell
+    exec uwsm app -- wlogout \
+        -p layer-shell \
+        --buttons-per-row 2 \
+        --column-spacing 16 \
+        --margin-left 520 \
+        --margin-right 520 \
+        --margin-top 344 \
+        --margin-bottom 344
 else
-    exec wlogout -p layer-shell
+    exec wlogout \
+        -p layer-shell \
+        --buttons-per-row 2 \
+        --column-spacing 16 \
+        --margin-left 520 \
+        --margin-right 520 \
+        --margin-top 344 \
+        --margin-bottom 344
 fi
 ]]
 
@@ -137,7 +151,7 @@ hl.bind(
 )
 
 hl.bind(
-    "CTRL + SHIFT + ALT + Delete",
+    "CTRL + ALT + Delete",
     hl.dsp.exec_cmd(wlogout_command),
     {
         description = "Open power menu",

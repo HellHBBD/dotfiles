@@ -1,22 +1,4 @@
 {
-    "label" : "lock",
-    "action" : "hyprlock",
-    "text" : "Lock",
-    "keybind" : "l"
-}
-{
-    "label" : "logout",
-    "action" : "bash $HOME/.config/hypr/scripts/logout-session.sh",
-    "text" : "Logout",
-    "keybind" : "e"
-}
-{
-    "label" : "suspend",
-    "action" : "systemctl suspend",
-    "text" : "Suspend",
-    "keybind" : "u"
-}
-{
     "label" : "reboot",
     "action" : "systemctl reboot",
     "text" : "Reboot",
