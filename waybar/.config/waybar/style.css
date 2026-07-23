@@ -1,90 +1,173 @@
+/*
+ * Geometry is expressed in logical pixels for eDP-1 at scale 1.25.
+ * 32px bar / 24px module / 8px radius render as 40px / 30px / 10px physical.
+ */
 * {
   border: none;
-  border-radius: 0;
-  font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK TC", sans-serif;
-  font-size: 13px;
   min-height: 0;
+  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC", monospace;
+  font-feature-settings: "tnum";
+  font-size: 13px;
+  font-weight: 500;
 }
 
 window#waybar {
-  background: rgba(20, 22, 30, 0.82);
-  color: #d8dee9;
+  background: transparent;
+  color: #cdd6f4;
 }
 
-#workspaces,
-#window,
+/* Shared rounded-rectangle geometry: 30px high with a 10px physical radius. */
 #custom-mpris,
-#group-system,
+#custom-clock,
+#custom-screenshot,
+#custom-colorpicker,
+#cpu,
+#memory,
+#pulseaudio,
 #custom-wifi,
 #custom-bluetooth,
-#pulseaudio,
 #battery,
-#custom-clock,
-#tray,
 #custom-notifications {
-  margin: 5px 0;
-  padding: 0 9px;
+  min-height: 24px;
+  margin: 4px 2.5px;
+  background: #313244;
+  border-radius: 8px;
+  color: #cdd6f4;
 }
 
-#workspaces button {
-  padding: 0 5px;
-  color: #6b7280;
-}
-
-#workspaces button.active {
-  color: #88c0d0;
-}
-
-#workspaces button.urgent,
-#battery.critical {
-  color: #bf616a;
-}
-
-#workspaces button:hover {
-  background: transparent;
-  box-shadow: inset 0 -2px #88c0d0;
-}
-
-#window {
-  color: #a3be8c;
+/* Text pills share a 12px physical horizontal inset. */
+#custom-mpris,
+#cpu,
+#memory,
+#pulseaudio,
+#custom-wifi,
+#custom-bluetooth,
+#battery,
+#custom-notifications {
+  padding: 0 10px;
 }
 
 #custom-mpris {
-  color: #b48ead;
+  margin-left: 0;
+}
+
+#custom-spacer {
+  min-width: 0;
+}
+
+/* Only the active workspace receives a pill background. */
+#workspaces {
+  margin: 4px 7px 4px 2.5px;
+}
+
+#workspaces button {
+  min-width: 24px;
+  min-height: 24px;
+  margin: 0 1.5px;
+  padding: 0;
+  border-radius: 8px;
+  color: #a6adc8;
+}
+
+#workspaces button.active {
+  background: #5c9cf5;
+  color: #1e1e2e;
+}
+
+#workspaces button.urgent {
+  background: #f38ba8;
+  color: #1e1e2e;
+}
+
+#workspaces button:hover {
+  background: #45475a;
+  box-shadow: none;
+}
+
+/* Clock has a slightly wider physical inset than ordinary text pills. */
+#custom-clock {
+  min-width: 108px;
+  margin: 4px 5px;
+  padding: 0 11px;
+  background: rgba(49, 50, 68, 0.8);
+  color: #5c9cf5;
+}
+
+/* Icon buttons keep the shared height and radius but have no text inset. */
+#custom-screenshot,
+#custom-colorpicker {
+  min-width: 24px;
+  padding: 0;
+  font-weight: 400;
+}
+
+/* Groups only arrange their children; the last child defines the next group gap. */
+#tools,
+#hardware,
+#status {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+#custom-colorpicker,
+#memory {
+  margin-right: 7px;
 }
 
 #cpu,
-#memory,
-#temperature {
-  padding: 0 5px;
-  color: #81a1c1;
-}
-
-#custom-wifi,
-#custom-bluetooth,
 #pulseaudio,
 #battery {
-  color: #ebcb8b;
+  min-width: 54px;
 }
 
-#battery.warning {
-  color: #d08770;
+#memory {
+  min-width: 74px;
 }
 
-#custom-clock,
+#custom-wifi {
+  min-width: 116px;
+}
+
+#custom-bluetooth {
+  min-width: 47px;
+}
+
 #custom-notifications {
-  color: #88c0d0;
+  min-width: 57px;
+  margin-right: 0;
 }
 
-#tray {
-  padding-right: 4px;
+#custom-wifi.connected {
+  color: #89b4fa;
+}
+
+#custom-bluetooth.off {
+  color: #f9c97b;
+}
+
+#custom-wifi.off,
+#battery.warning {
+  color: #fab387;
+}
+
+#custom-wifi.disconnected,
+#custom-bluetooth.idle {
+  color: #a6adc8;
+}
+
+#custom-wifi.error,
+#custom-bluetooth.error,
+#battery.critical {
+  color: #f38ba8;
 }
 
 tooltip {
-  background: #2e3440;
-  border: 1px solid #4c566a;
+  background: #1e1e2e;
+  border: 1px solid #45475a;
+  border-radius: 8px;
 }
 
 tooltip label {
-  color: #eceff4;
+  color: #cdd6f4;
 }

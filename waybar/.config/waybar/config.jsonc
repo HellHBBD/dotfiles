@@ -3,63 +3,68 @@
   "layer": "top",
   "position": "top",
   "height": 32,
-  "spacing": 6,
+  "margin-left": 5,
+  "margin-right": 5,
+  "spacing": 0,
+  "fixed-center": true,
+  "expand-left": true,
 
   "modules-left": [
-    "hyprland/workspaces",
-    "hyprland/window"
+    "custom/mpris",
+    "custom/spacer",
+    "hyprland/workspaces"
   ],
   "modules-center": [
-    "custom/mpris"
+    "custom/clock"
   ],
   "modules-right": [
-    "group/system",
-    "custom/wifi",
-    "custom/bluetooth",
-    "pulseaudio",
-    "battery",
-    "custom/clock",
-    "tray",
+    "group/tools",
+    "group/hardware",
+    "group/status",
     "custom/notifications"
   ],
 
   "hyprland/workspaces": {
-    "format": "{icon}",
-    "format-icons": {
-      "default": "",
-      "active": "",
-      "urgent": ""
-    },
+    "format": "{id}",
     "sort-by": "number",
     "enable-bar-scroll": false,
     "persistent-workspaces": {
-      "*": 5
+      "*": 4
     }
   },
-  "hyprland/window": {
-    "format": "{}",
-    "max-length": 60,
-    "separate-outputs": true
-  },
-  "group/system": {
+  "group/tools": {
     "orientation": "horizontal",
-    "modules": ["cpu", "memory", "temperature"]
+    "modules": ["custom/screenshot", "custom/colorpicker"]
+  },
+  "group/hardware": {
+    "orientation": "horizontal",
+    "modules": ["cpu", "memory"]
+  },
+  "group/status": {
+    "orientation": "horizontal",
+    "modules": ["pulseaudio", "custom/wifi", "custom/bluetooth", "battery"]
+  },
+  "custom/screenshot": {
+    "format": "󰄀",
+    "tooltip": true,
+    "tooltip-format": "Capture selected area",
+    "on-click": "bash ~/.config/hypr/scripts/screenshot-area.sh"
+  },
+  "custom/colorpicker": {
+    "format": "󰈋",
+    "tooltip": true,
+    "tooltip-format": "Pick color to clipboard",
+    "on-click": "hyprpicker -a"
   },
   "cpu": {
     "interval": 5,
-    "format": "󰍛 {usage}%",
+    "format": "CPU {usage}%",
     "tooltip": false
   },
   "memory": {
     "interval": 5,
-    "format": "󰘚 {percentage}%",
+    "format": "RAM {used:0.1f}G",
     "tooltip-format": "{used:0.1f} GiB / {total:0.1f} GiB"
-  },
-  "temperature": {
-    "critical-threshold": 85,
-    "format": "{icon} {temperatureC}°C",
-    "format-icons": ["󰔏", "󰔐", "󰸁"],
-    "tooltip": false
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
@@ -84,34 +89,41 @@
     "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "tooltip-format": "{timeTo} remaining"
   },
-  "tray": {
-    "spacing": 8
-  },
   "custom/mpris": {
     "return-type": "json",
     "exec": "bash ~/.config/hypr/scripts/waybar-mpris.sh",
     "interval": 2,
     "format": "{text}",
     "escape": true,
-    "max-length": 50,
+    "max-length": 28,
     "on-click": "playerctl play-pause",
-    "on-click-right": "playerctl next"
+    "on-click-right": "playerctl previous",
+    "on-click-middle": "playerctl next",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  },
+  "custom/spacer": {
+    "format": " ",
+    "expand": true,
+    "tooltip": false
   },
   "custom/wifi": {
     "return-type": "json",
     "exec": "bash ~/.config/hypr/scripts/wifi-status.sh",
     "interval": 5,
     "format": "{text}",
+    "max-length": 18,
     "on-click": "bash ~/.config/hypr/scripts/wifi-menu.sh",
-    "on-click-right": "nmcli radio wifi off; sleep 1; nmcli radio wifi on"
+    "on-click-right": "kcmshell6 kcm_networkmanagement"
   },
   "custom/bluetooth": {
     "return-type": "json",
     "exec": "bash ~/.config/hypr/scripts/bt-status.sh",
     "interval": 5,
     "format": "{text}",
+    "max-length": 12,
     "on-click": "bash ~/.config/hypr/scripts/bluetooth-menu.sh",
-    "on-click-right": "bluetoothctl power off; sleep 1; bluetoothctl power on"
+    "on-click-right": "kcmshell6 kcm_bluetooth"
   },
   "custom/clock": {
     "return-type": "json",
@@ -123,7 +135,7 @@
   "custom/notifications": {
     "exec": "swaync-client -swb",
     "return-type": "json",
-    "format": "{icon}",
+    "format": "{icon} {text}",
     "format-icons": {
       "notification": "",
       "none": "󰂛",
