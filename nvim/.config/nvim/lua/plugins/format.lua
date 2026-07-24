@@ -1,3 +1,5 @@
+local stylua_config = (vim.env.XDG_CONFIG_HOME or vim.fn.expand('~/.config')) .. '/stylua/stylua.toml'
+
 return {
 	'stevearc/conform.nvim',
 	event = { 'BufWritePre' },
@@ -32,6 +34,8 @@ return {
 		},
 		formatters = {
 			stylua = {
+				command = '/usr/bin/stylua',
+				prepend_args = { '--config-path', stylua_config },
 				enable = true,
 			},
 			prettier = {

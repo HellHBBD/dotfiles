@@ -292,7 +292,6 @@ return {
 
 				-- Lua
 				'lua-language-server',
-				'stylua',
 
 				-- Web / JS / TS / HTML / CSS …
 				'prettier',

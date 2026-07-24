@@ -23,6 +23,9 @@ unstow package:
 
 # 基礎設定
 
+formatters:
+    just stow formatters
+
 bash:
     sudo pacman -S --needed bash stow
     just stow bash
@@ -39,12 +42,13 @@ tmux:
     sudo pacman -S --needed tmux stow
     just stow tmux
 
-nvim:
+nvim: formatters
     sudo pacman -S --needed \
         neovim \
         nodejs \
         npm \
         luarocks \
+        stylua \
         ripgrep \
         fd \
         tree-sitter-cli \
