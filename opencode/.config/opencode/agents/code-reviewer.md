@@ -7,7 +7,25 @@ options:
   reasoningEffort: high
 permission:
   edit: deny
-  bash: ask
+  external_directory:
+    "*": ask
+    "~/.local/share/opencode/task-queues/**": allow
+  bash:
+    "*": ask
+    "git status*": allow
+    "git diff*": allow
+    "git show*": allow
+    "git log*": allow
+    "git rev-parse*": allow
+    "git branch --show-current*": allow
+    "git merge-base*": allow
+    "git -C * status*": allow
+    "git -C * diff*": allow
+    "git -C * show*": allow
+    "git -C * log*": allow
+    "git -C * rev-parse*": allow
+    "git -C * branch --show-current*": allow
+    "git -C * merge-base*": allow
   task: deny
   skill:
     "*": deny
