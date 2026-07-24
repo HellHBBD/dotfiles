@@ -67,7 +67,7 @@ window#waybar {
 }
 
 #workspaces button {
-  min-width: 24px;
+  min-width: 28px;
   min-height: 24px;
   margin: 0 1.5px;
   padding: 0;
