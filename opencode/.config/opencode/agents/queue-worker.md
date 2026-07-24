@@ -12,10 +12,11 @@ permission:
   doom_loop: ask
   external_directory:
     "*": deny
-    "~/.local/share/opencode/task-queues/**": allow
+    "/home/hellhbbd/.local/share/opencode/task-queues/**": allow
   edit:
     "*": deny
-    "~/.local/share/opencode/task-queues/**": allow
+    "../.local/share/opencode/task-queues/*/*/tasks/*/**": allow
+    "/home/hellhbbd/.local/share/opencode/task-queues/*/*/tasks/*/**": allow
   bash:
     "*": allow
     "sudo *": deny
@@ -64,9 +65,18 @@ Implement exactly one approved task in exactly one assigned Git worktree.
 ## Required Input
 
 The orchestrator must provide queue ID, task ID, worktree path, branch,
-starting commit, goal, completion criteria, non-goals, permitted scope,
-dependencies, validation commands, and commit requirements. If any are absent,
-return BLOCKED to the orchestrator. Never ask the user directly.
+starting commit, manifest path, goal, completion criteria, non-goals, permitted
+scope, dependencies, validation commands, and commit requirements. Read the
+manifest before editing and treat it as the authoritative task contract. If any
+required input is absent or conflicts with the manifest, return INFRA_BLOCKED to
+the orchestrator. Never ask the user directly.
+
+When assigned CANARY mode, do not implement a task. In the detached canary
+worktree only, read a file, add a scoped probe with `apply_patch`, run `git
+status`, commit the probe, remove it with `apply_patch`, commit the cleanup,
+and leave the worktree clean. Report command output and both commits. A
+permission, worktree, or tool failure is INFRA_BLOCKED and does not consume a
+task repair round.
 
 ## Worktree Boundary
 
@@ -87,7 +97,8 @@ the decision, evidence, affected files, options, and consequences.
 
 ## Validation And Commit
 
-Run the assigned validation. If a command is unavailable or unsuitable, do not
+Run required validation first and report optional/manual validation separately.
+If a command is unavailable or unsuitable, do not
 silently replace it; explain why, run the closest safe check when possible, and
 mark the original check unverified. Inspect the final diff for scope expansion.
 
@@ -106,6 +117,14 @@ COMPLETE
 - Completion-criteria evidence
 - Validation commands and results
 - Known limitations and review notes
+
+INFRA_BLOCKED
+
+- Task and branch
+- Failed infrastructure operation and exact evidence
+- Whether any task files changed (normally no)
+- Required environment or permission repair
+- Confirmation that no repair round was consumed
 
 BLOCKED
 

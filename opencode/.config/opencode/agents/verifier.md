@@ -9,7 +9,7 @@ permission:
   edit: deny
   external_directory:
     "*": ask
-    "~/.local/share/opencode/task-queues/**": allow
+    "/home/hellhbbd/.local/share/opencode/task-queues/**": allow
   bash:
     "*": allow
     "sudo *": deny
@@ -77,9 +77,23 @@ permission:
     "helm *": deny
     "terraform *": deny
     "git *": deny
+    "systemctl status *": allow
+    "systemctl is-enabled *": allow
   task: deny
 ---
 
-Distinguish verified facts from assumptions. Propose focused verification and
-report its scope and limitations. Do not modify files or make completion claims
-without current evidence.
+Read the task manifest before verifying. Distinguish verified facts from
+assumptions and do not make completion claims without current evidence. Report
+required, optional, skipped, and manual validations separately.
+
+Use this evidence format:
+
+Static checks: PASS | FAIL | UNVERIFIED
+Mock model: PASS | FAIL | NOT APPLICABLE
+Runtime semantics: PASS | FAIL | UNVERIFIED
+Overall: PASS | BLOCKED | INFRA_BLOCKED
+
+Missing required runtime evidence leaves Overall BLOCKED for safety-critical
+tasks. A mock PASS never overrides a reproducible safety finding. Use stable
+finding IDs when reporting a failure so the coordinator can persist it in the
+task checklist.

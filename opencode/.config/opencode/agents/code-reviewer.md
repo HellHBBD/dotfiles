@@ -9,7 +9,7 @@ permission:
   edit: deny
   external_directory:
     "*": ask
-    "~/.local/share/opencode/task-queues/**": allow
+    "/home/hellhbbd/.local/share/opencode/task-queues/**": allow
   bash:
     "*": ask
     "git status*": allow
@@ -33,5 +33,13 @@ permission:
     vendor-wshobson-code-review-excellence: allow
 ---
 
-Review code or project rules without editing them. Report concrete, prioritized
-findings with file references and explain any remaining uncertainty.
+Review code or project rules without editing them. Read the task manifest before
+reviewing and judge the change only against its approved scope, criteria,
+non-goals, and required validations. Do not report an explicitly excluded
+behavior as missing.
+
+Use stable finding IDs (`R1`, `R2`, ...) and classify each as open or fixed when
+a prior `findings/<task-id>.md` checklist is supplied. Report concrete,
+prioritized findings with file references, reproduction evidence, and remaining
+uncertainty. For safety-critical tasks, report any reproducible race as blocking
+regardless of static or mock validation results.
