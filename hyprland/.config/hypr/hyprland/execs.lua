@@ -31,6 +31,28 @@ fi
 	))
 end
 
+local function start_on_workspace(binary, workspace)
+	hl.exec_cmd(string.format(
+		[[
+if ! command -v %s >/dev/null 2>&1; then
+    exit 0
+fi
+
+if command -v uwsm >/dev/null 2>&1 &&
+   systemctl --user is-active --quiet 'wayland-session@*.target'; then
+    hyprctl dispatch exec "[workspace %d silent] uwsm app -- %s"
+else
+    hyprctl dispatch exec "[workspace %d silent] %s"
+fi
+]],
+		binary,
+		workspace,
+		binary,
+		workspace,
+		binary
+	))
+end
+
 hl.on('hyprland.start', function()
 	-- UWSM already manages the graphical-session activation environment.
 	hl.exec_cmd([[
@@ -76,6 +98,11 @@ systemctl --user start \
 
 	start_once('hypridle', '(^|/)hypridle($| )', 'hypridle')
 	start_once('hyprpaper', '(^|/)hyprpaper($| )', 'hyprpaper')
+
+	-- App rules here apply only to these startup launches, not future windows.
+	start_on_workspace('ghostty', 1)
+	start_on_workspace('zen-browser', 2)
+	hl.exec_cmd('hyprctl dispatch workspace 1')
 
 	-- Initialize the default tmux workspace once.
 	hl.exec_cmd([[
