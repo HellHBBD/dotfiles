@@ -152,8 +152,12 @@ hyprland: ghostty tmux wallpapers swaync waybar cliphist wlogout
     systemctl --user daemon-reload
     just stow hyprland
 
+# 登入管理員
+login-manager:
+    sudo pacman -S --needed greetd greetd-tuigreet
+
 # 完整桌面
-desktop: hyprland
+desktop: login-manager hyprland
     @printf '%s\n' "桌面套件與設定已完成"
 
 # 全部設定
