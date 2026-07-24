@@ -104,6 +104,10 @@ fi
 
 -- Applications
 
+hl.bind('SUPER + Slash', hl.dsp.exec_cmd('bash ~/.config/hypr/scripts/keybind-cheatsheet.sh'), {
+	description = 'Show keybind cheat sheet',
+})
+
 hl.bind('SUPER + D', hl.dsp.exec_cmd(launcher_command), {
 	description = 'Application launcher',
 })
