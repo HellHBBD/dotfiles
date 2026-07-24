@@ -5,11 +5,11 @@
 
 -- Direct Hyprland fallback.
 -- UWSM sessions receive the same values from ~/.config/uwsm/env.
-hl.env("XMODIFIERS", "@im=fcitx")
-hl.env("QT_IM_MODULES", "wayland;fcitx;ibus")
+hl.env('XMODIFIERS', '@im=fcitx')
+hl.env('QT_IM_MODULES', 'wayland;fcitx;ibus')
 
-hl.on("hyprland.start", function()
-    hl.exec_cmd([[
+hl.on('hyprland.start', function()
+	hl.exec_cmd([[
 if ! command -v fcitx5 >/dev/null 2>&1; then
     exit 0
 fi

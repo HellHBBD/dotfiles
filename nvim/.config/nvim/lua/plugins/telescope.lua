@@ -8,33 +8,45 @@ return {
 
 			build = 'make',
 
-			cond = function() return vim.fn.executable('make') == 1 end,
+			cond = function()
+				return vim.fn.executable('make') == 1
+			end,
 		},
 	},
 	keys = {
 		{
 			'<Leader>ff',
-			function() require('telescope.builtin').find_files() end,
+			function()
+				require('telescope.builtin').find_files()
+			end,
 			desc = 'Telescope: find files',
 		},
 		{
 			'<Leader>gf',
-			function() require('telescope.builtin').git_files() end,
+			function()
+				require('telescope.builtin').git_files()
+			end,
 			desc = 'Telescope: find git files',
 		},
 		{
 			'<Leader>fg',
-			function() require('telescope.builtin').live_grep() end,
+			function()
+				require('telescope.builtin').live_grep()
+			end,
 			desc = 'Telescope: live grep',
 		},
 		{
 			'<Leader>fb',
-			function() require('telescope.builtin').buffers() end,
+			function()
+				require('telescope.builtin').buffers()
+			end,
 			desc = 'Telescope: list buffers',
 		},
 		{
 			'<Leader>fh',
-			function() require('telescope.builtin').help_tags() end,
+			function()
+				require('telescope.builtin').help_tags()
+			end,
 			desc = 'Telescope: help tags',
 		},
 	},

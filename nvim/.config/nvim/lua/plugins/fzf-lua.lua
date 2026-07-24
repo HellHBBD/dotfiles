@@ -4,22 +4,30 @@ return {
 	keys = {
 		{
 			'<Leader>ff',
-			function() require('fzf-lua').files() end,
+			function()
+				require('fzf-lua').files()
+			end,
 			desc = 'FzfLua: find files',
 		},
 		{
 			'<Leader>fg',
-			function() require('fzf-lua').live_grep() end,
+			function()
+				require('fzf-lua').live_grep()
+			end,
 			desc = 'FzfLua: live grep',
 		},
 		{
 			'<Leader>fb',
-			function() require('fzf-lua').buffers() end,
+			function()
+				require('fzf-lua').buffers()
+			end,
 			desc = 'FzfLua: list buffers',
 		},
 		{
 			'<Leader>fh',
-			function() require('fzf-lua').help_tags() end,
+			function()
+				require('fzf-lua').help_tags()
+			end,
 			desc = 'FzfLua: help tags',
 		},
 	},

@@ -55,10 +55,14 @@ keymap(
 )
 
 -- neovim native plugins manager
-keymap('n', '<leader>u', function() vim.pack.update() end, { desc = 'Native update plugins' })
+keymap('n', '<leader>u', function()
+	vim.pack.update()
+end, { desc = 'Native update plugins' })
 
 -- Lazy nvim
-keymap('n', '<leader>l', function() vim.cmd('Lazy sync') end, { desc = 'Lazy sync' })
+keymap('n', '<leader>l', function()
+	vim.cmd('Lazy sync')
+end, { desc = 'Lazy sync' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 keymap('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Cancel search highlights' })

@@ -6,7 +6,7 @@
 -- Do not add appearance, widgets, plugins or application-specific
 -- rules here.
 
-require("hyprland.env")
-require("hyprland.monitors")
-require("hyprland.input")
-require("hyprland.safety")
+require('hyprland.env')
+require('hyprland.monitors')
+require('hyprland.input')
+require('hyprland.safety')

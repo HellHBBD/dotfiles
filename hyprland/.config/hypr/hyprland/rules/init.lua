@@ -12,7 +12,7 @@
 -- 30-layer:
 --   Waybar, Fuzzel, SwayNC, Wlogout and other layer-shell surfaces
 
-require("hyprland.rules.00-base")
-require("hyprland.rules.10-dialog")
-require("hyprland.rules.20-window")
-require("hyprland.rules.30-layer")
+require('hyprland.rules.00-base')
+require('hyprland.rules.10-dialog')
+require('hyprland.rules.20-window')
+require('hyprland.rules.30-layer')

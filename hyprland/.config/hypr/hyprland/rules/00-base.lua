@@ -4,40 +4,40 @@
 -- later files.
 
 hl.window_rule({
-    name = "suppress-maximize-events",
+	name = 'suppress-maximize-events',
 
-    match = {
-        class = ".*",
-    },
+	match = {
+		class = '.*',
+	},
 
-    suppress_event = "maximize",
+	suppress_event = 'maximize',
 })
 
 -- Official compatibility workaround for empty XWayland drag surfaces.
 
 hl.window_rule({
-    name = "fix-xwayland-drags",
+	name = 'fix-xwayland-drags',
 
-    match = {
-        class = "^$",
-        title = "^$",
-        xwayland = true,
-        float = true,
-        fullscreen = false,
-        pin = false,
-    },
+	match = {
+		class = '^$',
+		title = '^$',
+		xwayland = true,
+		float = true,
+		fullscreen = false,
+		pin = false,
+	},
 
-    no_focus = true,
+	no_focus = true,
 })
 
 -- Shadows are unnecessary for tiled windows and add rendering work.
 
 hl.window_rule({
-    name = "no-shadow-for-tiled-windows",
+	name = 'no-shadow-for-tiled-windows',
 
-    match = {
-        float = false,
-    },
+	match = {
+		float = false,
+	},
 
-    no_shadow = true,
+	no_shadow = true,
 })

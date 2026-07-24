@@ -31,7 +31,7 @@ fi
 	))
 end
 
-hl.on("hyprland.start", function()
+hl.on('hyprland.start', function()
 	-- UWSM already manages the graphical-session activation environment.
 	hl.exec_cmd([[
 if command -v uwsm >/dev/null 2>&1 &&
@@ -57,7 +57,7 @@ systemctl --user import-environment \
 ]])
 
 	-- Core desktop components.
-	start_once("waybar", "(^|/)waybar($| )", "waybar")
+	start_once('waybar', '(^|/)waybar($| )', 'waybar')
 
 	-- Desktop services are owned by systemd user services.
 	hl.exec_cmd([[
@@ -74,8 +74,8 @@ systemctl --user start \
     >/dev/null 2>&1 || true
 ]])
 
-	start_once("hypridle", "(^|/)hypridle($| )", "hypridle")
-	start_once("hyprpaper", "(^|/)hyprpaper($| )", "hyprpaper")
+	start_once('hypridle', '(^|/)hypridle($| )', 'hypridle')
+	start_once('hyprpaper', '(^|/)hyprpaper($| )', 'hyprpaper')
 
 	-- Initialize the default tmux workspace once.
 	hl.exec_cmd([[

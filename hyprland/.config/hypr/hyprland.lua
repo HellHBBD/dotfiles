@@ -5,7 +5,7 @@
 --   2. optional - desktop services, appearance, rules and keybinds
 --   3. custom   - machine-specific overrides loaded last
 
-require("hyprland.minimal")
-require("hyprland.ime")
-require("hyprland.optional")
-require("custom.init")
+require('hyprland.minimal')
+require('hyprland.ime')
+require('hyprland.optional')
+require('custom.init')

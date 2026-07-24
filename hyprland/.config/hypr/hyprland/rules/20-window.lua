@@ -5,7 +5,7 @@
 -- The size and position are monitor-local expressions.
 
 hl.window_rule({
-	name = "picture-in-picture",
+	name = 'picture-in-picture',
 
 	match = {
 		initial_title = [[^(Picture-in-Picture|Picture in picture|Picture in Picture)$]],
@@ -16,13 +16,13 @@ hl.window_rule({
 	no_initial_focus = true,
 
 	size = {
-		"monitor_w*0.25",
-		"monitor_h*0.25",
+		'monitor_w*0.25',
+		'monitor_h*0.25',
 	},
 
 	move = {
-		"monitor_w-window_w-20",
-		"monitor_h-window_h-60",
+		'monitor_w-window_w-20',
+		'monitor_h-window_h-60',
 	},
 
 	keep_aspect_ratio = true,
@@ -32,29 +32,29 @@ hl.window_rule({
 -- that expose the video content type directly.
 
 hl.window_rule({
-	name = "fullscreen-video-idle-inhibit",
+	name = 'fullscreen-video-idle-inhibit',
 
 	match = {
-		content = "video",
+		content = 'video',
 		fullscreen = true,
 	},
 
-	idle_inhibit = "fullscreen",
+	idle_inhibit = 'fullscreen',
 })
 
 -- Steam games.
 
 hl.window_rule({
-	name = "steam-games-content",
+	name = 'steam-games-content',
 
 	match = {
-		class = "^steam_app_.*$",
+		class = '^steam_app_.*$',
 	},
 
-	content = "game",
+	content = 'game',
 	immediate = true,
 	focus_on_activate = true,
-	idle_inhibit = "fullscreen",
+	idle_inhibit = 'fullscreen',
 })
 
 -- Minecraft windows.
@@ -64,25 +64,25 @@ hl.window_rule({
 --     hyprctl clients
 
 hl.window_rule({
-	name = "minecraft-content",
+	name = 'minecraft-content',
 
 	match = {
-		initial_class = "^(Minecraft.*|minecraft.*)$",
+		initial_class = '^(Minecraft.*|minecraft.*)$',
 	},
 
-	content = "game",
+	content = 'game',
 	immediate = true,
 	focus_on_activate = true,
-	idle_inhibit = "fullscreen",
+	idle_inhibit = 'fullscreen',
 })
 
 hl.window_rule({
-	name = "fullscreen-browser-idle-inhibit",
+	name = 'fullscreen-browser-idle-inhibit',
 
 	match = {
 		class = [[^(firefox|zen|zen-browser|Brave-browser|brave-browser|chromium|google-chrome)$]],
 		fullscreen = true,
 	},
 
-	idle_inhibit = "fullscreen",
+	idle_inhibit = 'fullscreen',
 })

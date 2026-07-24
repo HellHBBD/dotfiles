@@ -1,4 +1,5 @@
-local stylua_config = (vim.env.XDG_CONFIG_HOME or vim.fn.expand('~/.config')) .. '/stylua/stylua.toml'
+local stylua_config = (vim.env.XDG_CONFIG_HOME or vim.fn.expand('~/.config'))
+	.. '/stylua/stylua.toml'
 
 return {
 	'stevearc/conform.nvim',

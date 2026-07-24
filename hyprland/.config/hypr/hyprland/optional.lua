@@ -9,11 +9,11 @@
 --   6. full keybinds
 --   7. window and layer rules
 
-require("hyprland.general")
-require("hyprland.animations")
-require("presets.current")
+require('hyprland.general')
+require('hyprland.animations')
+require('presets.current')
 
-require("hyprland.workspaces")
-require("hyprland.execs")
-require("hyprland.keybinds")
-require("hyprland.rules.init")
+require('hyprland.workspaces')
+require('hyprland.execs')
+require('hyprland.keybinds')
+require('hyprland.rules.init')

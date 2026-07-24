@@ -2,7 +2,7 @@
 --
 -- This layer is loaded last and can override shared settings.
 
-require("custom.monitors")
+require('custom.monitors')
 
 -- Enable these only after the corresponding files exist:
 --

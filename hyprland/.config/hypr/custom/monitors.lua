@@ -12,9 +12,9 @@
 -- Do not force that mode until the new installation confirms it.
 
 hl.monitor({
-	output = "eDP-1",
-	mode = "preferred",
-	position = "0x0",
+	output = 'eDP-1',
+	mode = 'preferred',
+	position = '0x0',
 	scale = 1.25,
 })
 
