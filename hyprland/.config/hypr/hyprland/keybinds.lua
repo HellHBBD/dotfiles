@@ -117,6 +117,14 @@ hl.bind(
 )
 
 hl.bind(
+    "SUPER + SHIFT + Return",
+    hl.dsp.exec_cmd(managed_app("zen-browser")),
+    {
+        description = "Open browser",
+    }
+)
+
+hl.bind(
     "SUPER + V",
     hl.dsp.exec_cmd(clipboard_command),
     {

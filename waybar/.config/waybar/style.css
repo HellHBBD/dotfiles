@@ -149,17 +149,14 @@ window#waybar {
   color: #89b4fa;
 }
 
-#custom-bluetooth.off {
-  color: #f9c97b;
-}
-
-#custom-wifi.off,
+#custom-wifi.disconnected,
+#custom-bluetooth.idle,
 #battery.warning {
   color: #fab387;
 }
 
-#custom-wifi.disconnected,
-#custom-bluetooth.idle {
+#custom-wifi.off,
+#custom-bluetooth.off {
   color: #a6adc8;
 }
 
