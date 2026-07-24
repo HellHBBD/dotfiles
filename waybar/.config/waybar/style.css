@@ -29,13 +29,13 @@ window#waybar {
 #battery,
 #custom-notifications {
   min-height: 24px;
-  margin: 4px 2.5px;
+  margin: 4px 2px;
   background: #313244;
   border-radius: 8px;
   color: #cdd6f4;
 }
 
-/* Text pills share a 12px physical horizontal inset. */
+/* Text pills use compact insets; network names can still expand naturally. */
 #custom-mpris,
 #cpu,
 #memory,
@@ -44,11 +44,17 @@ window#waybar {
 #custom-bluetooth,
 #battery,
 #custom-notifications {
-  padding: 0 10px;
+  padding: 0 3px;
 }
 
 #custom-mpris {
   margin-left: 0;
+  padding: 0 8px;
+}
+
+#cpu,
+#memory {
+  padding: 0 8px;
 }
 
 #custom-spacer {
@@ -57,7 +63,7 @@ window#waybar {
 
 /* Only the active workspace receives a pill background. */
 #workspaces {
-  margin: 4px 7px 4px 2.5px;
+  margin: 4px 2px;
 }
 
 #workspaces button {
@@ -84,11 +90,10 @@ window#waybar {
   box-shadow: none;
 }
 
-/* Clock has a slightly wider physical inset than ordinary text pills. */
+/* The date pill follows its content width instead of reserving unused space. */
 #custom-clock {
-  min-width: 108px;
-  margin: 4px 5px;
-  padding: 0 11px;
+  margin: 4px 2px;
+  padding: 0 5px;
   background: rgba(49, 50, 68, 0.8);
   color: #5c9cf5;
 }
@@ -110,35 +115,37 @@ window#waybar {
   background: transparent;
 }
 
-#custom-colorpicker,
-#memory {
-  margin-right: 7px;
-}
-
-#cpu,
-#pulseaudio,
-#battery {
+#cpu {
   min-width: 54px;
 }
 
+#pulseaudio,
+#battery {
+  min-width: 68px;
+}
+
 #memory {
-  min-width: 74px;
+  min-width: 76px;
 }
 
 #custom-wifi {
-  min-width: 116px;
+  min-width: 130px;
+  padding: 0 10px;
 }
 
 #custom-bluetooth {
-  min-width: 47px;
+  min-width: 130px;
+  padding: 0 10px;
 }
 
 #custom-notifications {
-  min-width: 57px;
+  min-width: 24px;
+  padding: 0;
   margin-right: 0;
 }
 
-#custom-wifi.connected {
+#custom-wifi.connected,
+#custom-bluetooth.connected {
   color: #89b4fa;
 }
 

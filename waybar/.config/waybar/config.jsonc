@@ -27,10 +27,7 @@
   "hyprland/workspaces": {
     "format": "{id}",
     "sort-by": "number",
-    "enable-bar-scroll": false,
-    "persistent-workspaces": {
-      "*": 4
-    }
+    "enable-bar-scroll": false
   },
   "group/tools": {
     "orientation": "horizontal",
@@ -45,30 +42,30 @@
     "modules": ["pulseaudio", "custom/wifi", "custom/bluetooth", "battery"]
   },
   "custom/screenshot": {
-    "format": "󰄀",
+    "format": " 󰄀",
     "tooltip": true,
     "tooltip-format": "Capture selected area",
     "on-click": "bash ~/.config/hypr/scripts/screenshot-area.sh"
   },
   "custom/colorpicker": {
-    "format": "󰈋",
+    "format": " 󰈋",
     "tooltip": true,
     "tooltip-format": "Pick color to clipboard",
     "on-click": "hyprpicker -a"
   },
   "cpu": {
     "interval": 5,
-    "format": "CPU {usage}%",
+    "format": "CPU {usage:>2}%",
     "tooltip": false
   },
   "memory": {
     "interval": 5,
-    "format": "RAM {used:0.1f}G",
+    "format": "RAM {used:>4.1f}G",
     "tooltip-format": "{used:0.1f} GiB / {total:0.1f} GiB"
   },
   "pulseaudio": {
-    "format": "{icon} {volume}%",
-    "format-muted": "󰝟 Muted",
+    "format": "{icon} {volume:>3}%",
+    "format-muted": "󰝟",
     "format-icons": {
       "headphone": "",
       "default": ["", "", ""]
@@ -83,9 +80,9 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon} {capacity}%",
-    "format-charging": "󰂄 {capacity}%",
-    "format-plugged": "󰚥 {capacity}%",
+    "format": "{icon} {capacity:>3}%",
+    "format-charging": "󰂄 {capacity:>3}%",
+    "format-plugged": "󰚥 {capacity:>3}%",
     "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "tooltip-format": "{timeTo} remaining"
   },
@@ -95,7 +92,7 @@
     "interval": 2,
     "format": "{text}",
     "escape": true,
-    "max-length": 28,
+    "max-length": 60,
     "on-click": "playerctl play-pause",
     "on-click-right": "playerctl previous",
     "on-click-middle": "playerctl next",
@@ -112,7 +109,9 @@
     "exec": "bash ~/.config/hypr/scripts/wifi-status.sh",
     "interval": 5,
     "format": "{text}",
-    "max-length": 18,
+    "min-length": 16,
+    "max-length": 16,
+    "align": 0.5,
     "on-click": "bash ~/.config/hypr/scripts/wifi-menu.sh",
     "on-click-right": "kcmshell6 kcm_networkmanagement"
   },
@@ -121,7 +120,9 @@
     "exec": "bash ~/.config/hypr/scripts/bt-status.sh",
     "interval": 5,
     "format": "{text}",
-    "max-length": 12,
+    "min-length": 16,
+    "max-length": 16,
+    "align": 0.5,
     "on-click": "bash ~/.config/hypr/scripts/bluetooth-menu.sh",
     "on-click-right": "kcmshell6 kcm_bluetooth"
   },
@@ -135,14 +136,14 @@
   "custom/notifications": {
     "exec": "swaync-client -swb",
     "return-type": "json",
-    "format": "{icon} {text}",
+    "format": "{icon}",
     "format-icons": {
-      "notification": "",
-      "none": "󰂛",
-      "dnd-notification": "",
-      "dnd-none": "",
-      "inhibited-notification": "",
-      "inhibited-none": ""
+      "notification": " ",
+      "none": " 󰂛",
+      "dnd-notification": " ",
+      "dnd-none": " ",
+      "inhibited-notification": " ",
+      "inhibited-none": " "
     },
     "tooltip": true,
     "on-click": "swaync-client -t -sw",
