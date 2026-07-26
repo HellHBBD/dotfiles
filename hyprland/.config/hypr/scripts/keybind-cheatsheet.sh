@@ -2,7 +2,6 @@
 set -u
 
 sheet_name='hyprland-keybind-cheatsheet'
-prompt='Keybinds > '
 
 notify_error() {
     local message=$1
@@ -77,6 +76,9 @@ run_sheet() {
     local sheet_file=$1
     local pid_file=$2
     local token=$3
+    local width=$4
+    local lines=$5
+    local line_height=$6
     local namespace="$sheet_name-$token"
     local launcher_pid launch_attempts=0 seen_fuzzel=0
 
@@ -94,9 +96,13 @@ run_sheet() {
 
     if command -v uwsm >/dev/null 2>&1 &&
         systemctl --user is-active --quiet 'wayland-session@*.target'; then
-        uwsm app -- fuzzel --dmenu --match-mode=fzf --prompt "$prompt" --namespace="$namespace" < "$sheet_file" &
+        uwsm app -- fuzzel --dmenu --only-match --no-icons --no-sort --hide-prompt \
+            --match-mode=exact --namespace="$namespace" --width="$width" \
+            --lines="$lines" --line-height="$line_height" < "$sheet_file" &
     else
-        fuzzel --dmenu --match-mode=fzf --prompt "$prompt" --namespace="$namespace" < "$sheet_file" &
+        fuzzel --dmenu --only-match --no-icons --no-sort --hide-prompt \
+            --match-mode=exact --namespace="$namespace" --width="$width" \
+            --lines="$lines" --line-height="$line_height" < "$sheet_file" &
     fi
     launcher_pid=$!
 
@@ -122,7 +128,7 @@ if [[ ${1:-} == '--keybind-cheatsheet-run' ]]; then
         exit 1
     fi
     exec {lock_fd}>&-
-    run_sheet "$2" "$3" "$4"
+    run_sheet "$2" "$3" "$4" "$6" "$7" "$8"
     exit 0
 fi
 
@@ -179,61 +185,88 @@ fi
 
 close_existing_fuzzel || exit 1
 
-binds=$(hyprctl -j binds 2>/dev/null) || {
-    notify_error 'Could not read active Hyprland bindings.'
+monitor=$(hyprctl -j monitors 2>/dev/null) || {
+    notify_error 'Could not read monitor layout.'
     exit 1
 }
 
-sheet=$(printf '%s\n' "$binds" | jq -r '
-    def mask: (.modmask? // 0 | tonumber);
-    def has_modifier($bit): ((mask / $bit | floor) % 2 == 1);
-    def modifiers:
-        [
-            if has_modifier(4) then "CTRL" else empty end,
-            if has_modifier(8) then "ALT" else empty end,
-            if has_modifier(1) then "SHIFT" else empty end,
-            if has_modifier(64) then "SUPER" else empty end
-        ] | join(" + ");
-    def key:
-        if (.key? | type) == "string" and .key != "" then .key
-        else (.keycode? // "") | tostring
-        end;
-    def description:
-        if (.description? | type) == "string" and .description != "" then .description
-        elif (.allow_input_capture? | type) == "string" then .allow_input_capture
-        else "(" + (.dispatcher // "unknown") + ") " + (.arg // "")
-        end | gsub("[\\r\\n\\t]+"; " ");
-    map({ key: ([modifiers, key] | map(select(length > 0)) | join(" + ")), description: description })
-    | sort_by(.key, .description)[]
-    | "\(.key)\t\(.description)"
-' 2>/dev/null) || sheet=$(printf '%s\n' "$binds" | awk '
-    function value(line) {
-        sub(/^[^:]*:[[:space:]]*/, "", line)
-        sub(/,[[:space:]]*$/, "", line)
-        sub(/^"/, "", line)
-        sub(/"$/, "", line)
-        return line
-    }
-    function has(bit) { return int(modmask / bit) % 2 == 1 }
-    function emit(   modifiers) {
-        if (key == "") return
-        modifiers = ""
-        if (has(4)) modifiers = "CTRL"
-        if (has(8)) modifiers = modifiers (modifiers ? " + " : "") "ALT"
-        if (has(1)) modifiers = modifiers (modifiers ? " + " : "") "SHIFT"
-        if (has(64)) modifiers = modifiers (modifiers ? " + " : "") "SUPER"
-        print modifiers (modifiers ? " + " : "") key "\t" description
-    }
-    /^[[:space:]]*\{/ { emit(); modmask = 0; key = ""; description = ""; next }
-    /"submap":/ { modmask = value($0); next }
-    /"keycode":/ { key = value($0); next }
-    /"allow_input_capture":/ { description = value($0); next }
-    END { emit() }
-' | LC_ALL=C sort)
+read -r monitor_width monitor_height < <(printf '%s\n' "$monitor" | jq -r '
+    first(.[] | select(.focused)) // .[0] | "\(.width) \(.height)"
+')
 
-if [[ -z $sheet ]]; then
-    notify_error 'Hyprland reported no active bindings.'
+if [[ ! $monitor_width =~ ^[0-9]+$ || ! $monitor_height =~ ^[0-9]+$ ]]; then
+    notify_error 'Could not determine the focused monitor size.'
     exit 1
+fi
+
+left_column=$(printf '%s\n' \
+    'APPLICATIONS' \
+    'SUPER + /              Show cheat sheet' \
+    'SUPER + D              Application launcher' \
+    'SUPER + E              Open file manager' \
+    'SUPER + SHIFT + Return Open browser' \
+    'SUPER + V              Clipboard history' \
+    '' \
+    'SESSION' \
+    'SUPER + N              Toggle notification center' \
+    'SUPER + SHIFT + N      Toggle do-not-disturb' \
+    'SUPER + L              Lock session' \
+    'CTRL + ALT + Delete    Open power menu' \
+    'SUPER + SHIFT + M      Exit graphical session' \
+    '' \
+    'WINDOW MANAGEMENT' \
+    'SUPER + Return         Open terminal' \
+    'SUPER + Q              Close active window' \
+    'SUPER + F              Toggle fullscreen' \
+    'SUPER + ALT + Space    Toggle floating' \
+    'SUPER + Arrow keys     Focus window' \
+    'SUPER + SHIFT + Arrows Move window' \
+    'SUPER + Left click     Move window with mouse' \
+    'SUPER + Right click    Resize window with mouse' \
+    'ALT + Tab              Cycle to next window' \
+    'SUPER + P              Toggle window pin' \
+    'SUPER + Minus / Equal  Adjust split ratio' \
+    'SUPER + T              Toggle split direction')
+
+right_column=$(printf '%s\n' \
+    'CAPTURE' \
+    'SUPER + SHIFT + S      Copy selected screenshot' \
+    'Print                  Copy full-screen screenshot' \
+    'SUPER + SHIFT + C      Pick color' \
+    '' \
+    'WORKSPACES' \
+    'SUPER + 1 through 0    Focus workspace 1 through 10' \
+    'SUPER + ALT + 1..0     Move window to workspace' \
+    'SUPER + SHIFT + 1..0   Move window and follow' \
+    'CTRL + SUPER + Arrows  Previous or next workspace' \
+    'SUPER + Mouse wheel    Previous or next workspace' \
+    'SUPER + S              Toggle scratchpad' \
+    'SUPER + ALT + S        Move window to scratchpad' \
+    '' \
+    'AUDIO, BRIGHTNESS, MEDIA' \
+    'Volume keys            Increase or decrease volume' \
+    'Mute key               Toggle output mute' \
+    'Microphone mute key    Toggle microphone mute' \
+    'Brightness keys        Increase or decrease brightness' \
+    'Play or Pause key      Play or pause media' \
+    'Next or Previous key   Change media track')
+
+if ((monitor_width >= 1100 && monitor_height >= 680)); then
+    sheet=$(paste -d ' ' \
+        <(while IFS= read -r line; do printf '%-48s\n' "$line"; done <<< "$left_column") \
+        <(printf '%s\n' "$right_column"))
+    fuzzel_width=112
+    fuzzel_lines=29
+    fuzzel_line_height=20
+else
+    sheet=$(printf '%s\n\n%s\n' "$left_column" "$right_column")
+    fuzzel_width=$((monitor_width / 10))
+    ((fuzzel_width < 56)) && fuzzel_width=56
+    ((fuzzel_width > 86)) && fuzzel_width=86
+    fuzzel_lines=$(((monitor_height - 80) / 24))
+    ((fuzzel_lines < 12)) && fuzzel_lines=12
+    ((fuzzel_lines > 30)) && fuzzel_lines=30
+    fuzzel_line_height=22
 fi
 
 sheet_file=$(mktemp "$runtime_dir/$sheet_name.XXXXXX") || {
@@ -243,7 +276,8 @@ sheet_file=$(mktemp "$runtime_dir/$sheet_name.XXXXXX") || {
 printf '%s\n' "$sheet" > "$sheet_file"
 
 token="$$-$RANDOM-$RANDOM"
-setsid "$0" --keybind-cheatsheet-run "$sheet_file" "$pid_file" "$token" "$lock_fd" &
+setsid "$0" --keybind-cheatsheet-run "$sheet_file" "$pid_file" "$token" "$lock_fd" \
+    "$fuzzel_width" "$fuzzel_lines" "$fuzzel_line_height" &
 controller_pid=$!
 controller_start=$(process_start_time "$controller_pid")
 printf '%s %s %s\n' "$controller_pid" "$controller_start" "$token" > "$pid_file"
