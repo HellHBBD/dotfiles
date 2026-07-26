@@ -2,8 +2,6 @@
 # ~/.bash_profile
 #
 
-[[ -f ~/.bashrc ]] && . ~/.bashrc
-
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
@@ -12,18 +10,17 @@ export INPUT_METHOD=fcitx
 export GLFW_IM_MODULE=ibus
 
 ### EXPORT ###
-export EDITOR='nvim'
-export VISUAL='nvim'
-export HISTCONTROL=ignoreboth:erasedups
-export PAGER='less'
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
 
-## [Completion]
-## Completion scripts setup. Remove the following line to uninstall
-[ -f /home/hellhbbd/.dart-cli-completion/bash-config.bash ] && . /home/hellhbbd/.dart-cli-completion/bash-config.bash || true
+### COMPLETION ###
+dart_completion="$HOME/.dart-cli-completion/bash-config.bash"
+[[ -f $dart_completion ]] && . "$dart_completion"
+unset dart_completion
 
-## [/Completion]
-. "$HOME/.cargo/env"
+### CARGO ###
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
-## [/Completion]
-export PATH=$PATH:/home/hellhbbd/.spicetify
-
+### INTERACTIVE SHELL ###
+[[ -f "$HOME/.bashrc" ]] && . "$HOME/.bashrc"
