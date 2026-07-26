@@ -31,8 +31,11 @@ fi
 	))
 end
 
-local function start_on_workspace(binary, workspace)
-	hl.exec_cmd(string.format(
+local function start_on_workspace(binary, workspace, launch_command, rules)
+	launch_command = launch_command or binary
+	rules = rules or {}
+
+	local command = string.format(
 		[[
 if ! command -v %s >/dev/null 2>&1; then
     exit 0
@@ -40,17 +43,19 @@ fi
 
 if command -v uwsm >/dev/null 2>&1 &&
    systemctl --user is-active --quiet 'wayland-session@*.target'; then
-    hyprctl dispatch exec "[workspace %d silent] uwsm app -- %s"
+    exec uwsm app -- %s
 else
-    hyprctl dispatch exec "[workspace %d silent] %s"
+    exec %s
 fi
 ]],
 		binary,
-		workspace,
-		binary,
-		workspace,
-		binary
-	))
+		launch_command,
+		launch_command
+	)
+
+	-- Native exec rules avoid routing startup through hyprctl's Lua dispatcher.
+	rules.workspace = string.format('%d silent', workspace)
+	hl.exec_cmd(command, rules)
 end
 
 hl.on('hyprland.start', function()
@@ -100,27 +105,40 @@ systemctl --user start \
 	start_once('hyprpaper', '(^|/)hyprpaper($| )', 'hyprpaper')
 
 	-- App rules here apply only to these startup launches, not future windows.
-	start_on_workspace('ghostty', 1)
-	start_on_workspace('zen-browser', 2)
-	hl.exec_cmd('hyprctl dispatch workspace 1')
-
-	-- Initialize the default tmux workspace once.
-	hl.exec_cmd([[
-if ! command -v tmux >/dev/null 2>&1; then
-    exit 0
+	start_on_workspace('ghostty', 1, [[
+sh -c '
+if ! tmux list-sessions >/dev/null 2>&1; then
+    script="$HOME/shs/tmux-init.sh"
+    if [ -x "$script" ]; then
+        "$script"
+    fi
 fi
 
-script="$HOME/shs/tmux-init.sh"
-
-if [ ! -x "$script" ]; then
-    exit 0
-fi
-
-# Do not recreate sessions when a tmux server already has sessions.
-if tmux list-sessions >/dev/null 2>&1; then
-    exit 0
-fi
-
-exec "$script" >/dev/null 2>&1
+exec ghostty -e tmux new-session -A -s home
+'
 ]])
+
+	local zen_urgent_subscription
+	zen_urgent_subscription = hl.on('window.urgent', function(window)
+		if window.initial_class ~= 'zen' or not window.workspace or window.workspace.id ~= 2 then
+			return
+		end
+
+		-- Focusing Zen clears its startup urgency before returning to workspace 1.
+		hl.dispatch(hl.dsp.focus({ window = window }))
+		hl.timer(function()
+			-- Waybar needs one update cycle with workspace 2 active to drop urgent.
+			hl.dispatch(hl.dsp.focus({ workspace = 1 }))
+		end, { timeout = 100, type = 'oneshot' })
+		zen_urgent_subscription:remove()
+	end)
+
+	hl.timer(function()
+		if zen_urgent_subscription:is_active() then
+			zen_urgent_subscription:remove()
+		end
+	end, { timeout = 10000, type = 'oneshot' })
+
+	start_on_workspace('zen-browser', 2, nil, { suppress_event = 'activate' })
+	hl.dispatch(hl.dsp.focus({ workspace = 1 }))
 end)

@@ -116,6 +116,15 @@ wlogout:
     sudo pacman -S --needed stow
     just stow wlogout
 
+spotify:
+    @command -v yay >/dev/null || { \
+        printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
+        exit 1; \
+    }
+    yay -S --needed spotify
+    sudo pacman -S --needed stow
+    just stow spotify
+
 # Hyprland 整合層，最後執行
 hyprland: ghostty tmux wallpapers swaync waybar cliphist wlogout
     sudo pacman -S --needed \

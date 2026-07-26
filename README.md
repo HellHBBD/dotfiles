@@ -52,6 +52,7 @@ just --list
 | `formatters` | Stow `formatters` 設定。 |
 | `bash`、`git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
 | `wallpapers`、`swaync`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
+| `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
 | `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
 | `desktop` | 執行 `login-manager` 與 `hyprland`，適合準備桌面與登入管理員套件。 |

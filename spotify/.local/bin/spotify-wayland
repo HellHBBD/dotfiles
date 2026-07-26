@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+exec /opt/spotify/spotify \
+    --enable-features=UseOzonePlatform \
+    --ozone-platform=wayland \
+    --force-device-scale-factor=1.25 \
+    "$@"
