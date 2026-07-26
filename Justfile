@@ -70,6 +70,12 @@ swaync:
         stow
     just stow swaync
 
+swayosd:
+    sudo pacman -S --needed \
+        swayosd \
+        stow
+    just stow swayosd
+
 waybar: swaync
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
@@ -126,7 +132,7 @@ spotify:
     just stow spotify
 
 # Hyprland 整合層，最後執行
-hyprland: ghostty tmux wallpapers swaync waybar cliphist wlogout
+hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
     sudo pacman -S --needed \
         hyprland \
         hyprshutdown \

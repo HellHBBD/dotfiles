@@ -85,6 +85,7 @@ systemctl --user import-environment \
 
 	-- Core desktop components.
 	start_once('waybar', '(^|/)waybar($| )', 'waybar')
+	start_once('swayosd-server', '(^|/)swayosd-server($| )', 'swayosd-server')
 
 	-- Desktop services are owned by systemd user services.
 	hl.exec_cmd([[
