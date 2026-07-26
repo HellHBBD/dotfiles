@@ -47,6 +47,7 @@ hyprpaper
 hyprpolkitagent
 waybar
 swaync
+swayosd
 fuzzel
 ghostty
 wlogout
