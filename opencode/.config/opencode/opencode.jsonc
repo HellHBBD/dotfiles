@@ -172,5 +172,8 @@
         }
       }
     }
-  }
+  },
+  "plugin": [
+    "opencode-mobile@latest"
+  ]
 }

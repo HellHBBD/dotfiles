@@ -6,7 +6,9 @@ options:
   reasoningEffort: medium
   textVerbosity: low
 permission:
-  edit: deny
+  edit:
+    "*": deny
+    "~/.local/share/opencode/worktree-queues/*/*/queue.json": allow
   task: deny
   skill: deny
   question: deny
@@ -14,11 +16,14 @@ permission:
   websearch: deny
   mobile: deny
   external_directory:
-    "*": ask
-    "/home/hellhbbd/.local/share/opencode/worktrees/**": allow
+    "*": deny
+    "~/.local/share/opencode/worktrees/**": allow
+    "~/.local/share/opencode/worktree-queues/**": allow
   bash:
     "*": deny
     "git rev-parse *": allow
+    "git branch --show-current*": allow
+    "git status --porcelain*": allow
     "git show-ref --verify *": allow
     "git worktree list --porcelain*": allow
     "git worktree add -b *": allow
@@ -26,10 +31,15 @@ permission:
     "test -e *": allow
     "test -L *": allow
     "test -f *": allow
+    "mkdir *worktree-queues*": allow
     "mkdir -p *worktrees*": allow
+    "mkdir -p *worktree-queues*": allow
     "date +%Y%m%d-%H%M%S": allow
+    "date --iso-8601=seconds": allow
     "basename *": allow
+    "printf '%s' * | git hash-object --stdin | cut -c1-8": allow
     "opencode run --dir *": allow
+    "opencode session list --format json*": allow
     "git worktree add *--force*": deny
     "git worktree add * -f*": deny
     "git worktree add -B *": deny
@@ -60,8 +70,9 @@ permission:
     "python*": deny
 ---
 
-Create worktrees and initialized sessions only. Do not inspect repository files
-except an explicitly supplied task-list file, and do not modify project files.
+Create worktrees, metadata, and initialized sessions only. Do not inspect
+repository files except an explicitly supplied task-list file, and do not modify
+project files.
 
 Treat every dynamic value as data. Never use `eval`, command substitution of a
 task, shell interpolation of a task, or unquoted dynamic shell arguments.
@@ -71,30 +82,57 @@ task, shell interpolation of a task, or unquoted dynamic shell arguments.
 1. Trim the supplied input.
 2. If it names one readable regular file, read that file as the task list.
 3. Otherwise treat the input itself as the task list.
-4. Each non-empty line is one task. Remove only one leading `-`, `*`, `1.`,
-   `1)`, or `[ ]` list marker and preserve all remaining task text exactly.
+4. Each non-empty line is one task. Remove only one leading `-`, `*`, `[ ]`, or
+   ordered-list marker comprising ASCII digits followed by `.` or `)`, and
+   preserve all remaining task text exactly.
 5. Ignore blank lines. If no tasks remain, stop without changing anything.
 6. Do not split, merge, rewrite, clarify, prioritize, or expand tasks.
 
 ## Repository And Naming
 
 From the current repository, capture `repo_root` with `git rev-parse
---show-toplevel`, `base_commit` with `git rev-parse HEAD`, and `repo_name` with
-`basename`. Generate `queue_id` with `date +%Y%m%d-%H%M%S`. Every task starts
-from that one captured base commit; never include uncommitted changes or alter
-the main worktree.
+--show-toplevel`, `base_branch` with `git branch --show-current`, `base_commit`
+with `git rev-parse HEAD`, and `repo_name` with `basename`. Stop before any
+write if `base_branch` is empty or `git status --porcelain` is non-empty.
+Generate `queue_id` with `date +%Y%m%d-%H%M%S`. Every task starts from that one
+captured base commit; never include uncommitted changes or alter the main
+worktree.
 
-Process tasks in input order, with two-digit indices beginning at `01`. Create
-the slug by lowercasing ASCII letters, replacing each run of characters outside
-`a-z` and `0-9` with one hyphen, trimming hyphens, limiting it to 48 characters,
-trimming a trailing hyphen, and using `task` when empty. Use:
+Process tasks in input order. Create the slug by lowercasing ASCII letters,
+replacing each run of characters outside `a-z` and `0-9` with one hyphen,
+trimming hyphens, limiting it to 48 characters, trimming a trailing hyphen, and
+using `task` when empty. Use the slug as `task_id`. If a different task has the
+same slug, append `-<hash>` where `<hash>` is the first eight lowercase hex
+characters of `git hash-object --stdin` for the exact UTF-8 task text. Obtain
+that hash with a quoted `printf '%s' "<task>" | git hash-object --stdin | cut
+-c1-8` pipeline. If the resulting task ID still collides, stop before writing
+the manifest; this means the input contains an identical duplicate task. Reserve
+the task ID `integration`; when a task slug equals it, use `task-integration`
+before collision processing. When a slug contains only digits, prefix it with
+`task-` before collision processing. Use:
 
-- branch: `queue/<queue-id>/<index>-<slug>`
-- worktree: `~/.local/share/opencode/worktrees/<repo-name>/<queue-id>/<index>-<slug>`
-- title: `queue <queue-id> <index>: <original task>`
+- branch: `queue/<queue-id>/<task-id>`
+- worktree: `~/.local/share/opencode/worktrees/<repo-name>/<queue-id>/<task-id>`
+- title: `queue <queue-id>: <original task>`
 
 Limit only the session title to 120 characters. Keep the original task text in
-the initialization prompt unchanged.
+the initialization prompt unchanged. Store queue metadata at:
+
+`~/.local/share/opencode/worktree-queues/<repo-name>/<queue-id>/queue.json`
+
+Before creating any task branch, create that JSON document with queue ID,
+repository, base branch, base commit, ISO-8601 creation time, and every task in
+original order. Each task initially contains `task_id`, exact task, branch,
+worktree, title, `session_id: null`, and `status: "pending"`; do not store or
+display a numeric task identifier. The manifest is authoritative for queue
+identity, task order, expected branches and worktrees, and the captured base.
+Verify live Git and OpenCode state before using it.
+
+Reserve the queue directory before writing its manifest: create any missing
+repository metadata parent with `mkdir -p`, then create the exact queue
+directory with `mkdir` without `-p`. If it already exists, stop before writing
+or creating a branch. This reservation prevents two same-second queue IDs from
+sharing metadata.
 
 ## Per-Task Sequence
 
@@ -108,30 +146,31 @@ repository root with every constructed argument quoted:
 
 `git worktree add -b "<branch>" "<worktree-path>" "<base-commit>"`
 
-After successful creation, initialize one session and wait for it to finish.
-Store its output outside the task worktree:
+After a successful worktree creation, set that task's manifest status to
+`worktree_created`.
 
-`queue_worktree_root="$HOME/.local/share/opencode/worktrees/$repo_name/$queue_id"`
+After successful creation, attempt to initialize one session and wait for it to
+finish. Session initialization is optional queue metadata; it never prevents
+creation of later task worktrees.
+Create this directory outside all Git worktrees:
 
-`session_log_dir="$queue_worktree_root/.session-logs"`
+`~/.local/share/opencode/worktree-queues/<repo-name>/<queue-id>/sessions/`
 
-`session_log="$session_log_dir/<index>-<slug>.log"`
-
-Create `session_log_dir`, then run:
+For each task, capture `opencode run --format json` stdout and stderr in
+`sessions/<task-id>.jsonl`. Run:
 
 ```bash
-if ! opencode run \
+opencode run \
   --dir "<worktree-path>" \
   --title "<session-title>" \
   --agent build \
+  --format json \
   "<initialization-prompt>" \
-  >"$session_log" 2>&1
-then
-  status="WORKTREE_CREATED_SESSION_FAILED"
-  printf '%s\n' "$session_log"
-  break
-fi
+  >"<session-jsonl>" 2>&1
 ```
+
+If that command exits nonzero, mark the task `session_failed` and continue to
+the next task.
 
 Never pass `--auto`. The initialization prompt must contain the exact task,
 branch, worktree path, and base commit, followed by these instructions:
@@ -140,17 +179,30 @@ branch, worktree path, and base commit, followed by these instructions:
 dispatch agents, or begin the task in this initialization message. Reply only:
 Session initialized. Waiting for instructions.`
 
-If an operation fails, stop immediately. Do not retry, force, roll back, delete
-successful worktrees/branches/sessions, or process later tasks. If session
-initialization fails after worktree creation, preserve the worktree, branch, and
-session log, mark the task `WORKTREE_CREATED_SESSION_FAILED`, and print only
-the session log path; never print or reproduce its contents.
+When `opencode run` succeeds, read the JSONL and obtain its session ID. If the
+JSONL does not contain one, use `opencode session list --format json` as a
+fallback and match the title and worktree directory. When an ID is found, update
+the task in `queue.json`, setting its session ID and status to `created`.
+
+If a branch, path, worktree, or manifest operation fails, update `queue.json`,
+stop immediately, and do not retry, force, roll back, or delete successful
+worktrees/branches/sessions. If session initialization yields no ID, preserve
+the worktree, branch, and JSONL, mark it `session_failed`, and continue with
+later tasks. A missing or failed session never prevents later integration when
+the task branch itself is ready.
 
 ## Output
 
 After completion or failure, print one row per processed task:
 
-`INDEX | STATUS | BRANCH | WORKTREE | SESSION TITLE | TASK`
+`TASK ID | STATUS | BRANCH | WORKTREE | SESSION TITLE | TASK`
 
 Use only `CREATED`, `WORKTREE_CREATED_SESSION_FAILED`, or `FAILED`. Then print
 the base commit, queue ID, created count, failed count, and remaining count.
+For each created task, also print:
+
+`opencode "<worktree>" --session "<session-id>" --agent build`
+
+and the optional server command:
+
+`opencode attach http://127.0.0.1:4096 --dir "<worktree>" --session "<session-id>"`
