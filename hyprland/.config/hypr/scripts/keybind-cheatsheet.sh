@@ -7,9 +7,9 @@ notify_error() {
     local message=$1
 
     if command -v notify-send >/dev/null 2>&1; then
-        notify-send -u critical 'Keybind cheat sheet' "$message"
+        notify-send -u critical '快捷鍵總覽' "$message"
     else
-        printf 'Keybind cheat sheet: %s\n' "$message" >&2
+        printf '快捷鍵總覽：%s\n' "$message" >&2
     fi
 }
 
@@ -68,7 +68,7 @@ close_existing_fuzzel() {
         sleep 0.05
     done
 
-    notify_error 'An existing Fuzzel instance did not close.'
+    notify_error '已有 Fuzzel 視窗無法關閉。'
     return 1
 }
 
@@ -133,13 +133,13 @@ if [[ ${1:-} == '--keybind-cheatsheet-run' ]]; then
 fi
 
 if [[ -z ${XDG_RUNTIME_DIR:-} ]]; then
-    notify_error 'XDG_RUNTIME_DIR is unavailable.'
+    notify_error 'XDG_RUNTIME_DIR 無法使用。'
     exit 1
 fi
 
-for command in hyprctl jq fuzzel flock setsid; do
+for command in column hyprctl jq fuzzel flock setsid; do
     if ! command -v "$command" >/dev/null 2>&1; then
-        notify_error "Required command is unavailable: $command"
+        notify_error "找不到必要指令：$command"
         exit 1
     fi
 done
@@ -186,7 +186,7 @@ fi
 close_existing_fuzzel || exit 1
 
 monitor=$(hyprctl -j monitors 2>/dev/null) || {
-    notify_error 'Could not read monitor layout.'
+    notify_error '無法取得螢幕配置。'
     exit 1
 }
 
@@ -195,71 +195,75 @@ read -r monitor_width monitor_height < <(printf '%s\n' "$monitor" | jq -r '
 ')
 
 if [[ ! $monitor_width =~ ^[0-9]+$ || ! $monitor_height =~ ^[0-9]+$ ]]; then
-    notify_error 'Could not determine the focused monitor size.'
+    notify_error '無法判定目前螢幕尺寸。'
     exit 1
 fi
 
 left_column=$(printf '%s\n' \
-    'APPLICATIONS' \
-    'SUPER + /              Show cheat sheet' \
-    'SUPER + D              Application launcher' \
-    'SUPER + E              Open file manager' \
-    'SUPER + SHIFT + Return Open browser' \
-    'SUPER + V              Clipboard history' \
-    '' \
-    'SESSION' \
-    'SUPER + N              Toggle notification center' \
-    'SUPER + SHIFT + N      Toggle do-not-disturb' \
-    'SUPER + L              Lock session' \
-    'CTRL + ALT + Delete    Open power menu' \
-    'SUPER + SHIFT + M      Exit graphical session' \
-    '' \
-    'WINDOW MANAGEMENT' \
-    'SUPER + Return         Open terminal' \
-    'SUPER + Q              Close active window' \
-    'SUPER + F              Toggle fullscreen' \
-    'SUPER + ALT + Space    Toggle floating' \
-    'SUPER + Arrow keys     Focus window' \
-    'SUPER + SHIFT + Arrows Move window' \
-    'SUPER + Left click     Move window with mouse' \
-    'SUPER + Right click    Resize window with mouse' \
-    'ALT + Tab              Cycle to next window' \
-    'SUPER + P              Toggle window pin' \
-    'SUPER + Minus / Equal  Adjust split ratio' \
-    'SUPER + T              Toggle split direction')
+    $'應用程式\t' \
+    $'SUPER + /\t顯示快捷鍵總覽' \
+    $'SUPER + D\t開啟應用程式啟動器' \
+    $'SUPER + E\t開啟檔案管理員' \
+    $'SUPER + SHIFT + Return\t開啟瀏覽器' \
+    $'SUPER + V\t剪貼簿歷史紀錄' \
+    $'\t' \
+    $'工作階段\t' \
+    $'SUPER + N\t切換通知中心' \
+    $'SUPER + SHIFT + N\t切換勿擾模式' \
+    $'SUPER + L\t鎖定工作階段' \
+    $'CTRL + ALT + Delete\t開啟電源選單' \
+    $'SUPER + SHIFT + M\t結束圖形工作階段' \
+    $'\t' \
+    $'視窗管理\t' \
+    $'SUPER + Return\t開啟終端機' \
+    $'SUPER + Q\t關閉目前視窗' \
+    $'SUPER + F\t切換全螢幕' \
+    $'SUPER + ALT + Space\t切換浮動視窗' \
+    $'SUPER + 方向鍵\t聚焦視窗' \
+    $'SUPER + SHIFT + 方向鍵\t移動視窗' \
+    $'SUPER + 滑鼠左鍵\t移動視窗' \
+    $'SUPER + 滑鼠右鍵\t調整視窗大小' \
+    $'ALT + Tab\t切換至下一個視窗' \
+    $'SUPER + P\t切換視窗置頂' \
+    $'SUPER + Minus / Equal\t調整分割比例' \
+    $'SUPER + T\t切換分割方向')
 
 right_column=$(printf '%s\n' \
-    'CAPTURE' \
-    'SUPER + SHIFT + S      Copy selected screenshot' \
-    'Print                  Copy full-screen screenshot' \
-    'SUPER + SHIFT + C      Pick color' \
-    '' \
-    'WORKSPACES' \
-    'SUPER + 1 through 0    Focus workspace 1 through 10' \
-    'SUPER + ALT + 1..0     Move window to workspace' \
-    'SUPER + SHIFT + 1..0   Move window and follow' \
-    'CTRL + SUPER + Arrows  Previous or next workspace' \
-    'SUPER + Mouse wheel    Previous or next workspace' \
-    'SUPER + S              Toggle scratchpad' \
-    'SUPER + ALT + S        Move window to scratchpad' \
-    '' \
-    'AUDIO, BRIGHTNESS, MEDIA' \
-    'Volume keys            Increase or decrease volume' \
-    'Mute key               Toggle output mute' \
-    'Microphone mute key    Toggle microphone mute' \
-    'Brightness keys        Increase or decrease brightness' \
-    'Play or Pause key      Play or pause media' \
-    'Next or Previous key   Change media track')
+    $'螢幕擷取\t' \
+    $'SUPER + SHIFT + S\t複製選取區域截圖' \
+    $'Print\t複製全螢幕截圖' \
+    $'SUPER + SHIFT + C\t擷取色彩' \
+    $'\t' \
+    $'工作區\t' \
+    $'SUPER + 1 至 0\t聚焦工作區 1 至 10' \
+    $'SUPER + ALT + 1..0\t移動視窗至工作區' \
+    $'SUPER + SHIFT + 1..0\t移動視窗並跟隨' \
+    $'CTRL + SUPER + 方向鍵\t上一個或下一個工作區' \
+    $'SUPER + 滑鼠滾輪\t上一個或下一個工作區' \
+    $'SUPER + S\t切換暫存視窗' \
+    $'SUPER + ALT + S\t移動視窗至暫存區' \
+    $'\t' \
+    $'音效、亮度與媒體\t' \
+    $'音量鍵\t調高或調低音量' \
+    $'靜音鍵\t切換輸出靜音' \
+    $'麥克風靜音鍵\t切換麥克風靜音' \
+    $'亮度鍵\t調高或調低亮度' \
+    $'播放或暫停鍵\t播放或暫停媒體' \
+    $'下一首或上一首鍵\t切換媒體曲目')
+
+format_sheet() {
+    column -s $'\t' -t -o '    '
+}
 
 if ((monitor_width >= 1100 && monitor_height >= 680)); then
-    sheet=$(paste -d ' ' \
-        <(while IFS= read -r line; do printf '%-48s\n' "$line"; done <<< "$left_column") \
-        <(printf '%s\n' "$right_column"))
+    sheet=$(paste -d $'\t' \
+        <(printf '%s\n' "$left_column") \
+        <(printf '%s\n' "$right_column") | format_sheet)
     fuzzel_width=112
     fuzzel_lines=29
     fuzzel_line_height=20
 else
-    sheet=$(printf '%s\n\n%s\n' "$left_column" "$right_column")
+    sheet=$(printf '%s\n\n%s\n' "$left_column" "$right_column" | format_sheet)
     fuzzel_width=$((monitor_width / 10))
     ((fuzzel_width < 56)) && fuzzel_width=56
     ((fuzzel_width > 86)) && fuzzel_width=86
@@ -270,7 +274,7 @@ else
 fi
 
 sheet_file=$(mktemp "$runtime_dir/$sheet_name.XXXXXX") || {
-    notify_error 'Could not create cheat sheet data.'
+    notify_error '無法建立快捷鍵資料。'
     exit 1
 }
 printf '%s\n' "$sheet" > "$sheet_file"
