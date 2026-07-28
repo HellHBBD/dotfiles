@@ -32,6 +32,9 @@ tree
 # dependency of remnote
 electron28-bin
 brightnessctl
+python-gobject
+gtk4
+libadwaita
 # adjust brightness in humanized way
 brillo
 # diff gui tool

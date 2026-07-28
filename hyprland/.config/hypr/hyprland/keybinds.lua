@@ -104,91 +104,91 @@ fi
 
 -- Applications
 
-hl.bind('SUPER + Slash', hl.dsp.exec_cmd('bash ~/.config/hypr/scripts/keybind-cheatsheet.sh'), {
-	description = 'Show keybind cheat sheet',
+hl.bind('SUPER + Slash', hl.dsp.exec_cmd(managed_app('python3 ~/.config/hypr/keybind-cheatsheet/app.py')), {
+	description = '應用程式 | 快捷鍵總覽 | cheatsheet hotkeys reference',
 })
 
 hl.bind('SUPER + D', hl.dsp.exec_cmd(launcher_command), {
-	description = 'Application launcher',
+	description = '應用程式 | 應用程式啟動器 | app launcher',
 })
 
 hl.bind('SUPER + E', hl.dsp.exec_cmd(managed_app('dolphin')), {
-	description = 'Open file manager',
+	description = '應用程式 | 檔案管理員 | file manager dolphin',
 })
 
 hl.bind('SUPER + SHIFT + Return', hl.dsp.exec_cmd(managed_app('zen-browser')), {
-	description = 'Open browser',
+	description = '應用程式 | 瀏覽器 | browser zen',
 })
 
 hl.bind('SUPER + V', hl.dsp.exec_cmd(clipboard_command), {
-	description = 'Clipboard history',
+	description = '應用程式 | 剪貼簿歷史 | clipboard copy paste',
 })
 
 -- Session
 
 hl.bind('SUPER + N', hl.dsp.exec_cmd('swaync-client -t -sw'), {
-	description = 'Toggle notification center',
+	description = '系統 | 通知中心 | notification center swaync',
 })
 
 hl.bind('SUPER + SHIFT + N', hl.dsp.exec_cmd('swaync-client -d -sw'), {
-	description = 'Toggle do-not-disturb',
+	description = '系統 | 勿擾模式 | do not disturb dnd',
 })
 
 hl.bind('SUPER + L', hl.dsp.exec_cmd(managed_app('hyprlock')), {
-	description = 'Lock session',
+	description = '系統 | 鎖定畫面 | lock session hyprlock',
 })
 
 hl.bind('CTRL + ALT + Delete', hl.dsp.exec_cmd(wlogout_command), {
-	description = 'Open power menu',
+	description = '系統 | 電源選單 | power logout shutdown reboot',
 })
 
 -- Screenshots and color picker
 
 hl.bind('SUPER + SHIFT + S', hl.dsp.exec_cmd('bash ~/.config/hypr/scripts/screenshot-area.sh'), {
-	description = 'Copy selected screenshot',
+	description = '螢幕擷取 | 選取區域截圖 | screenshot capture area',
 })
 
 hl.bind('Print', hl.dsp.exec_cmd(screenshot_screen_command), {
 	locked = true,
-	description = 'Copy full-screen screenshot',
+	description = '螢幕擷取 | 全螢幕截圖 | screenshot capture full screen',
 })
 
 hl.bind('SUPER + SHIFT + C', hl.dsp.exec_cmd(managed_app('hyprpicker -a')), {
-	description = 'Pick color',
+	description = '螢幕擷取 | 色彩擷取 | color picker',
 })
 
 -- Move active window
 
 hl.bind('SUPER + SHIFT + Left', hl.dsp.window.move({ direction = 'l' }), {
-	description = 'Move window left',
+	description = '視窗管理 | 移動視窗 | window move',
 })
 
 hl.bind('SUPER + SHIFT + Right', hl.dsp.window.move({ direction = 'r' }), {
-	description = 'Move window right',
+	description = '視窗管理 | 移動視窗 | window move',
 })
 
 hl.bind('SUPER + SHIFT + Up', hl.dsp.window.move({ direction = 'u' }), {
-	description = 'Move window up',
+	description = '視窗管理 | 移動視窗 | window move',
 })
 
 hl.bind('SUPER + SHIFT + Down', hl.dsp.window.move({ direction = 'd' }), {
-	description = 'Move window down',
+	description = '視窗管理 | 移動視窗 | window move',
 })
 
 -- Dwindle split ratio
 
 hl.bind('SUPER + Minus', hl.dsp.layout('splitratio -0.1'), {
 	repeating = true,
-	description = 'Decrease split ratio',
+	description = '視窗管理 | 調整分割比例 | layout split ratio',
 })
 
 hl.bind('SUPER + Equal', hl.dsp.layout('splitratio +0.1'), {
 	repeating = true,
-	description = 'Increase split ratio',
+	description = '視窗管理 | 調整分割比例 | layout split ratio',
 })
 
 hl.bind('SUPER + T', hl.dsp.layout('togglesplit'), {
-	description = 'Toggle split direction',
+	description = '視窗管理 | 切換分割方向 | layout split direction',
 })
 
 -- Workspace 1-10
@@ -197,7 +197,7 @@ for index = 1, 10 do
 	local key = tostring(index % 10)
 
 	hl.bind('SUPER + ' .. key, hl.dsp.focus({ workspace = index }), {
-		description = 'Focus workspace ' .. index,
+		description = '工作區 | 切換工作區 | workspace focus',
 	})
 
 	hl.bind(
@@ -207,7 +207,7 @@ for index = 1, 10 do
 			follow = false,
 		}),
 		{
-			description = 'Move window silently to workspace ' .. index,
+			description = '工作區 | 移動視窗至工作區 | workspace move',
 		}
 	)
 
@@ -218,7 +218,7 @@ for index = 1, 10 do
 			follow = true,
 		}),
 		{
-			description = 'Move window and follow to workspace ' .. index,
+			description = '工作區 | 移動並跟隨 | workspace move follow',
 		}
 	)
 end
@@ -226,25 +226,25 @@ end
 -- Relative workspace navigation
 
 hl.bind('CTRL + SUPER + Right', hl.dsp.focus({ workspace = 'r+1' }), {
-	description = 'Next workspace on monitor',
+	description = '工作區 | 切換相鄰工作區 | workspace next previous',
 })
 
 hl.bind('CTRL + SUPER + Left', hl.dsp.focus({ workspace = 'r-1' }), {
-	description = 'Previous workspace on monitor',
+	description = '工作區 | 切換相鄰工作區 | workspace next previous',
 })
 
 hl.bind('SUPER + mouse_up', hl.dsp.focus({ workspace = '+1' }), {
-	description = 'Next workspace',
+	description = '工作區 | 切換相鄰工作區 | workspace next previous',
 })
 
 hl.bind('SUPER + mouse_down', hl.dsp.focus({ workspace = '-1' }), {
-	description = 'Previous workspace',
+	description = '工作區 | 切換相鄰工作區 | workspace next previous',
 })
 
 -- Scratchpad workspace
 
 hl.bind('SUPER + S', hl.dsp.workspace.toggle_special('scratch'), {
-	description = 'Toggle scratchpad',
+	description = '工作區 | 暫存視窗 | scratchpad special workspace',
 })
 
 hl.bind(
@@ -254,18 +254,18 @@ hl.bind(
 		follow = false,
 	}),
 	{
-		description = 'Move window to scratchpad',
+		description = '工作區 | 移至暫存區 | scratchpad special workspace',
 	}
 )
 
 -- Window navigation
 
 hl.bind('ALT + Tab', hl.dsp.window.cycle_next({ next = true }), {
-	description = 'Cycle to next window',
+	description = '視窗管理 | 下一個視窗 | window cycle alt tab',
 })
 
 hl.bind('SUPER + P', hl.dsp.window.pin(), {
-	description = 'Toggle window pin',
+	description = '視窗管理 | 視窗置頂 | window pin',
 })
 
 -- Audio
@@ -276,7 +276,7 @@ hl.bind(
 	{
 		locked = true,
 		repeating = true,
-		description = 'Increase volume',
+		description = '媒體與硬體 | 調整音量 | volume audio',
 	}
 )
 
@@ -286,18 +286,18 @@ hl.bind(
 	{
 		locked = true,
 		repeating = true,
-		description = 'Decrease volume',
+		description = '媒體與硬體 | 調整音量 | volume audio',
 	}
 )
 
 hl.bind('XF86AudioMute', hl.dsp.exec_cmd('swayosd-client --output-volume mute-toggle'), {
 	locked = true,
-	description = 'Toggle output mute',
+	description = '媒體與硬體 | 輸出靜音 | volume mute audio',
 })
 
 hl.bind('XF86AudioMicMute', hl.dsp.exec_cmd('wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle'), {
 	locked = true,
-	description = 'Toggle microphone mute',
+	description = '媒體與硬體 | 麥克風靜音 | microphone mute audio',
 })
 
 -- Display brightness
@@ -305,33 +305,33 @@ hl.bind('XF86AudioMicMute', hl.dsp.exec_cmd('wpctl set-mute @DEFAULT_AUDIO_SOURC
 hl.bind('XF86MonBrightnessUp', hl.dsp.exec_cmd('swayosd-client --brightness +5'), {
 	locked = true,
 	repeating = true,
-	description = 'Increase brightness',
+	description = '媒體與硬體 | 調整亮度 | brightness display',
 })
 
 hl.bind('XF86MonBrightnessDown', hl.dsp.exec_cmd('swayosd-client --brightness -5'), {
 	locked = true,
 	repeating = true,
-	description = 'Decrease brightness',
+	description = '媒體與硬體 | 調整亮度 | brightness display',
 })
 
 -- Media controls
 
 hl.bind('XF86AudioPlay', hl.dsp.exec_cmd('playerctl play-pause'), {
 	locked = true,
-	description = 'Play or pause media',
+	description = '媒體與硬體 | 播放／暫停 | media play pause',
 })
 
 hl.bind('XF86AudioPause', hl.dsp.exec_cmd('playerctl play-pause'), {
 	locked = true,
-	description = 'Play or pause media',
+	description = '媒體與硬體 | 播放／暫停 | media play pause',
 })
 
 hl.bind('XF86AudioNext', hl.dsp.exec_cmd('playerctl next'), {
 	locked = true,
-	description = 'Next media track',
+	description = '媒體與硬體 | 切換曲目 | media next previous',
 })
 
 hl.bind('XF86AudioPrev', hl.dsp.exec_cmd('playerctl previous'), {
 	locked = true,
-	description = 'Previous media track',
+	description = '媒體與硬體 | 切換曲目 | media next previous',
 })

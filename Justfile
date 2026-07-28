@@ -151,6 +151,9 @@ hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
         slurp \
         hyprpicker \
         brightnessctl \
+        python-gobject \
+        gtk4 \
+        libadwaita \
         fcitx5 \
         fcitx5-gtk \
         fcitx5-qt \

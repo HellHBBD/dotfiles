@@ -1,5 +1,23 @@
 -- Application and content-specific rules.
 
+hl.window_rule({
+	name = 'hyprland-keybind-cheatsheet',
+
+	match = {
+		initial_class = [[^com\.hellhbbd\.HyprlandCheatsheet$]],
+	},
+
+	float = true,
+	center = true,
+
+	size = {
+		'1100',
+		'720',
+	},
+
+	persistent_size = true,
+})
+
 -- Browser Picture-in-Picture windows.
 --
 -- The size and position are monitor-local expressions.
