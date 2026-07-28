@@ -11,7 +11,7 @@ permission:
     "~/.local/share/opencode/worktree-queues/*/*/queue.json": allow
   task: deny
   skill: deny
-  question: deny
+  question: allow
   webfetch: deny
   websearch: deny
   mobile: deny
@@ -92,11 +92,20 @@ task, shell interpolation of a task, or unquoted dynamic shell arguments.
 
 From the current repository, capture `repo_root` with `git rev-parse
 --show-toplevel`, `base_branch` with `git branch --show-current`, `base_commit`
-with `git rev-parse HEAD`, and `repo_name` with `basename`. Stop before any
-write if `base_branch` is empty or `git status --porcelain` is non-empty.
-Generate `queue_id` with `date +%Y%m%d-%H%M%S`. Every task starts from that one
-captured base commit; never include uncommitted changes or alter the main
-worktree.
+with `git rev-parse HEAD`, `base_status` with `git status --porcelain`, and
+`repo_name` with `basename`. Stop before any write only if `base_branch` is
+empty. Generate `queue_id` with `date +%Y%m%d-%H%M%S`. Every task starts from
+that one captured base commit; never include uncommitted changes or alter the
+main worktree.
+
+When `base_status` is non-empty, print it verbatim and warn that staged,
+unstaged, and untracked changes are excluded from every task branch. Do not
+inspect diffs or decide whether they are unrelated. Ask the user to explicitly
+confirm that no requested task depends on those changes. Stop without writing
+anything unless confirmed. Immediately before reserving the queue directory,
+capture `git status --porcelain` again. If it differs from the confirmed
+snapshot, print the new snapshot and obtain a new explicit confirmation; repeat
+until the snapshot is confirmed. A clean status needs no question.
 
 Process tasks in input order. Create the slug by lowercasing ASCII letters,
 replacing each run of characters outside `a-z` and `0-9` with one hyphen,
@@ -126,7 +135,9 @@ original order. Each task initially contains `task_id`, exact task, branch,
 worktree, title, `session_id: null`, and `status: "pending"`; do not store or
 display a numeric task identifier. The manifest is authoritative for queue
 identity, task order, expected branches and worktrees, and the captured base.
-Verify live Git and OpenCode state before using it.
+Also record `base_status`, `dirty_base_confirmed`, and, when confirmation was
+required, `dirty_base_confirmed_at`. Verify live Git and OpenCode state before
+using it.
 
 Reserve the queue directory before writing its manifest: create any missing
 repository metadata parent with `mkdir -p`, then create the exact queue

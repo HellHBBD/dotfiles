@@ -289,16 +289,28 @@ design is materially ambiguous.
 
 After every selected task is verified, run the full `--check` once more and
 repeat integration status, HEAD, whitespace, and selected-tip ancestry checks.
-Confirm the original worktree is clean, remains on the manifest base branch,
-and its HEAD equals `published_head`. Without a passing `--check`, report
+Confirm the original worktree remains on the manifest base branch and its
+committed HEAD equals `published_head`. Without a passing `--check`, report
 `UNVERIFIED` and stop without offering a final merge.
 
 With a passing check, report the selected task IDs, exact tips, integration
 HEAD, task worktrees, branches, repair commits, and validation evidence. Ask
 the user whether to publish this batch and remove its worktrees and branches.
-Only after explicit textual confirmation, record `publish_pending` with the
-current `published_head` and integration HEAD, then request the permission prompt
-for `git merge --ff-only <integration-branch>` in the original worktree.
+Before asking, capture the original worktree's `git status --porcelain`. If it
+is non-empty, print it verbatim and warn that these local changes are excluded
+from integration. Ask for explicit confirmation that no selected task depends on
+them and that publishing may proceed; do not decide whether they are unrelated.
+Record `publish_pending` with the current `published_head`, integration HEAD,
+and this status snapshot only after the required confirmation.
+
+Immediately before requesting the permission prompt for `git merge --ff-only
+<integration-branch>`, confirm the original worktree remains on the manifest
+base branch and its committed HEAD still equals `published_head`. Capture status
+again. If it differs from the confirmed snapshot, print the new snapshot and
+obtain a new explicit publish confirmation before replacing the snapshot in
+`publish_pending`. Do not require a clean original worktree. Git must reject any
+fast-forward that would overwrite local changes; on failure, do not clean up and
+preserve the active batch.
 
 After a successful fast-forward, set `published_head` to the new base HEAD,
 mark each selected task published with its pinned tip and `cleanup_pending`, and
@@ -306,7 +318,9 @@ clear `active_batch` before cleanup. For each selected task, confirm its tip is
 an ancestor of the new base HEAD, then perform the non-force worktree removal
 and merged branch deletion described in Cleanup Pending. Preserve the integration
 worktree and branch, metadata, and all unselected task resources. Report any
-cleanup failure as `cleanup_pending`.
+cleanup failure as `cleanup_pending`. Do not require the original worktree to be
+clean after publishing; preserve its previously confirmed local changes. Stop if
+Git reports unmerged paths.
 
 ## Output
 

@@ -11,4 +11,5 @@ $ARGUMENTS
 
 Perform only the initialization workflow defined by the `worktree-queue` agent.
 Do not plan, implement, review, verify, commit, merge, push, dispatch
-subagents, or modify project files.
+subagents, or modify project files. A dirty main worktree requires explicit
+confirmation that no task depends on its uncommitted changes.
