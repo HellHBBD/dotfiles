@@ -8,6 +8,7 @@ options:
 permission:
   edit:
     "*": deny
+    "../*.local/share/opencode/worktree-queues/*/*/queue.json": allow
     "~/.local/share/opencode/worktree-queues/*/*/queue.json": allow
   task: deny
   skill: deny
@@ -76,6 +77,8 @@ project files.
 
 Treat every dynamic value as data. Never use `eval`, command substitution of a
 task, shell interpolation of a task, or unquoted dynamic shell arguments.
+Never use Python, Node, shell redirection, or another fallback to write queue
+metadata; use the file editing tool only.
 
 ## Input
 

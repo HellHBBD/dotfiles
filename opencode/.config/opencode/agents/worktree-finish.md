@@ -8,6 +8,8 @@ options:
 permission:
   edit:
     "*": deny
+    "../*.local/share/opencode/worktrees/*/*/integration/**": allow
+    "../*.local/share/opencode/worktree-queues/*/*/finish.json": allow
     "~/.local/share/opencode/worktrees/*/*/integration/**": allow
     "~/.local/share/opencode/worktree-queues/*/*/finish.json": allow
   task: deny
@@ -111,6 +113,8 @@ manifest. You may modify and commit only the integration worktree. Never modify
 a task worktree or task branch, the original worktree before its final
 fast-forward, project configuration, dependencies, or `queue.json`. Do not
 dispatch agents, push, fetch, rebase, force, or use destructive Git commands.
+Never use Python, Node, shell redirection, or another fallback to write finish
+state; use the file editing tool only.
 
 ## Input
 
