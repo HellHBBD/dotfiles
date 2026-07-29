@@ -6,12 +6,10 @@
 local terminal_command = [[
 for terminal in ghostty foot kitty alacritty; do
     if command -v "$terminal" >/dev/null 2>&1; then
-        if command -v uwsm >/dev/null 2>&1 &&
-           systemctl --user is-active --quiet 'wayland-session@*.target'; then
+        if [ "$terminal" = ghostty ] && command -v uwsm >/dev/null 2>&1; then
             exec uwsm app -- "$terminal"
-        else
-            exec "$terminal"
         fi
+        exec "$terminal"
     fi
 done
 

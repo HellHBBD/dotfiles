@@ -52,6 +52,7 @@ just --list
 | `formatters` | Stow `formatters` 設定。 |
 | `bash`、`git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
+| `systemd-oomd` | 將 `systemd-oomd` 的 memory-pressure drop-in Stow 至 `/etc`、啟用服務，並套用到目前使用者 session；不啟用全系統 swap kill。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
 | `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
@@ -65,6 +66,28 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## systemd-oomd
+
+`just systemd-oomd` 會將 `systemd-oomd/etc/systemd/system/user@.service.d/60-oomd-memory-pressure.conf` Stow 至 `/etc/systemd/system/user@.service.d/`，啟用 `systemd-oomd`，並對目前使用者 session 設定 40% PSI memory pressure、持續 20 秒後允許終止候選 cgroup。它不設定 `ManagedOOMSwap=kill`。
+
+系統 drop-in 會指向此 repository 內的檔案，因此可修改使用者可寫入的 dotfiles 來改變有效的 `/etc` 設定。這只適合受信任的個人管理員帳號；修改後需執行 `sudo systemctl daemon-reload`。驗證可使用：
+
+```sh
+systemctl status systemd-oomd.service --no-pager
+sudo systemctl show "user@$(id -u).service" \
+  -p ManagedOOMMemoryPressure \
+  -p ManagedOOMMemoryPressureLimit \
+  -p ManagedOOMMemoryPressureDurationUSec
+oomctl dump
+```
+
+移除設定時執行：
+
+```sh
+sudo stow --dir ~/dotfiles --target / --delete --no-folding systemd-oomd
+sudo systemctl daemon-reload
+```
 
 ## 設定 greetd
 

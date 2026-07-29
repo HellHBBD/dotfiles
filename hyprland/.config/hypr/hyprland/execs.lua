@@ -41,8 +41,7 @@ if ! command -v %s >/dev/null 2>&1; then
     exit 0
 fi
 
-if command -v uwsm >/dev/null 2>&1 &&
-   systemctl --user is-active --quiet 'wayland-session@*.target'; then
+if command -v uwsm >/dev/null 2>&1; then
     exec uwsm app -- %s
 else
     exec %s

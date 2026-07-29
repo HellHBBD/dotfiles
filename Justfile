@@ -76,6 +76,21 @@ swayosd:
         stow
     just stow swayosd
 
+# System memory-pressure protection, managed under /etc via GNU Stow.
+systemd-oomd:
+    sudo stow \
+        --dir "{{repo}}" \
+        --target / \
+        --restow \
+        --no-folding \
+        systemd-oomd
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now systemd-oomd.service
+    sudo systemctl set-property --runtime "user@$(id -u).service" \
+        ManagedOOMMemoryPressure=kill \
+        ManagedOOMMemoryPressureLimit=40% \
+        ManagedOOMMemoryPressureDurationSec=20s
+
 waybar: swaync
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \

@@ -25,7 +25,7 @@ fi
 
 if command -v uwsm >/dev/null 2>&1 &&
    systemctl --user is-active --quiet 'wayland-session@*.target'; then
-    exec uwsm app -- fuzzel --launch-prefix='uwsm app --'
+    exec uwsm app -- fuzzel
 else
     exec fuzzel
 fi
@@ -116,7 +116,13 @@ hl.bind('SUPER + E', hl.dsp.exec_cmd(managed_app('dolphin')), {
 	description = '應用程式 | 檔案管理員 | file manager dolphin',
 })
 
-hl.bind('SUPER + SHIFT + Return', hl.dsp.exec_cmd(managed_app('zen-browser')), {
+hl.bind('SUPER + SHIFT + Return', hl.dsp.exec_cmd([[
+if command -v uwsm >/dev/null 2>&1; then
+    exec uwsm app -- zen-browser
+else
+    exec zen-browser
+fi
+]]), {
 	description = '應用程式 | 瀏覽器 | browser zen',
 })
 
