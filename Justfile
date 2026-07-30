@@ -89,6 +89,7 @@ swayosd:
     sudo pacman -S --needed \
         swayosd \
         stow
+    sudo usermod --append --groups video "$USER"
     just stow swayosd
 
 # System memory-pressure protection, managed under /etc via GNU Stow.
