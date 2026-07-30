@@ -1,9 +1,0 @@
-{
-  "url": "https://ratio-tracking-fig-soldiers.trycloudflare.com",
-  "tunnelId": "ratio-tracking-fig-soldiers",
-  "provider": "cloudflare",
-  "port": 4096,
-  "targetPort": 4096,
-  "startedAt": "2026-07-25T15:50:24.960Z",
-  "lastUpdated": "2026-07-25T15:50:24.960Z"
-}
