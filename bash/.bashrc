@@ -43,30 +43,6 @@ alias su='sudo -s'
 alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
 alias ip6="ip a | grep -Eo '(2[0-9a-fA-F]{0,3}:)([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}'"
 
-nvims() {
-    local -a items=("LazyVim" "default")
-    local config
-
-    config=$(
-        printf '%s\n' "${items[@]}" |
-            fzf \
-                --prompt=" Neovim Config" \
-                --height='~50%' \
-                --layout=reverse \
-                --border \
-                --exit-0
-    )
-
-    if [[ -z $config ]]; then
-        echo "Nothing selected"
-        return 0
-    fi
-
-    [[ $config == default ]] && config=""
-
-    NVIM_APPNAME="$config" nvim "$@"
-}
-
 ### HISTORY ###
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=5000
