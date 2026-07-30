@@ -21,6 +21,7 @@ nodejs
 
 ### Tools ###
 tmux
+herdr-bin
 git-delta
 bluez-utils
 bluez

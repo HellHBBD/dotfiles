@@ -57,6 +57,27 @@ tmux:
     sudo pacman -S --needed tmux stow
     just stow tmux
 
+herdr:
+    @command -v yay >/dev/null || { \
+        printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
+        exit 1; \
+    }
+    yay -S --needed herdr-bin
+    if [ -e "{{home}}/.config/herdr/config.toml" ] && [ ! -L "{{home}}/.config/herdr/config.toml" ]; then \
+        if [ -e "{{home}}/.config/herdr/config.toml.pre-stow" ]; then \
+            printf '%s\n' '~/.config/herdr/config.toml.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
+            exit 1; \
+        fi; \
+        mv -- "{{home}}/.config/herdr/config.toml" "{{home}}/.config/herdr/config.toml.pre-stow"; \
+    fi
+    mkdir -p "{{home}}/.config/herdr"
+    stow \
+        --dir "{{repo}}" \
+        --target "{{home}}" \
+        --restow \
+        --no-folding \
+        herdr
+
 nvim: formatters
     sudo pacman -S --needed \
         neovim \
