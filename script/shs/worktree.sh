@@ -252,7 +252,7 @@ add_branch() {
     local session_title
     local session_log
 
-    session_title="${add_title:-$project:$branch}"
+    session_title="${add_title:-$branch}"
     validate_add "$branch" "$worktree_path"
 
     if "$dry_run"; then
