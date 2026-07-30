@@ -53,6 +53,7 @@ just --list
 | `bash` | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。 |
 | `system-bash` | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。 |
 | `git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
+| `herdr` | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
 | `systemd-oomd` | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
@@ -68,6 +69,16 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## Herdr
+
+`just herdr` 是選用 target，不會由 `desktop`、`hyprland` 或 `all` 遞迴執行。它需要已安裝且可使用的 `yay`，並安裝 AUR 套件 `herdr-bin`。若 `~/.config/herdr/config.toml` 是實體檔，recipe 會先移至 `~/.config/herdr/config.toml.pre-stow`；該備份已存在時會停止而不覆蓋。設定檔以 `--no-folding` Stow，因此 Herdr 自動建立的 `session.json`、log、socket 與 `.plugins.lock` 會保留在本機設定目錄，不會寫入 repository。
+
+設定將 Herdr prefix 設為 `Ctrl-Space`，`Prefix` + `f` 開啟 workspace picker，`Prefix` + `Alt-g` 以 80% × 80% popup 開啟 `lazygit`。其他 Herdr 預設操作保留，例如 `Prefix` + `c` 建立 tab、`Prefix` + `h/j/k/l` 聚焦 pane、`Prefix` + `v` 或 `-` 分割 pane、`Prefix` + `z` zoom，以及 `Prefix` + `Shift-r` 重載設定。可用以下指令驗證設定：
+
+```sh
+herdr config check
+```
 
 ## system-bash
 

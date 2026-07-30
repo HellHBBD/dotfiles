@@ -1,0 +1,24 @@
+onboarding = false
+
+[theme]
+name = "tokyo-night"
+
+[keys]
+prefix = "ctrl+space"
+workspace_picker = "prefix+f"
+
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "lazygit"
+width = "80%"
+height = "80%"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+
+[ui.toast]
+delivery = "system"
+
+[ui.sound]
+enabled = true
