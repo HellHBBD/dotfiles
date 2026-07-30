@@ -26,8 +26,23 @@ unstow package:
 formatters:
     just stow formatters
 
-bash:
+system-bash:
     sudo pacman -S --needed bash stow
+    if [ -e /etc/bash.bashrc ] && [ ! -L /etc/bash.bashrc ]; then \
+        if [ -e /etc/bash.bashrc.pre-stow ]; then \
+            printf '%s\n' '/etc/bash.bashrc.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
+            exit 1; \
+        fi; \
+        sudo mv -- /etc/bash.bashrc /etc/bash.bashrc.pre-stow; \
+    fi
+    sudo stow \
+        --dir "{{repo}}" \
+        --target / \
+        --restow \
+        --no-folding \
+        system-bash
+
+bash: system-bash
     just stow bash
 
 git:

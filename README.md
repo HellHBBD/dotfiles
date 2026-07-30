@@ -40,7 +40,7 @@ cd ~/dotfiles
 just --list
 ```
 
-儲存庫根目錄的第一層目錄（例如 `bash/`、`nvim/`、`hyprland/`）是 Stow 套件。`just stow <套件>` 實際以儲存庫為 `--dir`、以 `$HOME` 為 `--target`，並使用 `--restow` 建立或更新連結；`just unstow <套件>` 則移除該套件的連結。開始前請先備份家目錄中會被連結覆蓋或衝突的既有設定。
+儲存庫根目錄的第一層目錄（例如 `bash/`、`nvim/`、`hyprland/`）是 Stow 套件。`just stow <套件>` 實際以儲存庫為 `--dir`、以 `$HOME` 為 `--target`，並使用 `--restow` 建立或更新連結；`just unstow <套件>` 則移除該套件的連結。開始前請先備份家目錄中會被連結覆蓋或衝突的既有設定。需要系統目錄的 package 會使用獨立的 Just target，並以 `/` 為 Stow target。
 
 ## Just targets
 
@@ -50,7 +50,9 @@ just --list
 | --- | --- |
 | `stow <package>` / `unstow <package>` | 為指定 Stow 套件建立/更新連結，或移除連結。 |
 | `formatters` | Stow `formatters` 設定。 |
-| `bash`、`git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
+| `bash` | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。 |
+| `system-bash` | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。 |
+| `git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
 | `systemd-oomd` | 將 `systemd-oomd` 的 memory-pressure drop-in Stow 至 `/etc`、啟用服務，並套用到目前使用者 session；不啟用全系統 swap kill。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
@@ -66,6 +68,19 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## system-bash
+
+`just system-bash` 會將現有的實體 `/etc/bash.bashrc` 移至 `/etc/bash.bashrc.pre-stow`，再將 `system-bash/etc/bash.bashrc` Stow 至 `/etc/bash.bashrc`。若備份檔已存在，recipe 會停止而不覆蓋它。`just bash` 會同時執行此 target 與使用者層級的 `bash` package。
+
+系統設定檔會指向使用者可寫入的 repository，因此只適用於受信任的個人管理員帳號。驗證及還原方式如下：
+
+```sh
+readlink -f /etc/bash.bashrc
+
+sudo stow --dir ~/dotfiles --target / --delete --no-folding system-bash
+sudo mv -- /etc/bash.bashrc.pre-stow /etc/bash.bashrc
+```
 
 ## systemd-oomd
 
