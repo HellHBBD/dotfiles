@@ -54,7 +54,7 @@ just --list
 | `system-bash` | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。 |
 | `git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
-| `systemd-oomd` | 將 `systemd-oomd` 的 memory-pressure drop-in Stow 至 `/etc`、啟用服務，並套用到目前使用者 session；不啟用全系統 swap kill。 |
+| `systemd-oomd` | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
 | `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
@@ -84,24 +84,36 @@ sudo mv -- /etc/bash.bashrc.pre-stow /etc/bash.bashrc
 
 ## systemd-oomd
 
-`just systemd-oomd` 會將 `systemd-oomd/etc/systemd/system/user@.service.d/60-oomd-memory-pressure.conf` Stow 至 `/etc/systemd/system/user@.service.d/`，啟用 `systemd-oomd`，並對目前使用者 session 設定 40% PSI memory pressure、持續 20 秒後允許終止候選 cgroup。它不設定 `ManagedOOMSwap=kill`。
+`just systemd-oomd` 會將 `systemd-oomd/etc/systemd/system/user@.service.d/60-oomd-memory-pressure.conf` 與 `systemd-oomd/etc/systemd/oomd.conf.d/60-swap-used-limit.conf` Stow 至 `/etc`，啟用 `systemd-oomd`，並對目前使用者 session 設定 `ManagedOOMMemoryPressure=kill` 與 `ManagedOOMSwap=kill`。memory pressure 規則維持在 PSI 40%、持續 20 秒；40% 是 cgroup 中所有工作都遭延遲的時間比例，不是 RAM 使用率。
 
-系統 drop-in 會指向此 repository 內的檔案，因此可修改使用者可寫入的 dotfiles 來改變有效的 `/etc` 設定。這只適合受信任的個人管理員帳號；修改後需執行 `sudo systemctl daemon-reload`。驗證可使用：
+`SwapUsedLimit=70%` 僅在系統 RAM 使用率與系統 swap 使用率都超過 70% 時觸發；OOMD 會從啟用 `ManagedOOMSwap=kill` 的 cgroup descendant 中，選擇使用超過總 swap 5% 且 swap 使用量最高的候選者，以 `SIGKILL` 終止。未儲存的工作可能遺失。
+
+系統 drop-in 會指向此 repository 內的檔案，因此可修改使用者可寫入的 dotfiles 來改變有效的 `/etc` 設定。這只適合受信任的個人管理員帳號；修改後需執行 `sudo systemctl daemon-reload` 與 `sudo systemctl restart systemd-oomd.service`。驗證可使用：
 
 ```sh
 systemctl status systemd-oomd.service --no-pager
+systemd-analyze cat-config systemd/oomd.conf
 sudo systemctl show "user@$(id -u).service" \
+  -p ManagedOOMSwap \
   -p ManagedOOMMemoryPressure \
   -p ManagedOOMMemoryPressureLimit \
   -p ManagedOOMMemoryPressureDurationUSec
 oomctl dump
 ```
 
+`oomctl dump` 應同時在 `Swap Monitored CGroups` 與 `Memory Pressure Monitored CGroups` 列出目前的 `user@UID.service`。
+
 移除設定時執行：
 
 ```sh
 sudo stow --dir ~/dotfiles --target / --delete --no-folding systemd-oomd
 sudo systemctl daemon-reload
+sudo systemctl set-property --runtime "user@$(id -u).service" \
+  ManagedOOMSwap=auto \
+  ManagedOOMMemoryPressure=auto \
+  ManagedOOMMemoryPressureLimit= \
+  ManagedOOMMemoryPressureDurationSec=
+sudo systemctl restart systemd-oomd.service
 ```
 
 ## 設定 greetd

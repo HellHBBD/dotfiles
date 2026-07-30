@@ -102,9 +102,11 @@ systemd-oomd:
     sudo systemctl daemon-reload
     sudo systemctl enable --now systemd-oomd.service
     sudo systemctl set-property --runtime "user@$(id -u).service" \
+        ManagedOOMSwap=kill \
         ManagedOOMMemoryPressure=kill \
         ManagedOOMMemoryPressureLimit=40% \
         ManagedOOMMemoryPressureDurationSec=20s
+    sudo systemctl restart systemd-oomd.service
 
 waybar: swaync
     @command -v yay >/dev/null || { \
