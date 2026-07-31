@@ -1,22 +1,38 @@
-BACKEND_SESSION="backend"
-HOME_SESSION="home"
+#!/usr/bin/env bash
 
 # MINECRAFT_DIR="$HOME/.local/share/PrismLauncher/instances/server/minecraft"
 # MINECRAFT_WORLD_DIR="$HOME/.local/share/PrismLauncher/instances/server/minecraft/world"
 # GEMINI_DIR="$HOME/gemini-balance"
 # CLAUDE_DIR="$HOME/.claude-code-router"
 
-tmux new-session -d -s "$BACKEND_SESSION" -n "Backend Process" -c "$HOME"
-# tmux new-window -t "$BACKEND_SESSION" -n "Minecraft Server" -c "$MINECRAFT_DIR"
-# tmux split-window -h -t "${BACKEND_SESSION}:Minecraft Server" -c "$MINECRAFT_WORLD_DIR"
-# tmux select-pane -t backend:"Minecraft Server".1
-tmux select-window -t "${BACKEND_SESSION}:Backend Process"
+ensure_tmux_session() {
+    local session_name="$1"
+    local working_directory="$2"
+    local first_window
+    local window_name
 
-tmux new-session -d -s "$HOME_SESSION" -c "$HOME"
+    if tmux has-session -t "=$session_name" 2>/dev/null; then
+        return
+    fi
 
-# PROJECT_NAME="schedule"
-# PROJECT_PATH="$HOME/schedule"
-# tmux new-session -d -s "$PROJECT_NAME" -n "AI" -c "$PROJECT_PATH"
-# tmux new-window -t "$PROJECT_NAME" -n "Code" -c "$PROJECT_PATH"
-# tmux new-window -t "$PROJECT_NAME" -n "Build" -c "$PROJECT_PATH"
-# tmux select-window -t "${PROJECT_NAME}:Code"
+    shift 2
+    if (($# == 0)); then
+        tmux new-session -d -s "$session_name" -c "$working_directory"
+        return
+    fi
+
+    first_window="$1"
+    tmux new-session -d -s "$session_name" -n "$first_window" -c "$working_directory"
+    shift
+
+    for window_name in "$@"; do
+        tmux new-window -t "$session_name" -n "$window_name" -c "$working_directory"
+    done
+
+    tmux select-window -t "${session_name}:${first_window}"
+}
+
+ensure_tmux_session "backend" "$HOME" "Backend Process"
+ensure_tmux_session "home" "$HOME"
+# ensure_tmux_session "dotfiles" "$HOME/dotfiles" "Code" "Build"
+# ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"

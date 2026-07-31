@@ -107,38 +107,82 @@ systemctl --user start \
 	-- App rules here apply only to these startup launches, not future windows.
 	start_on_workspace('ghostty', 1, [[
 sh -c '
-if ! tmux list-sessions >/dev/null 2>&1; then
-    script="$HOME/shs/tmux-init.sh"
-    if [ -x "$script" ]; then
-        "$script"
-    fi
+script="$HOME/shs/tmux-init.sh"
+if [ -x "$script" ]; then
+    "$script"
 fi
 
 exec ghostty -e tmux new-session -A -s home
 '
 ]])
 
-	local zen_urgent_subscription
-	zen_urgent_subscription = hl.on('window.urgent', function(window)
-		if window.initial_class ~= 'zen' or not window.workspace or window.workspace.id ~= 2 then
+	local startup_urgent_targets = {
+		[2] = 'zen',
+		[3] = 'com.mitchellh.ghostty',
+	}
+	local startup_urgent_workspaces = {}
+	local startup_urgent_windows = {}
+	local startup_urgent_subscription
+	local processing_startup_urgent = false
+
+	local function all_startup_urgents_cleared()
+		for workspace in pairs(startup_urgent_targets) do
+			if not startup_urgent_workspaces[workspace] then
+				return false
+			end
+		end
+		return true
+	end
+
+	local function clear_next_startup_urgent()
+		local window = table.remove(startup_urgent_windows, 1)
+		if not window then
+			processing_startup_urgent = false
+			if all_startup_urgents_cleared() then
+				startup_urgent_subscription:remove()
+			end
 			return
 		end
 
-		-- Focusing Zen clears its startup urgency before returning to workspace 1.
+		-- Waybar needs one update cycle with the target workspace active to drop urgent.
+		processing_startup_urgent = true
 		hl.dispatch(hl.dsp.focus({ window = window }))
 		hl.timer(function()
-			-- Waybar needs one update cycle with workspace 2 active to drop urgent.
 			hl.dispatch(hl.dsp.focus({ workspace = 1 }))
+			clear_next_startup_urgent()
 		end, { timeout = 100, type = 'oneshot' })
-		zen_urgent_subscription:remove()
+	end
+
+	startup_urgent_subscription = hl.on('window.urgent', function(window)
+		local workspace = window.workspace
+		if not workspace or
+			startup_urgent_targets[workspace.id] ~= window.initial_class or
+			startup_urgent_workspaces[workspace.id] then
+			return
+		end
+
+		startup_urgent_workspaces[workspace.id] = true
+		table.insert(startup_urgent_windows, window)
+		if not processing_startup_urgent then
+			clear_next_startup_urgent()
+		end
 	end)
 
 	hl.timer(function()
-		if zen_urgent_subscription:is_active() then
-			zen_urgent_subscription:remove()
+		if startup_urgent_subscription:is_active() then
+			startup_urgent_subscription:remove()
 		end
 	end, { timeout = 10000, type = 'oneshot' })
 
 	start_on_workspace('zen-browser', 2, nil, { suppress_event = 'activate' })
+	start_on_workspace('ghostty', 3, [[
+sh -c '
+if ! command -v herdr >/dev/null 2>&1; then
+    exit 0
+fi
+
+exec ghostty -e herdr
+'
+]])
 	hl.dispatch(hl.dsp.focus({ workspace = 1 }))
 end)
