@@ -11,4 +11,5 @@ $ARGUMENTS
 
 Use only the local helper script after confirmation for mutating operations. Do
 not inspect project files, implement code, create an implementation plan,
-dispatch subagents, alter explicit branch names, or run additional Git commands.
+alter explicit branch names, or run additional Git commands. Only a verified
+`MERGE_CONFLICT` may dispatch the hidden `worktree-merge-resolver`.

@@ -1,7 +1,7 @@
 ---
 description: Conduct a manual, high-depth read-only review of critical changes.
 mode: subagent
-hidden: false
+hidden: true
 model: openai/gpt-5.6-sol
 options:
   reasoningEffort: max

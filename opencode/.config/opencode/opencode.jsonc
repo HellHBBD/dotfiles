@@ -127,6 +127,12 @@
     }
   },
   "agent": {
+    "general": {
+      "hidden": true
+    },
+    "explore": {
+      "hidden": true
+    },
     "build": {
       "model": "openai/gpt-5.6-terra",
       "options": {

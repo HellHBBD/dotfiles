@@ -9,7 +9,7 @@ readonly EXIT_MERGE=6
 readonly EXIT_CLEANUP=7
 
 WORKTREE_BASE="${XDG_DATA_HOME:-$HOME/.local/share}/worktrees"
-DEFAULT_INITIALIZATION_PROMPT='Initialize this worktree session. Inspect the repository only. Do not modify files or create commits. Wait for further instructions.'
+DEFAULT_INITIALIZATION_PROMPT='初始化 worktree 工作階段。請勿讀取或修改檔案、執行工具或開始工作，只回覆「已初始化」。'
 
 repo_arg='.'
 repo_root=''
@@ -20,6 +20,10 @@ json=false
 yes=false
 dry_run=false
 command_name=''
+merge_target_status=''
+merge_target_clean=true
+merge_target_changes_json='[]'
+merge_warnings_json='[]'
 
 usage() {
     cat <<'EOF'
@@ -188,6 +192,8 @@ emit_add_result() {
     local worktree_path="$3"
     local session_title="$4"
     local session_log="${5-}"
+    local herdr_workspace="${6-}"
+    local session_id="${7-}"
 
     if "$json"; then
         jq -cn \
@@ -197,12 +203,18 @@ emit_add_result() {
             --arg worktree "$worktree_path" \
             --arg session "$session_title" \
             --arg log "$session_log" \
+            --arg herdr_workspace "$herdr_workspace" \
+            --arg session_id "$session_id" \
             '{status: $status, command: $command, branch: $branch, worktree: $worktree} +
-             (if $session == "" then {} else {session: $session} end) +
-             (if $log == "" then {} else {log: $log} end)'
+              (if $session == "" then {} else {session: $session} end) +
+              (if $log == "" then {} else {log: $log} end) +
+              (if $herdr_workspace == "" then {} else {herdr_workspace: $herdr_workspace} end) +
+              (if $session_id == "" then {} else {session_id: $session_id} end)'
     else
         printf 'Branch: %s\nWorktree: %s\n' "$branch" "$worktree_path"
         [[ -n "$session_title" ]] && printf 'Session: %s\n' "$session_title"
+        [[ -n "$session_id" ]] && printf 'Session ID: %s\n' "$session_id"
+        [[ -n "$herdr_workspace" ]] && printf 'Herdr workspace: %s\n' "$herdr_workspace"
         [[ -n "$session_log" ]] && printf 'Log: %s\n' "$session_log"
     fi
 }
@@ -243,7 +255,52 @@ validate_add() {
     if "$add_session" && ! "$dry_run"; then
         command -v opencode >/dev/null 2>&1 ||
             fail "$EXIT_USAGE" 'OPENCODE_NOT_FOUND' '找不到 opencode'
+        command -v herdr >/dev/null 2>&1 ||
+            fail "$EXIT_USAGE" 'HERDR_NOT_FOUND' '找不到 herdr'
+        require_command jq
     fi
+}
+
+open_herdr_workspace() {
+    local worktree_path="$1"
+    local session_title="$2"
+
+    herdr_log="$(mktemp "${TMPDIR:-/tmp}/worktree-herdr-${project}-${branch//\//-}.XXXXXX.log")"
+    if ! herdr worktree open \
+        --cwd "$repo_root" \
+        --path "$worktree_path" \
+        --label "$session_title" \
+        --no-focus \
+        --json >"$herdr_log" 2>&1; then
+        return 1
+    fi
+
+    herdr_workspace="$(jq -er '.result.workspace.workspace_id' "$herdr_log")" || return 1
+    herdr_root_pane="$(jq -er '.result.root_pane.pane_id' "$herdr_log")" || return 1
+}
+
+initialize_opencode_session() {
+    local worktree_path="$1"
+    local session_title="$2"
+
+    if ! opencode run --pure --format json --dir "$worktree_path" --title "$session_title" \
+        --agent "$add_agent" "$add_prompt" >"$session_log" 2>&1; then
+        return 1
+    fi
+
+    session_id="$(jq -rs 'map(select(.sessionID? != null).sessionID) | last // empty' "$session_log")"
+    [[ -n "$session_id" ]]
+}
+
+start_herdr_opencode() {
+    local agent_name="wt-${BASHPID}"
+
+    herdr agent start "$agent_name" --kind opencode --pane "$herdr_root_pane" -- \
+        --session "$session_id" --agent "$add_agent" >>"$session_log" 2>&1
+}
+
+initialize_herdr_session() {
+    initialize_opencode_session "$worktree_path" "$session_title" && start_herdr_opencode
 }
 
 add_branch() {
@@ -251,6 +308,10 @@ add_branch() {
     local worktree_path="$project_dir/$branch"
     local session_title
     local session_log
+    local herdr_log=''
+    local herdr_workspace=''
+    local herdr_root_pane=''
+    local session_id=''
 
     session_title="${add_title:-$branch}"
     validate_add "$branch" "$worktree_path"
@@ -266,12 +327,21 @@ add_branch() {
                 --argjson create_session "$add_session" \
                 '{status: "DRY_RUN", command: "add", branch: $branch, worktree: $worktree,
                   operations: (["git worktree add -b " + $branch + " " + $worktree + " " + $base] +
-                  (if $create_session then ["opencode run --agent " + $agent] else [] end)),
+                  (if $create_session then ["herdr worktree open --path " + $worktree,
+                    "opencode run --agent " + $agent,
+                    "herdr agent start --kind opencode"] else [] end)),
                   session: $session}'
         else
             printf 'DRY RUN: git -C %q worktree add -b %q %q %q\n' \
                 "$repo_root" "$branch" "$worktree_path" "$add_base"
-            "$add_session" && printf 'DRY RUN: opencode run --agent %q --dir %q\n' "$add_agent" "$worktree_path"
+            if "$add_session"; then
+                printf 'DRY RUN: herdr worktree open --cwd %q --path %q --label %q --no-focus\n' \
+                    "$repo_root" "$worktree_path" "$session_title"
+                printf 'DRY RUN: opencode run --pure --format json --agent %q --dir %q\n' \
+                    "$add_agent" "$worktree_path"
+                printf 'DRY RUN: herdr agent start wt-<pid> --kind opencode --pane <root-pane> -- --session <session-id> --agent %q\n' \
+                    "$add_agent"
+            fi
         fi
         return
     fi
@@ -287,21 +357,35 @@ add_branch() {
         return
     fi
 
+    progress "建立 Herdr workspace：$session_title"
+    if ! open_herdr_workspace "$worktree_path" "$session_title"; then
+        emit_add_result 'WORKTREE_CREATED_HERDR_FAILED' "$branch" "$worktree_path" "$session_title" "$herdr_log"
+        exit "$EXIT_SESSION"
+    fi
+    rm -f "$herdr_log"
+
     session_log="$(mktemp "${TMPDIR:-/tmp}/worktree-${project}-${branch//\//-}.XXXXXX.log")"
     if "$add_wait"; then
         progress "初始化 OpenCode session：$session_title"
-        if opencode run --pure --dir "$worktree_path" --title "$session_title" --agent "$add_agent" "$add_prompt" >"$session_log" 2>&1; then
-            emit_add_result 'OK' "$branch" "$worktree_path" "$session_title"
+        if ! initialize_opencode_session "$worktree_path" "$session_title"; then
+            emit_add_result 'WORKTREE_CREATED_SESSION_FAILED' "$branch" "$worktree_path" "$session_title" "$session_log" "$herdr_workspace"
+            exit "$EXIT_SESSION"
+        fi
+        progress "在 Herdr 啟動 OpenCode：$session_title"
+        if start_herdr_opencode; then
+            emit_add_result 'OK' "$branch" "$worktree_path" "$session_title" '' "$herdr_workspace" "$session_id"
             rm -f "$session_log"
         else
-            emit_add_result 'WORKTREE_CREATED_SESSION_FAILED' "$branch" "$worktree_path" "$session_title" "$session_log"
+            emit_add_result 'WORKTREE_CREATED_SESSION_START_FAILED' "$branch" "$worktree_path" "$session_title" "$session_log" "$herdr_workspace" "$session_id"
             exit "$EXIT_SESSION"
         fi
     else
         (
-            opencode run --pure --dir "$worktree_path" --title "$session_title" --agent "$add_agent" "$add_prompt" >"$session_log" 2>&1
+            if ! initialize_herdr_session; then
+                printf 'OpenCode session initialization or Herdr launch failed\n' >>"$session_log"
+            fi
         ) </dev/null &
-        emit_add_result 'SESSION_INITIALIZING' "$branch" "$worktree_path" "$session_title" "$session_log"
+        emit_add_result 'SESSION_INITIALIZING' "$branch" "$worktree_path" "$session_title" "$session_log" "$herdr_workspace"
     fi
 }
 
@@ -318,13 +402,47 @@ emit_merge_failure() {
             --arg branch "$failed_branch" \
             --argjson merged "$merged_json" \
             --argjson remaining "$remaining_json" \
+            --argjson target_clean "$merge_target_clean" \
+            --argjson target_changes_before "$merge_target_changes_json" \
+            --argjson warnings "$merge_warnings_json" \
             '{status: $status, command: $command, failed_branch: $branch,
-              merged: $merged, remaining: $remaining, merge_aborted: false}'
+              merged: $merged, remaining: $remaining, merge_aborted: false,
+              target_clean: $target_clean, target_changes_before: $target_changes_before,
+              warnings: $warnings}'
     else
         printf '\n合併失敗，已停止：%s\n' "$failed_branch" >&2
         printf '請使用 git status 查看狀態。\n' >&2
         printf '取消合併可執行：git merge --abort\n' >&2
     fi
+}
+
+capture_merge_target_state() {
+    local -a changes=()
+
+    merge_target_status="$(git -C "$repo_root" status --short)" ||
+        fail "$EXIT_REPOSITORY" 'TARGET_STATUS_FAILED' '無法取得 target worktree 狀態'
+    merge_target_clean=true
+    merge_target_changes_json='[]'
+    merge_warnings_json='[]'
+
+    if [[ -n "$merge_target_status" ]]; then
+        merge_target_clean=false
+        mapfile -t changes <<<"$merge_target_status"
+        if "$json"; then
+            merge_target_changes_json="$(json_array "${changes[@]}")"
+            merge_warnings_json='["DIRTY_TARGET"]'
+        fi
+    fi
+}
+
+warn_dirty_merge_target() {
+    "$merge_target_clean" && return
+    "$json" && return
+
+    printf '\n警告：target worktree 有未提交變更，將直接嘗試合併。\n' >&2
+    printf '%s\n' "$merge_target_status" >&2
+    printf '%s\n' 'staged changes 通常會讓 Git 拒絕 merge；重疊的 local changes 也會讓 Git 停止。' >&2
+    printf '%s\n' '不重疊的 unstaged changes 可能會被保留；若發生 conflict，merge --abort 未必能完整還原它們。' >&2
 }
 
 validate_merge() {
@@ -338,8 +456,6 @@ validate_merge() {
     [[ "$target" == "$current_branch" ]] ||
         fail "$EXIT_REPOSITORY" 'INVALID_TARGET' '--target 必須是目前 checkout 的 branch'
     (($# > 0)) || fail "$EXIT_USAGE" 'USAGE_ERROR' 'merge 至少需要一個 branch'
-    is_clean_worktree "$repo_root" ||
-        fail "$EXIT_REPOSITORY" 'DIRTY_WORKTREE' '目前 worktree 有未提交變更，不能合併'
 
     for branch in "$@"; do
         [[ "$branch" != "$target" ]] ||
@@ -379,6 +495,8 @@ merge_branches() {
     local merge_status='OK'
 
     validate_merge "$target" "${branches[@]}"
+    capture_merge_target_state
+    warn_dirty_merge_target
 
     if "$dry_run"; then
         if "$json"; then
@@ -386,8 +504,12 @@ merge_branches() {
                 --arg target "$target" \
                 --argjson branches "$(json_array "${branches[@]}")" \
                 --argjson delete "$merge_delete" \
+                --argjson target_clean "$merge_target_clean" \
+                --argjson target_changes_before "$merge_target_changes_json" \
+                --argjson warnings "$merge_warnings_json" \
                 '{status: "DRY_RUN", command: "merge", target: $target, branches: $branches,
-                  delete: $delete}'
+                  delete: $delete, target_clean: $target_clean,
+                  target_changes_before: $target_changes_before, warnings: $warnings}'
         else
             for branch in "${branches[@]}"; do
                 printf 'DRY RUN: git -C %q merge --no-ff --no-edit %q\n' "$repo_root" "$branch"
@@ -433,7 +555,12 @@ merge_branches() {
             --arg target "$target" \
             --argjson merged "$(json_array "${merged[@]}")" \
             --argjson deleted "$merge_delete" \
-            '{status: "OK", command: "merge", target: $target, merged: $merged, deleted: $deleted}'
+            --argjson target_clean "$merge_target_clean" \
+            --argjson target_changes_before "$merge_target_changes_json" \
+            --argjson warnings "$merge_warnings_json" \
+            '{status: "OK", command: "merge", target: $target, merged: $merged, deleted: $deleted,
+              target_clean: $target_clean, target_changes_before: $target_changes_before,
+              warnings: $warnings}'
     else
         printf '\n全部處理完成\n'
     fi
@@ -460,6 +587,7 @@ cleanup_branch() {
 list_branches() {
     local -a branches=()
     local branch
+    local branch_tip
     local worktree_path
     local current=false
     local entries_json
@@ -470,10 +598,11 @@ list_branches() {
         entries_json="$({
             for branch in "${branches[@]}"; do
                 worktree_path="$(worktree_path_for_branch "$branch")"
+                branch_tip="$(git -C "$repo_root" rev-parse --verify "$branch^{commit}")"
                 current=false
                 [[ "$branch" == "$current_branch" ]] && current=true
-                jq -cn --arg branch "$branch" --arg worktree "$worktree_path" --argjson current "$current" \
-                    '{branch: $branch, worktree: (if $worktree == "" then null else $worktree end), current: $current}'
+                jq -cn --arg branch "$branch" --arg tip "$branch_tip" --arg worktree "$worktree_path" --argjson current "$current" \
+                    '{branch: $branch, tip: $tip, worktree: (if $worktree == "" then null else $worktree end), current: $current}'
             done
         } | jq -s .)"
         jq -cn \
@@ -585,7 +714,7 @@ run_interactive() {
 
     while true; do
         printf 'Project: %s\nCurrent branch: %s\nWorktree root: %s\n\n' "$project" "$current_branch" "$project_dir"
-        action="$(gum choose 'add    建立 branch、worktree 和 OpenCode session' 'merge  選擇並合併 branch' 'quit   離開')" || exit 0
+        action="$(gum choose 'add    建立 branch、worktree、Herdr workspace 和 OpenCode session' 'merge  選擇並合併 branch' 'quit   離開')" || exit 0
         clear
         case "$action" in
         add*) run_interactive_add ;;
