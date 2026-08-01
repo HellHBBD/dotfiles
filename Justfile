@@ -42,6 +42,42 @@ system-bash:
         --no-folding \
         system-bash
 
+# Portable UEFI boot support. This repository expects the ESP at /boot.
+boot-compatibility:
+    sudo sh -c 'test "$(findmnt --target /boot --noheadings --output FSTYPE)" = vfat'
+    sudo pacman -S --needed \
+        grub \
+        efibootmgr \
+        mkinitcpio \
+        linux-firmware \
+        amd-ucode \
+        intel-ucode \
+        stow
+    for path in /etc/mkinitcpio.conf /etc/mkinitcpio.d/linux.preset /etc/grub.d/40_custom; do \
+        if [ -e "$path" ] && [ ! -L "$path" ]; then \
+            backup="$path.pre-stow"; \
+            if [ -e "$backup" ]; then \
+                printf '%s\\n' "$backup 已存在，為避免覆蓋備份而停止" >&2; \
+                exit 1; \
+            fi; \
+            sudo mv -- "$path" "$backup"; \
+        fi; \
+    done
+    sudo stow \
+        --dir "{{repo}}" \
+        --target / \
+        --restow \
+        --no-folding \
+        boot-compatibility
+    sudo mkinitcpio -P
+    sudo grub-install \
+        --target=x86_64-efi \
+        --efi-directory=/boot \
+        --bootloader-id=GRUB \
+        --removable \
+        --recheck
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+
 bash: system-bash
     just stow bash
 

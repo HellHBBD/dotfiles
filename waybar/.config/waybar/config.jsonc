@@ -39,7 +39,7 @@
   },
   "group/status": {
     "orientation": "horizontal",
-    "modules": ["pulseaudio", "custom/wifi", "custom/bluetooth", "battery"]
+    "modules": ["pulseaudio", "custom/wifi", "custom/bluetooth", "custom/battery"]
   },
   "custom/screenshot": {
     "format": " 󰄀",
@@ -74,17 +74,12 @@
     "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
     "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
   },
-  "battery": {
+  "custom/battery": {
+    "return-type": "json",
+    "exec": "bash ~/.config/hypr/scripts/battery-status.sh",
     "interval": 30,
-    "states": {
-      "warning": 30,
-      "critical": 15
-    },
-    "format": "{icon} {capacity:>3}%",
-    "format-charging": "󰂄 {capacity:>3}%",
-    "format-plugged": "󰚥 {capacity:>3}%",
-    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "tooltip-format": "{timeTo} remaining"
+    "format": "{text}",
+    "hide-empty-text": true
   },
   "custom/mpris": {
     "return-type": "json",
