@@ -50,10 +50,25 @@ boot-compatibility:
         efibootmgr \
         mkinitcpio \
         linux-firmware \
+        sof-firmware \
+        alsa-firmware \
+        wireless-regdb \
         amd-ucode \
         intel-ucode \
         stow
-    for path in /etc/mkinitcpio.conf /etc/mkinitcpio.d/linux.preset /etc/grub.d/40_custom; do \
+    if [ -L /etc/grub.d/40_custom ]; then \
+        target="$(readlink /etc/grub.d/40_custom)"; \
+        case "$target" in \
+            *boot-compatibility/etc/grub.d/40_custom) \
+                test -e /etc/grub.d/40_custom.pre-stow || { \
+                    printf '%s\n' '找不到 /etc/grub.d/40_custom.pre-stow，拒絕移除目前自訂 entry' >&2; \
+                    exit 1; \
+                }; \
+                sudo rm -- /etc/grub.d/40_custom; \
+                sudo mv -- /etc/grub.d/40_custom.pre-stow /etc/grub.d/40_custom ;; \
+        esac; \
+    fi
+    for path in /etc/mkinitcpio.conf /etc/mkinitcpio.d/linux.preset /etc/grub.d/15_uki /etc/default/grub.d/50-boot-compatibility.cfg; do \
         if [ -e "$path" ] && [ ! -L "$path" ]; then \
             backup="$path.pre-stow"; \
             if [ -e "$backup" ]; then \
@@ -61,6 +76,9 @@ boot-compatibility:
                 exit 1; \
             fi; \
             sudo mv -- "$path" "$backup"; \
+            case "$path" in \
+                /etc/grub.d/15_uki) sudo chmod a-x -- "$backup" ;; \
+            esac; \
         fi; \
     done
     sudo stow \
@@ -69,6 +87,24 @@ boot-compatibility:
         --restow \
         --no-folding \
         boot-compatibility
+    sudo sh -eu -c ' \
+        set -f; \
+        portable_cmdline=""; \
+        for argument in $(cat /etc/kernel/cmdline); do \
+            case "$argument" in \
+                acpi_backlight=*) continue ;; \
+                root=/dev/*|resume=/dev/*) \
+                    printf "%s\\n" "refusing non-portable kernel argument: $argument" >&2; \
+                    exit 1 ;; \
+            esac; \
+            portable_cmdline="${portable_cmdline:+$portable_cmdline }$argument"; \
+        done; \
+        case "$portable_cmdline" in \
+            *root=UUID=*|*root=PARTUUID=*) ;; \
+            *) printf "%s\\n" "portable kernel command line requires root=UUID or root=PARTUUID" >&2; exit 1 ;; \
+        esac; \
+        printf "%s\\n" "$portable_cmdline" > /etc/kernel/cmdline-portable \
+    '
     sudo mkinitcpio -P
     sudo grub-install \
         --target=x86_64-efi \
@@ -77,6 +113,56 @@ boot-compatibility:
         --removable \
         --recheck
     sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# Verify boot-compatibility artifacts; root reads the protected ESP.
+boot-compatibility-check:
+    sudo sh -eu -c ' \
+        test "$(findmnt --target /boot --noheadings --output FSTYPE)" = vfat; \
+        test -f /boot/EFI/BOOT/BOOTX64.EFI; \
+        test -f /boot/EFI/Linux/arch-linux.efi; \
+        test -f /boot/EFI/Linux/arch-linux-fallback.efi; \
+        test -f /boot/grub/grub.cfg; \
+        test -x /etc/grub.d/15_uki; \
+        sh -n /etc/grub.d/15_uki; \
+        if [ -e /etc/grub.d/15_uki.pre-stow ]; then test ! -x /etc/grub.d/15_uki.pre-stow; fi; \
+        test -f /etc/default/grub.d/50-boot-compatibility.cfg; \
+        grep -Fx "GRUB_DEFAULT=saved" /etc/default/grub.d/50-boot-compatibility.cfg; \
+        grep -Fx "GRUB_SAVEDEFAULT=true" /etc/default/grub.d/50-boot-compatibility.cfg; \
+        test -z "$(find /etc/grub.d /etc/kernel /etc/mkinitcpio.d -xtype l -print)"; \
+        ! grep -Fq "Arch Linux (UKI)" /boot/grub/grub.cfg; \
+        test -s /etc/kernel/cmdline-portable; \
+        ! grep -Eq "(^| )acpi_backlight=" /etc/kernel/cmdline-portable; \
+        ! grep -Eq "(^| )(root|resume)=/dev/" /etc/kernel/cmdline /etc/kernel/cmdline-portable; \
+        grep -Eq "(^| )root=(UUID|PARTUUID)=" /etc/kernel/cmdline-portable \
+    '
+    test "$(sudo rg -c '^[[:space:]]*set blsuki_save_default=true[[:space:]]*$' /boot/grub/grub.cfg)" -eq 1
+    test "$(sudo rg -c '^[[:space:]]*uki[[:space:]]*$' /boot/grub/grub.cfg)" -eq 1
+    generated_config="$(sudo mktemp)"; \
+    trap 'sudo rm -f "$generated_config"' EXIT; \
+    sudo grub-mkconfig -o "$generated_config"; \
+    test "$(sudo rg -c '^[[:space:]]*set blsuki_save_default=true[[:space:]]*$' "$generated_config")" -eq 1; \
+    test "$(sudo rg -c '^[[:space:]]*uki[[:space:]]*$' "$generated_config")" -eq 1
+    for uki in /boot/EFI/Linux/arch-linux.efi /boot/EFI/Linux/arch-linux-fallback.efi; do \
+        early_contents="$(sudo lsinitcpio --early "$uki")"; \
+        for microcode in AuthenticAMD GenuineIntel; do \
+            grep -Fq "$microcode" <<<"$early_contents"; \
+        done; \
+    done
+    fallback_contents="$(sudo lsinitcpio /boot/EFI/Linux/arch-linux-fallback.efi)"; \
+    for module in vmd nvme ahci uas usb_storage; do \
+        module_path="$(modinfo -F filename "$module")"; \
+        if [ "$module_path" != '(builtin)' ]; then \
+            grep -Fq "${module_path##*/}" <<<"$fallback_contents"; \
+        fi; \
+    done
+    default_cmdline="$(sudo objcopy --dump-section .cmdline=/dev/stdout /boot/EFI/Linux/arch-linux.efi | tr '\0' '\n')"; \
+    fallback_cmdline="$(sudo objcopy --dump-section .cmdline=/dev/stdout /boot/EFI/Linux/arch-linux-fallback.efi | tr '\0' '\n')"; \
+    default_osrelease="$(sudo objcopy --dump-section .osrel=/dev/stdout /boot/EFI/Linux/arch-linux.efi | tr '\0' '\n')"; \
+    fallback_osrelease="$(sudo objcopy --dump-section .osrel=/dev/stdout /boot/EFI/Linux/arch-linux-fallback.efi | tr '\0' '\n')"; \
+    grep -Eq '(^| )acpi_backlight=native( |$)' <<<"$default_cmdline"; \
+    ! grep -Eq '(^| )acpi_backlight=native( |$)' <<<"$fallback_cmdline"; \
+    grep -Fx 'PRETTY_NAME="Arch Linux"' <<<"$default_osrelease"; \
+    grep -Fx 'PRETTY_NAME="Arch Linux (fallback)"' <<<"$fallback_osrelease"
 
 bash: system-bash
     just stow bash

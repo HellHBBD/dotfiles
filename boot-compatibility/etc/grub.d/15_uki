@@ -1,0 +1,11 @@
+#! /bin/sh
+set -e
+
+# Let GRUB discover every UKI in EFI/Linux. Entry labels come from each UKI's
+# embedded os-release metadata, avoiding duplicate hand-written entries.
+cat <<EOF
+if [ "\$grub_platform" = "efi" ]; then
+  set blsuki_save_default=true
+  uki
+fi
+EOF

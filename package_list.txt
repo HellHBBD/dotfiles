@@ -93,6 +93,9 @@ grub
 efibootmgr
 mkinitcpio
 linux-firmware
+sof-firmware
+alsa-firmware
+wireless-regdb
 amd-ucode
 intel-ucode
 aic94xx-firmware

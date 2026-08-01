@@ -5,11 +5,11 @@
 > [!WARNING]
 > 這些設定含有個人偏好，並非所有螢幕、GPU、鍵盤或觸控板都適用。首次進入圖形桌面前，請先閱讀並依本機硬體調整下列檔案：
 >
-> - `hyprland/.config/hypr/custom/monitors.lua`（目前筆電的輸出名稱、縮放與螢幕模式）
+> - `hyprland/.config/hypr/custom/init.lua`（需要時才加入的主機專屬覆寫）
 > - `hyprland/.config/hypr/hyprland/input.lua`（鍵盤配置、觸控板與手勢）
 > - `hyprland/.config/hypr/hyprland/env.lua`（工作階段環境變數；GPU 專用設定應在確認相依項後再加入）
 >
-> 尤其不要直接假設 `eDP-1`、解析度或 GPU 設定適用於你的機器。`custom/monitors.lua` 建議先使用 `preferred`，登入後以 `hyprctl monitors all` 確認實際模式。
+> 尤其不要直接假設 `eDP-1`、解析度或 GPU 設定適用於你的機器。所有主機會使用 `preferred`、auto-position、1.25 倍縮放的通用 monitor fallback；登入後以 `hyprctl monitors all` 確認實際模式。
 
 ## 安裝前準備
 
@@ -56,7 +56,8 @@ just --list
 | `herdr` | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
 | `systemd-oomd` | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。 |
-| `boot-compatibility` | 備份並 Stow mkinitcpio、Linux preset 與 GRUB UKI entries；重建正常及 generic fallback UKI，並安裝 UEFI fallback loader。此 target 要求 ESP 掛載於 `/boot`。 |
+| `boot-compatibility` | 備份並 Stow mkinitcpio、Linux preset 與 GRUB UKI discovery script；重建現機 UKI 及 portable fallback UKI，並安裝 UEFI fallback loader。此 target 要求 ESP 掛載於 `/boot`。 |
+| `boot-compatibility-check` | 唯讀檢查 fallback loader、兩個具名 UKI、GRUB UKI discovery、microcode、portable cmdline 與 fallback storage modules；需 root 讀取 ESP。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
 | `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
@@ -73,25 +74,28 @@ just desktop
 
 ## 跨主機開機
 
-本設定以 x86_64 UEFI、GRUB 與 `/boot` ESP 為目標，不包含 Secure Boot 簽章。首次套用前，確認 ESP 的掛載點：
+本設定以 x86_64 UEFI、GRUB 與 `/boot` ESP 為目標，不包含 Secure Boot 簽章。目標主機必須可停用 Secure Boot，並允許從 USB/removable drive 啟動。首次套用前，確認 ESP 的掛載點：
 
 ```sh
 findmnt /boot
 just boot-compatibility
 ```
 
-此 target 會先將現有的 `/etc/mkinitcpio.conf`、`/etc/mkinitcpio.d/linux.preset` 與 `/etc/grub.d/40_custom` 改名為同路徑的 `.pre-stow` 備份，拒絕覆蓋既有備份。它安裝 Intel 與 AMD microcode、建立主機最佳化 UKI 與不使用 `autodetect` 的 generic fallback UKI，並以 `grub-install --removable` 建立 `EFI/BOOT/BOOTX64.EFI`。fallback UKI 透過 GRUB 選單中的 `Arch Linux (fallback UKI)` 啟動。
+此 target 會先將現有的 `/etc/mkinitcpio.conf`、`/etc/mkinitcpio.d/linux.preset` 與 `/etc/grub.d/15_uki` 改名為同路徑的 `.pre-stow` 備份，拒絕覆蓋既有備份。若先前版本曾將自訂 UKI entries Stow 到 `40_custom`，target 會還原原本的 `40_custom.pre-stow`，讓 GRUB 只使用 `15_uki` 自動掃描。它安裝 Intel 與 AMD microcode、`linux-firmware`、`sof-firmware`、`alsa-firmware` 與 `wireless-regdb`，再建立兩種 UKI：`Arch Linux` 使用 `/etc/kernel/cmdline` 的現機參數；`Arch Linux (fallback)` 跳過 `autodetect`，使用從該檔移除 `acpi_backlight=*` 後生成的 `/etc/kernel/cmdline-portable`，並嵌入專用顯示名稱。兩者都必須使用 `root=UUID=` 或 `root=PARTUUID=`；target 拒絕 `root=/dev/*` 或 `resume=/dev/*`。最後以 `grub-install --removable` 建立 `EFI/BOOT/BOOTX64.EFI`。
 
-執行後，確認 loader、兩個 UKI 與選單項目：
+執行後，使用以下 target 確認 loader、兩個 UKI、選單項目、microcode、storage modules 及 portable cmdline：
 
 ```sh
-test -f /boot/EFI/BOOT/BOOTX64.EFI
-test -f /boot/EFI/Linux/arch-linux.efi
-test -f /boot/EFI/Linux/arch-linux-fallback.efi
-grep -F "Arch Linux (fallback UKI)" /boot/grub/grub.cfg
+just boot-compatibility-check
 ```
 
-先在目前電腦測試 fallback UKI，再把磁碟移至其他硬體。若新硬體無法從 GRUB 啟動，使用 UEFI boot menu 選取磁碟 fallback path；請保留可用 TTY 與已知可正常開機的 kernel，直到兩種 entry 都完成驗證。
+GRUB 應列出 `Arch Linux` 與 `Arch Linux (fallback)`。第一次手動選擇 `Arch Linux` 後，GRUB 會記住這個動態 UKI，而不是依賴 menu 順序；選擇 fallback 後也會暫時改成它，測試完成後需再選一般 UKI 一次。先在目前電腦測試兩者，再把磁碟移至其他硬體。fallback 保留可攜的 storage modules 並移除 Acer 專用背光參數，但仍使用同一顆磁碟的 root PARTUUID/UUID；它不是可跨不同 root filesystem 的通用映像。換到新硬體時先選 `Arch Linux (fallback)`。若新硬體無法從 GRUB 啟動，使用 UEFI boot menu 選取磁碟 fallback path；請保留可用 TTY 與已知可正常開機的 kernel，直到兩種 entry 都完成驗證。
+
+準備移動磁碟前必須完整關機，不可在休眠後換機恢復。此設定不提供 Secure Boot 簽章；若日後啟用 LUKS/TPM，必須保留可攜的 passphrase、recovery key 或 FIDO2 解鎖方式，不能只保留 TPM token。
+
+## 主機專屬 Hyprland 設定
+
+`hyprland/monitors.lua` 提供所有機器共用的 preferred-mode、auto-position、1.25 倍縮放 fallback。`custom/init.lua` 目前不含覆寫；新電腦先使用通用規則，僅在必要時才加入特定 output、縮放或位置。GPU 專屬環境變數應放在主機專屬設定或 UWSM host layer，不能寫入 `/etc/environment`。
 
 若要還原，先移除 Stow links，再確認 `.pre-stow` 備份後手動還原；完成後重建 UKI 與 GRUB menu：
 
@@ -99,7 +103,8 @@ grep -F "Arch Linux (fallback UKI)" /boot/grub/grub.cfg
 sudo stow --dir ~/dotfiles --target / --delete --no-folding boot-compatibility
 sudo mv -- /etc/mkinitcpio.conf.pre-stow /etc/mkinitcpio.conf
 sudo mv -- /etc/mkinitcpio.d/linux.preset.pre-stow /etc/mkinitcpio.d/linux.preset
-sudo mv -- /etc/grub.d/40_custom.pre-stow /etc/grub.d/40_custom
+sudo mv -- /etc/grub.d/15_uki.pre-stow /etc/grub.d/15_uki
+sudo chmod 755 /etc/grub.d/15_uki
 sudo mkinitcpio -P
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
