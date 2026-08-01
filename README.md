@@ -56,6 +56,7 @@ just --list
 | `herdr` | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。 |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
 | `systemd-oomd` | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。 |
+| `boot-compatibility` | 備份並 Stow mkinitcpio、Linux preset 與 GRUB UKI entries；重建正常及 generic fallback UKI，並安裝 UEFI fallback loader。此 target 要求 ESP 掛載於 `/boot`。 |
 | `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
 | `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
@@ -69,6 +70,39 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## 跨主機開機
+
+本設定以 x86_64 UEFI、GRUB 與 `/boot` ESP 為目標，不包含 Secure Boot 簽章。首次套用前，確認 ESP 的掛載點：
+
+```sh
+findmnt /boot
+just boot-compatibility
+```
+
+此 target 會先將現有的 `/etc/mkinitcpio.conf`、`/etc/mkinitcpio.d/linux.preset` 與 `/etc/grub.d/40_custom` 改名為同路徑的 `.pre-stow` 備份，拒絕覆蓋既有備份。它安裝 Intel 與 AMD microcode、建立主機最佳化 UKI 與不使用 `autodetect` 的 generic fallback UKI，並以 `grub-install --removable` 建立 `EFI/BOOT/BOOTX64.EFI`。fallback UKI 透過 GRUB 選單中的 `Arch Linux (fallback UKI)` 啟動。
+
+執行後，確認 loader、兩個 UKI 與選單項目：
+
+```sh
+test -f /boot/EFI/BOOT/BOOTX64.EFI
+test -f /boot/EFI/Linux/arch-linux.efi
+test -f /boot/EFI/Linux/arch-linux-fallback.efi
+grep -F "Arch Linux (fallback UKI)" /boot/grub/grub.cfg
+```
+
+先在目前電腦測試 fallback UKI，再把磁碟移至其他硬體。若新硬體無法從 GRUB 啟動，使用 UEFI boot menu 選取磁碟 fallback path；請保留可用 TTY 與已知可正常開機的 kernel，直到兩種 entry 都完成驗證。
+
+若要還原，先移除 Stow links，再確認 `.pre-stow` 備份後手動還原；完成後重建 UKI 與 GRUB menu：
+
+```sh
+sudo stow --dir ~/dotfiles --target / --delete --no-folding boot-compatibility
+sudo mv -- /etc/mkinitcpio.conf.pre-stow /etc/mkinitcpio.conf
+sudo mv -- /etc/mkinitcpio.d/linux.preset.pre-stow /etc/mkinitcpio.d/linux.preset
+sudo mv -- /etc/grub.d/40_custom.pre-stow /etc/grub.d/40_custom
+sudo mkinitcpio -P
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
 
 ## Herdr
 

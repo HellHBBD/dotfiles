@@ -1,6 +1,5 @@
 /*
- * Geometry is expressed in logical pixels for eDP-1 at scale 1.25.
- * 32px bar / 24px module / 8px radius render as 40px / 30px / 10px physical.
+ * Geometry is expressed in logical pixels and works at any output scale.
  */
 * {
   border: none;
@@ -26,7 +25,7 @@ window#waybar {
 #pulseaudio,
 #custom-wifi,
 #custom-bluetooth,
-#battery,
+#custom-battery,
 #custom-notifications {
   min-height: 24px;
   margin: 4px 2px;
@@ -42,7 +41,7 @@ window#waybar {
 #pulseaudio,
 #custom-wifi,
 #custom-bluetooth,
-#battery,
+#custom-battery,
 #custom-notifications {
   padding: 0 3px;
 }
@@ -120,7 +119,7 @@ window#waybar {
 }
 
 #pulseaudio,
-#battery {
+#custom-battery {
   min-width: 68px;
 }
 
@@ -151,7 +150,7 @@ window#waybar {
 
 #custom-wifi.disconnected,
 #custom-bluetooth.idle,
-#battery.warning {
+#custom-battery.warning {
   color: #fab387;
 }
 
@@ -162,7 +161,7 @@ window#waybar {
 
 #custom-wifi.error,
 #custom-bluetooth.error,
-#battery.critical {
+#custom-battery.critical {
   color: #f38ba8;
 }
 

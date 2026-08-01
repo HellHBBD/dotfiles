@@ -89,6 +89,12 @@ noto-fonts-emoji
 ### Login ###
 
 ### Firmware ###
+grub
+efibootmgr
+mkinitcpio
+linux-firmware
+amd-ucode
+intel-ucode
 aic94xx-firmware
 ast-firmware
 linux-firmware-qlogic
