@@ -125,58 +125,83 @@ exec ghostty -e tmux new-session -A -s home
 		[3] = 'com.mitchellh.ghostty',
 	}
 	local startup_urgent_timeout = 60000
-	local startup_urgent_workspaces = {}
-	local startup_urgent_windows = {}
-	local startup_urgent_subscription
-	local processing_startup_urgent = false
+	local startup_urgent_open = {}
+	local startup_urgent_pending = {}
+	local startup_urgent_generation = {}
+	local startup_urgent_expired = false
+	local schedule_startup_urgent_clear
 
-	local function all_startup_urgents_cleared()
-		for workspace in pairs(startup_urgent_targets) do
-			if not startup_urgent_workspaces[workspace] then
-				return false
-			end
-		end
-		return true
+	local function is_startup_urgent_target(window)
+		local workspace = window.workspace
+		return workspace and startup_urgent_targets[workspace.id] == window.initial_class
 	end
 
-	local function clear_next_startup_urgent()
-		local window = table.remove(startup_urgent_windows, 1)
-		if not window then
-			processing_startup_urgent = false
-			if all_startup_urgents_cleared() then
-				startup_urgent_subscription:remove()
-			end
+	local function clear_startup_urgent(window)
+		local id = window.stable_id
+		if startup_urgent_expired or not startup_urgent_open[id] or not window.mapped then
 			return
 		end
 
-		-- Waybar needs one update cycle with the target workspace active to drop urgent.
-		processing_startup_urgent = true
+		local workspace = window.workspace
+		if not workspace then
+			return
+		end
+
+		local restore_workspace = hl.get_active_workspace()
 		hl.dispatch(hl.dsp.focus({ window = window }))
 		hl.timer(function()
-			hl.dispatch(hl.dsp.focus({ workspace = 1 }))
-			clear_next_startup_urgent()
-		end, { timeout = 100, type = 'oneshot' })
+			local retry = not startup_urgent_expired and workspace.has_urgent
+			if not retry and not startup_urgent_expired then
+				startup_urgent_pending[id] = nil
+			end
+
+			if restore_workspace then
+				hl.dispatch(hl.dsp.focus({ workspace = restore_workspace }))
+			end
+			if retry then
+				schedule_startup_urgent_clear(window)
+			end
+		end, { timeout = 250, type = 'oneshot' })
 	end
 
-	startup_urgent_subscription = hl.on('window.urgent', function(window)
-		local workspace = window.workspace
-		if not workspace or
-			startup_urgent_targets[workspace.id] ~= window.initial_class or
-			startup_urgent_workspaces[workspace.id] then
+	schedule_startup_urgent_clear = function(window)
+		local id = window.stable_id
+		startup_urgent_pending[id] = window
+		if startup_urgent_expired or not startup_urgent_open[id] then
 			return
 		end
 
-		startup_urgent_workspaces[workspace.id] = true
-		table.insert(startup_urgent_windows, window)
-		if not processing_startup_urgent then
-			clear_next_startup_urgent()
+		startup_urgent_generation[id] = (startup_urgent_generation[id] or 0) + 1
+		local generation = startup_urgent_generation[id]
+		hl.timer(function()
+			if startup_urgent_generation[id] == generation then
+				clear_startup_urgent(window)
+			end
+		end, { timeout = 500, type = 'oneshot' })
+	end
+
+	local startup_urgent_open_subscription = hl.on('window.open', function(window)
+		if not is_startup_urgent_target(window) then
+			return
+		end
+
+		local id = window.stable_id
+		startup_urgent_open[id] = true
+		if startup_urgent_pending[id] then
+			schedule_startup_urgent_clear(window)
+		end
+	end)
+
+	local startup_urgent_subscription = hl.on('window.urgent', function(window)
+		if is_startup_urgent_target(window) then
+			schedule_startup_urgent_clear(window)
 		end
 	end)
 
 	hl.timer(function()
-		if startup_urgent_subscription:is_active() then
-			startup_urgent_subscription:remove()
-		end
+		startup_urgent_expired = true
+		startup_urgent_open_subscription:remove()
+		startup_urgent_subscription:remove()
 	end, { timeout = startup_urgent_timeout, type = 'oneshot' })
 
 	start_on_workspace('zen-browser', 2, nil, { suppress_event = 'activate' })
