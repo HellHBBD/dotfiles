@@ -124,6 +124,7 @@ exec ghostty -e tmux new-session -A -s home
 		[2] = 'zen',
 		[3] = 'com.mitchellh.ghostty',
 	}
+	local startup_urgent_timeout = 60000
 	local startup_urgent_workspaces = {}
 	local startup_urgent_windows = {}
 	local startup_urgent_subscription
@@ -176,7 +177,7 @@ exec ghostty -e tmux new-session -A -s home
 		if startup_urgent_subscription:is_active() then
 			startup_urgent_subscription:remove()
 		end
-	end, { timeout = 10000, type = 'oneshot' })
+	end, { timeout = startup_urgent_timeout, type = 'oneshot' })
 
 	start_on_workspace('zen-browser', 2, nil, { suppress_event = 'activate' })
 	start_on_workspace('ghostty', 3, [[
