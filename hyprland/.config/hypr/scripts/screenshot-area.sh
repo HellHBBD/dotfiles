@@ -9,7 +9,7 @@ mkdir -p "$directory"
 file="$directory/$(date '+%Y-%m-%d_%H-%M-%S').png"
 
 if grim -g "$selection" "$file"; then
-    wl-copy < "$file"
+    wl-copy <"$file"
     notify-send "Screenshot saved" "$file"
 else
     notify-send -u critical "Screenshot failed" "grim could not capture the selected area"

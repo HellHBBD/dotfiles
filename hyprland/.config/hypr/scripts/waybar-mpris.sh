@@ -43,18 +43,18 @@ filled=${filled// /█}
 empty=${empty// /░}
 
 case $status in
-    Playing)
-        icon="󰐊"
-        class="playing"
-        ;;
-    Paused)
-        icon="󰏤"
-        class="paused"
-        ;;
-    *)
-        icon="󰏤"
-        class="idle"
-        ;;
+Playing)
+    icon="󰐊"
+    class="playing"
+    ;;
+Paused)
+    icon="󰏤"
+    class="paused"
+    ;;
+*)
+    icon="󰏤"
+    class="idle"
+    ;;
 esac
 
 text="$icon $artist${artist:+ - }$title"

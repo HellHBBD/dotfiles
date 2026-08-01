@@ -23,7 +23,7 @@ else
     power_action="󰖩 Turn Wi-Fi on"
 fi
 
-selection=$( {
+selection=$({
     printf '%s\n' "$power_action" '󰖩 Disconnect' '󰑓 Rescan'
     if wifi_enabled; then
         nmcli --terse --fields SSID device wifi list --rescan yes 2>/dev/null |
@@ -33,38 +33,38 @@ selection=$( {
 } | fuzzel --dmenu --prompt 'Wi-Fi > ') || exit 0
 
 case $selection in
-    '󰖪 Turn Wi-Fi off')
-        nmcli radio wifi off && notify "Wi-Fi turned off"
-        ;;
-    '󰖩 Turn Wi-Fi on')
-        nmcli radio wifi on && notify "Wi-Fi turned on"
-        ;;
-    '󰖩 Disconnect')
-        device=$(connected_device)
-        if [[ -n $device ]]; then
-            nmcli device disconnect "$device" && notify "Disconnected"
-        else
-            notify "No active Wi-Fi connection"
-        fi
-        ;;
-    '󰑓 Rescan')
-        nmcli device wifi rescan && notify "Network scan requested"
-        ;;
-    '')
+'󰖪 Turn Wi-Fi off')
+    nmcli radio wifi off && notify "Wi-Fi turned off"
+    ;;
+'󰖩 Turn Wi-Fi on')
+    nmcli radio wifi on && notify "Wi-Fi turned on"
+    ;;
+'󰖩 Disconnect')
+    device=$(connected_device)
+    if [[ -n $device ]]; then
+        nmcli device disconnect "$device" && notify "Disconnected"
+    else
+        notify "No active Wi-Fi connection"
+    fi
+    ;;
+'󰑓 Rescan')
+    nmcli device wifi rescan && notify "Network scan requested"
+    ;;
+'')
+    exit 0
+    ;;
+*)
+    if nmcli device wifi connect "$selection"; then
+        notify "Connected to $selection"
         exit 0
-        ;;
-    *)
-        if nmcli device wifi connect "$selection"; then
-            notify "Connected to $selection"
-            exit 0
-        fi
+    fi
 
-        password=$(fuzzel --dmenu --prompt-only 'Wi-Fi password > ' --password) || exit 0
-        [[ -n $password ]] || exit 0
-        if nmcli device wifi connect "$selection" password "$password"; then
-            notify "Connected to $selection"
-        else
-            notify "Could not connect to $selection"
-        fi
-        ;;
+    password=$(fuzzel --dmenu --prompt-only 'Wi-Fi password > ' --password) || exit 0
+    [[ -n $password ]] || exit 0
+    if nmcli device wifi connect "$selection" password "$password"; then
+        notify "Connected to $selection"
+    else
+        notify "Could not connect to $selection"
+    fi
+    ;;
 esac

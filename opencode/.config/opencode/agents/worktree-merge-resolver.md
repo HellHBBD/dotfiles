@@ -4,31 +4,31 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
-  textVerbosity: low
+    reasoningEffort: high
+    textVerbosity: low
 permission:
-  edit: allow
-  task: deny
-  skill: deny
-  question: deny
-  webfetch: deny
-  websearch: deny
-  mobile: deny
-  external_directory:
-    "*": deny
-    "~/.local/share/worktrees/**": allow
-  bash:
-    "*": deny
-    "git status --short*": allow
-    "git rev-parse *": allow
-    "git diff --name-only --diff-filter=U": allow
-    "git diff --name-only*": allow
-    "git diff --cached*": allow
-    "git ls-files -u*": allow
-    "git show :*": allow
-    "git add -- *": allow
-    "git commit --no-edit": allow
-    "git rev-list --parents*": allow
+    edit: allow
+    task: deny
+    skill: deny
+    question: deny
+    webfetch: deny
+    websearch: deny
+    mobile: deny
+    external_directory:
+        "*": deny
+        "~/.local/share/worktrees/**": allow
+    bash:
+        "*": deny
+        "git status --short*": allow
+        "git rev-parse *": allow
+        "git diff --name-only --diff-filter=U": allow
+        "git diff --name-only*": allow
+        "git diff --cached*": allow
+        "git ls-files -u*": allow
+        "git show :*": allow
+        "git add -- *": allow
+        "git commit --no-edit": allow
+        "git rev-list --parents*": allow
 ---
 
 Resolve one assigned merge conflict in the current worktree only. Your assignment

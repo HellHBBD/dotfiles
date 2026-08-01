@@ -22,23 +22,23 @@ of truth. Do not infer current syntax from old configuration examples.
 1. Read repository instructions and inspect the existing configuration layout.
 2. Determine the installed version with `hyprctl version` or `Hyprland --version`.
 3. Select the matching documentation version:
-   - Hyprland 0.55 and later: `https://wiki.hypr.land/<version>/`
-   - Hyprland 0.54 and earlier: `https://wiki.hypr.land/0.54.0/`
-   - If no local binary is available, ask for the target version before writing
-     version-sensitive syntax.
+    - Hyprland 0.55 and later: `https://wiki.hypr.land/<version>/`
+    - Hyprland 0.54 and earlier: `https://wiki.hypr.land/0.54.0/`
+    - If no local binary is available, ask for the target version before writing
+      version-sensitive syntax.
 4. Identify the actual entry file and include graph before editing:
-   - Lua configurations normally start at `$XDG_CONFIG_HOME/hypr/hyprland.lua`
-     and use `require()`.
-   - Legacy Hyprlang configurations normally start at
-     `$XDG_CONFIG_HOME/hypr/hyprland.conf` and use `source =`.
-   - Follow local modules, overrides, generated files, and load order. Edit the
-     narrowest owned source file, not a derived output.
+    - Lua configurations normally start at `$XDG_CONFIG_HOME/hypr/hyprland.lua`
+      and use `require()`.
+    - Legacy Hyprlang configurations normally start at
+      `$XDG_CONFIG_HOME/hypr/hyprland.conf` and use `source =`.
+    - Follow local modules, overrides, generated files, and load order. Edit the
+      narrowest owned source file, not a derived output.
 5. For hardware- or window-specific work, inspect only the required state:
-   - `hyprctl -j monitors all` for outputs and modes.
-   - `hyprctl -j devices` for input device names.
-   - `hyprctl -j clients` for window class, title, and other rule match data.
-   - `hyprctl -j binds`, `hyprctl -j workspaces`, or `hyprctl -j activeworkspace`
-     when relevant.
+    - `hyprctl -j monitors all` for outputs and modes.
+    - `hyprctl -j devices` for input device names.
+    - `hyprctl -j clients` for window class, title, and other rule match data.
+    - `hyprctl -j binds`, `hyprctl -j workspaces`, or `hyprctl -j activeworkspace`
+      when relevant.
 
 ## Version Rules
 
@@ -88,9 +88,9 @@ desktop.
 2. When the Hyprland binary is available, validate the entry file without
    starting a session:
 
-   ```sh
-   Hyprland --verify-config --config <entry-file>
-   ```
+    ```sh
+    Hyprland --verify-config --config <entry-file>
+    ```
 
 3. For Lua files, `luac -p <file>` may catch basic Lua syntax errors, but it
    does not replace `Hyprland --verify-config` because `hl.*` APIs and
@@ -99,9 +99,9 @@ desktop.
    the source, and validate again.
 5. If live reload is approved or has occurred automatically, run:
 
-   ```sh
-   hyprctl configerrors
-   ```
+    ```sh
+    hyprctl configerrors
+    ```
 
 6. Verify the specific intended result: monitor state, bind registration,
    client rule match, workspace behavior, or option value. Do not report

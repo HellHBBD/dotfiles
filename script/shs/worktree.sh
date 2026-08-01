@@ -121,7 +121,7 @@ parse_global_option() {
         dry_run=true
         PARSED_COUNT=1
         ;;
-    --help|-h)
+    --help | -h)
         usage
         exit 0
         ;;
@@ -820,7 +820,10 @@ run_merge_command() {
             shift
             ;;
         --*) fail "$EXIT_USAGE" 'USAGE_ERROR' "未知選項：$1" ;;
-        *) branches+=("$1"); shift ;;
+        *)
+            branches+=("$1")
+            shift
+            ;;
         esac
     done
     require_jq_for_json

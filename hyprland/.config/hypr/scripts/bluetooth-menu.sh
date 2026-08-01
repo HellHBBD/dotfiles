@@ -14,28 +14,28 @@ else
     power_action="󰂯 Turn Bluetooth on"
 fi
 
-selection=$( {
+selection=$({
     printf '%s\n' "$power_action" '󰂯 Scan for devices'
     bluetoothctl devices 2>/dev/null | sed 's/^Device / /'
 } | fuzzel --dmenu --prompt 'Bluetooth > ') || exit 0
 
 case $selection in
-    '󰂲 Turn Bluetooth off')
-        bluetoothctl power off >/dev/null && notify "Bluetooth turned off"
-        exit 0
-        ;;
-    '󰂯 Turn Bluetooth on')
-        bluetoothctl power on >/dev/null && notify "Bluetooth turned on"
-        exit 0
-        ;;
-    '󰂯 Scan for devices')
-        bluetoothctl power on >/dev/null
-        bluetoothctl --timeout 5 scan on >/dev/null 2>&1
-        exec "$0"
-        ;;
-    '')
-        exit 0
-        ;;
+'󰂲 Turn Bluetooth off')
+    bluetoothctl power off >/dev/null && notify "Bluetooth turned off"
+    exit 0
+    ;;
+'󰂯 Turn Bluetooth on')
+    bluetoothctl power on >/dev/null && notify "Bluetooth turned on"
+    exit 0
+    ;;
+'󰂯 Scan for devices')
+    bluetoothctl power on >/dev/null
+    bluetoothctl --timeout 5 scan on >/dev/null 2>&1
+    exec "$0"
+    ;;
+'')
+    exit 0
+    ;;
 esac
 
 address=${selection# }

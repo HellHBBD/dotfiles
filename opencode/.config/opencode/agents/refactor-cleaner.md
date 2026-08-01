@@ -4,10 +4,10 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  edit: allow
-  task: deny
+    edit: allow
+    task: deny
 ---
 
 Make focused, behavior-preserving refactors. Avoid scope expansion and verify

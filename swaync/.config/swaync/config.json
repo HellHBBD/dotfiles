@@ -1,50 +1,46 @@
 {
-  "$schema": "/etc/xdg/swaync/configSchema.json",
-  "ignore-gtk-theme": true,
-  "positionX": "right",
-  "positionY": "top",
-  "layer": "overlay",
-  "layer-shell": true,
-  "cssPriority": "application",
-  "notification-window-width": 420,
-  "control-center-positionX": "right",
-  "control-center-positionY": "top",
-  "control-center-layer": "overlay",
-  "control-center-exclusive-zone": false,
-  "control-center-margin-top": 44,
-  "control-center-margin-bottom": 8,
-  "control-center-margin-left": 8,
-  "control-center-margin-right": 8,
-  "control-center-width": 420,
-  "control-center-height": 700,
-  "fit-to-screen": false,
-  "timeout": 8,
-  "timeout-low": 5,
-  "timeout-critical": 0,
-  "transition-time": 180,
-  "keyboard-shortcuts": true,
-  "relative-timestamps": true,
-  "image-visibility": "when-available",
-  "notification-body-image-height": 160,
-  "notification-body-image-width": 280,
-  "notification-2fa-action": true,
-  "notification-inline-replies": true,
-  "hide-on-clear": false,
-  "hide-on-action": true,
-  "script-fail-notify": true,
-  "widgets": [
-    "title",
-    "dnd",
-    "notifications"
-  ],
-  "widget-config": {
-    "title": {
-      "text": "通知",
-      "clear-all-button": true,
-      "button-text": "全部清除"
-    },
-    "dnd": {
-      "text": "勿擾模式"
+    "$schema": "/etc/xdg/swaync/configSchema.json",
+    "ignore-gtk-theme": true,
+    "positionX": "right",
+    "positionY": "top",
+    "layer": "overlay",
+    "layer-shell": true,
+    "cssPriority": "application",
+    "notification-window-width": 420,
+    "control-center-positionX": "right",
+    "control-center-positionY": "top",
+    "control-center-layer": "overlay",
+    "control-center-exclusive-zone": false,
+    "control-center-margin-top": 44,
+    "control-center-margin-bottom": 8,
+    "control-center-margin-left": 8,
+    "control-center-margin-right": 8,
+    "control-center-width": 420,
+    "control-center-height": 700,
+    "fit-to-screen": false,
+    "timeout": 8,
+    "timeout-low": 5,
+    "timeout-critical": 0,
+    "transition-time": 180,
+    "keyboard-shortcuts": true,
+    "relative-timestamps": true,
+    "image-visibility": "when-available",
+    "notification-body-image-height": 160,
+    "notification-body-image-width": 280,
+    "notification-2fa-action": true,
+    "notification-inline-replies": true,
+    "hide-on-clear": false,
+    "hide-on-action": true,
+    "script-fail-notify": true,
+    "widgets": ["title", "dnd", "notifications"],
+    "widget-config": {
+        "title": {
+            "text": "通知",
+            "clear-all-button": true,
+            "button-text": "全部清除"
+        },
+        "dnd": {
+            "text": "勿擾模式"
+        }
     }
-  }
 }

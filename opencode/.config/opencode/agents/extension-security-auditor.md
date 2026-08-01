@@ -4,17 +4,17 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-sol
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  skill: deny
-  task: deny
-  websearch: deny
-  webfetch: deny
-  edit: deny
-  bash: deny
-  external_directory:
-    "*": deny
-    "~/.local/share/opencode-extension-manager/**": allow
+    skill: deny
+    task: deny
+    websearch: deny
+    webfetch: deny
+    edit: deny
+    bash: deny
+    external_directory:
+        "*": deny
+        "~/.local/share/opencode-extension-manager/**": allow
 ---
 
 Audit only staged extension source. Report executable behavior, hooks, network

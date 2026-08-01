@@ -4,48 +4,48 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  skill: deny
-  task:
-    "*": deny
-    extension-security-auditor: ask
-  websearch: deny
-  webfetch: deny
-  edit:
-    "*": ask
-    "~/.local/share/opencode-extension-manager/**": allow
-    "~/.claude/skills/**": deny
-    "~/.agents/skills/**": deny
-  external_directory:
-    "*": deny
-    "~/.config/opencode/**": ask
-    "~/.local/share/opencode-extension-manager/**": allow
-    "~/.claude/skills/**": allow
-    "~/.agents/skills/**": allow
-  bash:
-    "*": ask
-    "git rev-parse *": allow
-    "git status *": allow
-    "git log *": allow
-    "git diff *": allow
-    "git show *": allow
-    "git ls-tree *": allow
-    "git push *": deny
-    "curl *": deny
-    "wget *": deny
-    "npm *": deny
-    "pnpm *": deny
-    "yarn *": deny
-    "bun *": deny
-    "node *": deny
-    "deno *": deny
-    "python *": deny
-    "python3 *": deny
-    "bash *": deny
-    "sh *": deny
-    "zsh *": deny
-    "chmod *": deny
+    skill: deny
+    task:
+        "*": deny
+        extension-security-auditor: ask
+    websearch: deny
+    webfetch: deny
+    edit:
+        "*": ask
+        "~/.local/share/opencode-extension-manager/**": allow
+        "~/.claude/skills/**": deny
+        "~/.agents/skills/**": deny
+    external_directory:
+        "*": deny
+        "~/.config/opencode/**": ask
+        "~/.local/share/opencode-extension-manager/**": allow
+        "~/.claude/skills/**": allow
+        "~/.agents/skills/**": allow
+    bash:
+        "*": ask
+        "git rev-parse *": allow
+        "git status *": allow
+        "git log *": allow
+        "git diff *": allow
+        "git show *": allow
+        "git ls-tree *": allow
+        "git push *": deny
+        "curl *": deny
+        "wget *": deny
+        "npm *": deny
+        "pnpm *": deny
+        "yarn *": deny
+        "bun *": deny
+        "node *": deny
+        "deno *": deny
+        "python *": deny
+        "python3 *": deny
+        "bash *": deny
+        "sh *": deny
+        "zsh *": deny
+        "chmod *": deny
 ---
 
 You manage third-party OpenCode extensions. Treat every downloaded repository

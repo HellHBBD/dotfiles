@@ -134,22 +134,22 @@ server for ordinary validation.
 
 1. Format and inspect the diff:
 
-   ```sh
-   cargo fmt --check
-   dx fmt --check --locked
-   ```
+    ```sh
+    cargo fmt --check
+    dx fmt --check --locked
+    ```
 
 2. When `dx` is available, validate the affected platform without launching it:
 
-   ```sh
-   dx check --web --locked
-   dx check --desktop --locked
-   dx check --server --locked
-   ```
+    ```sh
+    dx check --web --locked
+    dx check --desktop --locked
+    dx check --server --locked
+    ```
 
-   Run only the platform commands the project supports and that are affected by
-   the change. For fullstack work, validate client and server configurations
-   separately when the project needs explicit target selection.
+    Run only the platform commands the project supports and that are affected by
+    the change. For fullstack work, validate client and server configurations
+    separately when the project needs explicit target selection.
 
 3. Use `cargo check`, `cargo clippy`, and `cargo test` with the project's
    package, feature, and target selection. Do not claim a target passed when

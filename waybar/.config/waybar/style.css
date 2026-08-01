@@ -2,17 +2,19 @@
  * Geometry is expressed in logical pixels and works at any output scale.
  */
 * {
-  border: none;
-  min-height: 0;
-  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC", monospace;
-  font-feature-settings: "tnum";
-  font-size: 13px;
-  font-weight: 500;
+    border: none;
+    min-height: 0;
+    font-family:
+        "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC",
+        monospace;
+    font-feature-settings: "tnum";
+    font-size: 13px;
+    font-weight: 500;
 }
 
 window#waybar {
-  background: transparent;
-  color: #cdd6f4;
+    background: transparent;
+    color: #cdd6f4;
 }
 
 /* Shared rounded-rectangle geometry: 30px high with a 10px physical radius. */
@@ -27,11 +29,11 @@ window#waybar {
 #custom-bluetooth,
 #custom-battery,
 #custom-notifications {
-  min-height: 24px;
-  margin: 4px 2px;
-  background: #313244;
-  border-radius: 8px;
-  color: #cdd6f4;
+    min-height: 24px;
+    margin: 4px 2px;
+    background: #313244;
+    border-radius: 8px;
+    color: #cdd6f4;
 }
 
 /* Text pills use compact insets; network names can still expand naturally. */
@@ -43,134 +45,134 @@ window#waybar {
 #custom-bluetooth,
 #custom-battery,
 #custom-notifications {
-  padding: 0 3px;
+    padding: 0 3px;
 }
 
 #custom-mpris {
-  margin-left: 0;
-  padding: 0 8px;
+    margin-left: 0;
+    padding: 0 8px;
 }
 
 #cpu,
 #memory {
-  padding: 0 8px;
+    padding: 0 8px;
 }
 
 #custom-spacer {
-  min-width: 0;
+    min-width: 0;
 }
 
 /* Only the active workspace receives a pill background. */
 #workspaces {
-  margin: 4px 2px;
+    margin: 4px 2px;
 }
 
 #workspaces button {
-  min-width: 28px;
-  min-height: 24px;
-  margin: 0 1.5px;
-  padding: 0;
-  border-radius: 8px;
-  color: #a6adc8;
+    min-width: 28px;
+    min-height: 24px;
+    margin: 0 1.5px;
+    padding: 0;
+    border-radius: 8px;
+    color: #a6adc8;
 }
 
 #workspaces button.active {
-  background: #5c9cf5;
-  color: #1e1e2e;
+    background: #5c9cf5;
+    color: #1e1e2e;
 }
 
 #workspaces button.urgent {
-  background: #f38ba8;
-  color: #1e1e2e;
+    background: #f38ba8;
+    color: #1e1e2e;
 }
 
 #workspaces button:hover {
-  background: #45475a;
-  box-shadow: none;
+    background: #45475a;
+    box-shadow: none;
 }
 
 /* The date pill follows its content width instead of reserving unused space. */
 #custom-clock {
-  margin: 4px 2px;
-  padding: 0 5px;
-  background: rgba(49, 50, 68, 0.8);
-  color: #5c9cf5;
+    margin: 4px 2px;
+    padding: 0 5px;
+    background: rgba(49, 50, 68, 0.8);
+    color: #5c9cf5;
 }
 
 /* Icon buttons keep the shared height and radius but have no text inset. */
 #custom-screenshot,
 #custom-colorpicker {
-  min-width: 24px;
-  padding: 0;
-  font-weight: 400;
+    min-width: 24px;
+    padding: 0;
+    font-weight: 400;
 }
 
 /* Groups only arrange their children; the last child defines the next group gap. */
 #tools,
 #hardware,
 #status {
-  margin: 0;
-  padding: 0;
-  background: transparent;
+    margin: 0;
+    padding: 0;
+    background: transparent;
 }
 
 #cpu {
-  min-width: 54px;
+    min-width: 54px;
 }
 
 #pulseaudio,
 #custom-battery {
-  min-width: 68px;
+    min-width: 68px;
 }
 
 #memory {
-  min-width: 76px;
+    min-width: 76px;
 }
 
 #custom-wifi {
-  min-width: 130px;
-  padding: 0 10px;
+    min-width: 130px;
+    padding: 0 10px;
 }
 
 #custom-bluetooth {
-  min-width: 130px;
-  padding: 0 10px;
+    min-width: 130px;
+    padding: 0 10px;
 }
 
 #custom-notifications {
-  min-width: 24px;
-  padding: 0;
-  margin-right: 0;
+    min-width: 24px;
+    padding: 0;
+    margin-right: 0;
 }
 
 #custom-wifi.connected,
 #custom-bluetooth.connected {
-  color: #89b4fa;
+    color: #89b4fa;
 }
 
 #custom-wifi.disconnected,
 #custom-bluetooth.idle,
 #custom-battery.warning {
-  color: #fab387;
+    color: #fab387;
 }
 
 #custom-wifi.off,
 #custom-bluetooth.off {
-  color: #a6adc8;
+    color: #a6adc8;
 }
 
 #custom-wifi.error,
 #custom-bluetooth.error,
 #custom-battery.critical {
-  color: #f38ba8;
+    color: #f38ba8;
 }
 
 tooltip {
-  background: #1e1e2e;
-  border: 1px solid #45475a;
-  border-radius: 8px;
+    background: #1e1e2e;
+    border: 1px solid #45475a;
+    border-radius: 8px;
 }
 
 tooltip label {
-  color: #cdd6f4;
+    color: #cdd6f4;
 }

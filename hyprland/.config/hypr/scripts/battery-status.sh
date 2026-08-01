@@ -8,7 +8,7 @@ emit() {
 
 shopt -s nullglob
 batteries=(/sys/class/power_supply/BAT*)
-if (( ${#batteries[@]} == 0 )); then
+if ((${#batteries[@]} == 0)); then
     emit '' 'hidden' ''
     exit 0
 fi
@@ -23,9 +23,9 @@ if [[ ! $capacity =~ ^[0-9]+$ ]]; then
 fi
 
 class='normal'
-if (( capacity <= 15 )); then
+if ((capacity <= 15)); then
     class='critical'
-elif (( capacity <= 30 )); then
+elif ((capacity <= 30)); then
     class='warning'
 fi
 
@@ -33,7 +33,7 @@ case $status in
 Charging)
     icon='󰂄'
     ;;
-Full|Not\ charging)
+Full | Not\ charging)
     icon='󰚥'
     ;;
 *)

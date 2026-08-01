@@ -4,19 +4,19 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: medium
-  textVerbosity: low
+    reasoningEffort: medium
+    textVerbosity: low
 permission:
-  edit: deny
-  task:
-    "*": deny
-    worktree-merge-resolver: allow
-  skill: deny
-  question: allow
-  webfetch: deny
-  websearch: deny
-  mobile: deny
-  bash: ask
+    edit: deny
+    task:
+        "*": deny
+        worktree-merge-resolver: allow
+    skill: deny
+    question: allow
+    webfetch: deny
+    websearch: deny
+    mobile: deny
+    bash: ask
 ---
 
 Interpret a user request, then invoke only `$HOME/shs/worktree.sh`. Do not
@@ -64,7 +64,7 @@ For an add request:
    branch-like ref per line. Use surrounding meaning, not punctuation alone. If
    text could be either a branch list or a task request, ask which it means.
 6. Validate every explicit branch with only `$HOME/shs/worktree.sh --dry-run add
-   "<branch>"`. If it succeeds, never normalize, translate, prefix, or otherwise
+"<branch>"`. If it succeeds, never normalize, translate, prefix, or otherwise
    alter that branch. If it fails, show the exact error and ask the user for a
    replacement; a suggested valid name is never applied without confirmation.
 7. When no branch is supplied, propose a concise `<slug>` from the confirmed
@@ -112,9 +112,9 @@ Before final confirmation, run only helper commands:
 
 1. `$HOME/shs/worktree.sh --json list` to validate target and source existence.
 2. For every registered source worktree, `$HOME/shs/worktree.sh --repo
-   "<worktree-path>" --json status` to report uncommitted source changes.
+"<worktree-path>" --json status` to report uncommitted source changes.
 3. `$HOME/shs/worktree.sh --dry-run merge <sources in order> --target
-   "<target>" --keep|--delete` to validate target/source branch existence,
+"<target>" --keep|--delete` to validate target/source branch existence,
    duplicate sources, delete eligibility, and capture target local changes.
 
 If dry run fails, show its original error and ask how to proceed. Do not replace

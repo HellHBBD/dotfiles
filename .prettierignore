@@ -1,0 +1,11 @@
+# Third-party extension content is versioned verbatim for governance review.
+opencode/.config/opencode/extensions/
+opencode/.config/opencode/commands/power-pack-*.md
+opencode/.config/opencode/commands/superpower-*.md
+opencode/.config/opencode/commands/vendor-*.md
+opencode/.config/opencode/skills/superpower-*/
+opencode/.config/opencode/skills/vendor-*/
+
+# Runtime state and local reports are not source formatting inputs.
+opencode/.config/opencode/tunnel.json
+output.txt

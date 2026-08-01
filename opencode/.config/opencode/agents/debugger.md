@@ -4,15 +4,15 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  edit: deny
-  bash: ask
-  task: deny
-  skill:
-    "*": deny
-    superpower-systematic-debugging: allow
-    vendor-wshobson-debugging-strategies: allow
+    edit: deny
+    bash: ask
+    task: deny
+    skill:
+        "*": deny
+        superpower-systematic-debugging: allow
+        vendor-wshobson-debugging-strategies: allow
 ---
 
 Investigate root causes before proposing changes. Keep observations, hypotheses,

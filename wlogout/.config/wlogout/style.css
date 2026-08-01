@@ -1,7 +1,9 @@
 * {
     background-image: none;
     box-shadow: none;
-    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC", sans-serif;
+    font-family:
+        "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC",
+        sans-serif;
     font-size: 14px;
     font-weight: 500;
 }
@@ -26,7 +28,9 @@ button {
     background-size: 24%;
     text-shadow: none;
     outline-style: none;
-    transition: background-color 140ms ease, border-color 140ms ease;
+    transition:
+        background-color 140ms ease,
+        border-color 140ms ease;
 }
 
 button:hover,
@@ -55,9 +59,15 @@ button:focus {
 }
 
 #shutdown {
-    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+    background-image: image(
+        url("/usr/share/wlogout/icons/shutdown.png"),
+        url("/usr/local/share/wlogout/icons/shutdown.png")
+    );
 }
 
 #reboot {
-    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+    background-image: image(
+        url("/usr/share/wlogout/icons/reboot.png"),
+        url("/usr/local/share/wlogout/icons/reboot.png")
+    );
 }

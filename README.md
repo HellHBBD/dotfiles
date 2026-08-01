@@ -46,23 +46,23 @@ just --list
 
 以下 targets 與根目錄 `Justfile` 相符；多數會以 `sudo pacman` 安裝套件，因此請先檢閱 recipe 與套件清單再執行。
 
-| Target | 用途 |
-| --- | --- |
-| `stow <package>` / `unstow <package>` | 為指定 Stow 套件建立/更新連結，或移除連結。 |
-| `formatters` | Stow `formatters` 設定。 |
-| `bash` | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。 |
-| `system-bash` | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。 |
-| `git`、`ghostty`、`tmux`、`nvim` | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。 |
-| `herdr` | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。 |
-| `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。 |
-| `systemd-oomd` | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。 |
-| `boot-compatibility` | 備份並 Stow mkinitcpio、Linux preset 與 GRUB UKI discovery script；重建現機 UKI 及 portable fallback UKI，並安裝 UEFI fallback loader。此 target 要求 ESP 掛載於 `/boot`。 |
-| `boot-compatibility-check` | 唯讀檢查 fallback loader、兩個具名 UKI、GRUB UKI discovery、microcode、portable cmdline 與 fallback storage modules；需 root 讀取 ESP。 |
-| `spotify` | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。 |
-| `hyprland` | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
-| `login-manager` | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。 |
-| `desktop` | 執行 `login-manager` 與 `hyprland`，適合準備桌面與登入管理員套件。 |
-| `all` | 執行 `bash`、`git`、`nvim` 與 `hyprland`；它**不會**執行 `login-manager`。 |
+| Target                                                             | 用途                                                                                                                                                                                        |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `stow <package>` / `unstow <package>`                              | 為指定 Stow 套件建立/更新連結，或移除連結。                                                                                                                                                 |
+| `formatters`                                                       | Stow `formatters` 設定。                                                                                                                                                                    |
+| `bash`                                                             | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。                                                                                                                           |
+| `system-bash`                                                      | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。                                                                                                                      |
+| `git`、`ghostty`、`tmux`、`nvim`                                   | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。                                                                                                                      |
+| `herdr`                                                            | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。                                |
+| `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。              |
+| `systemd-oomd`                                                     | 將 `systemd-oomd` 的 OOMD 與使用者 session drop-in Stow 至 `/etc`、啟用服務，並套用 memory-pressure 與 swap kill 保護。                                                                     |
+| `boot-compatibility`                                               | 備份並 Stow mkinitcpio、Linux preset 與 GRUB UKI discovery script；重建現機 UKI 及 portable fallback UKI，並安裝 UEFI fallback loader。此 target 要求 ESP 掛載於 `/boot`。                  |
+| `boot-compatibility-check`                                         | 唯讀檢查 fallback loader、兩個具名 UKI、GRUB UKI discovery、microcode、portable cmdline 與 fallback storage modules；需 root 讀取 ESP。                                                     |
+| `spotify`                                                          | 透過 `yay` 安裝 Spotify，並 Stow Wayland 啟動器與 desktop entry；不會由其他 target 自動執行。                                                                                               |
+| `hyprland`                                                         | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
+| `login-manager`                                                    | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。                                                                                                  |
+| `desktop`                                                          | 執行 `login-manager` 與 `hyprland`，適合準備桌面與登入管理員套件。                                                                                                                          |
+| `all`                                                              | 執行 `bash`、`git`、`nvim` 與 `hyprland`；它**不會**執行 `login-manager`。                                                                                                                  |
 
 例如，只安裝桌面套件與設定可執行：
 

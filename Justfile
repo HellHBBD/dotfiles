@@ -9,22 +9,43 @@ default:
 # 共用 Stow 操作
 stow package:
     stow \
-        --dir "{{repo}}" \
-        --target "{{home}}" \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
         --restow \
-        "{{package}}"
+        "{{ package }}"
 
 unstow package:
     stow \
-        --dir "{{repo}}" \
-        --target "{{home}}" \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
         --delete \
-        "{{package}}"
+        "{{ package }}"
 
 # 基礎設定
 
 formatters:
     just stow formatters
+
+format:
+    stylua $(git ls-files '*.lua')
+    ruff format $(git ls-files '*.py')
+    shfmt -w $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
+    prettier --write $(git ls-files '*.json' '*.jsonc' '*.css' '*.md')
+    taplo format $(git ls-files '*.toml')
+    just --fmt
+
+format-check:
+    test "$(cat stylua.toml)" = "$(cat formatters/.config/stylua/stylua.toml)"
+    test "$(cat .editorconfig)" = "$(cat formatters/.editorconfig)"
+    test "$(cat .prettierrc.json)" = "$(cat formatters/.config/prettier/config.json)"
+    test "$(cat pyproject.toml)" = "$(cat formatters/.config/ruff/pyproject.toml)"
+    test "$(cat taplo.toml)" = "$(cat formatters/.config/taplo/taplo.toml)"
+    stylua --check $(git ls-files '*.lua')
+    ruff format --check $(git ls-files '*.py')
+    shfmt -d $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
+    prettier --check $(git ls-files '*.json' '*.jsonc' '*.css' '*.md')
+    taplo format --check $(git ls-files '*.toml')
+    just --fmt --check
 
 system-bash:
     sudo pacman -S --needed bash stow
@@ -36,7 +57,7 @@ system-bash:
         sudo mv -- /etc/bash.bashrc /etc/bash.bashrc.pre-stow; \
     fi
     sudo stow \
-        --dir "{{repo}}" \
+        --dir "{{ repo }}" \
         --target / \
         --restow \
         --no-folding \
@@ -82,7 +103,7 @@ boot-compatibility:
         fi; \
     done
     sudo stow \
-        --dir "{{repo}}" \
+        --dir "{{ repo }}" \
         --target / \
         --restow \
         --no-folding \
@@ -185,17 +206,17 @@ herdr:
         exit 1; \
     }
     yay -S --needed herdr-bin
-    if [ -e "{{home}}/.config/herdr/config.toml" ] && [ ! -L "{{home}}/.config/herdr/config.toml" ]; then \
-        if [ -e "{{home}}/.config/herdr/config.toml.pre-stow" ]; then \
+    if [ -e "{{ home }}/.config/herdr/config.toml" ] && [ ! -L "{{ home }}/.config/herdr/config.toml" ]; then \
+        if [ -e "{{ home }}/.config/herdr/config.toml.pre-stow" ]; then \
             printf '%s\n' '~/.config/herdr/config.toml.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
             exit 1; \
         fi; \
-        mv -- "{{home}}/.config/herdr/config.toml" "{{home}}/.config/herdr/config.toml.pre-stow"; \
+        mv -- "{{ home }}/.config/herdr/config.toml" "{{ home }}/.config/herdr/config.toml.pre-stow"; \
     fi
-    mkdir -p "{{home}}/.config/herdr"
+    mkdir -p "{{ home }}/.config/herdr"
     stow \
-        --dir "{{repo}}" \
-        --target "{{home}}" \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
         --restow \
         --no-folding \
         herdr
@@ -207,6 +228,10 @@ nvim: formatters
         npm \
         luarocks \
         stylua \
+        shfmt \
+        ruff \
+        prettier \
+        taplo-cli \
         ripgrep \
         fd \
         tree-sitter-cli \
@@ -238,7 +263,7 @@ swayosd:
 # System memory-pressure protection, managed under /etc via GNU Stow.
 systemd-oomd:
     sudo stow \
-        --dir "{{repo}}" \
+        --dir "{{ repo }}" \
         --target / \
         --restow \
         --no-folding \

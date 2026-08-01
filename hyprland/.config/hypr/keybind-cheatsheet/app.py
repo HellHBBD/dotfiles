@@ -19,7 +19,15 @@ from gi.repository import Adw, Gdk, Gio, Gtk
 
 
 APP_ID = "com.hellhbbd.HyprlandCheatsheet"
-CATEGORY_ORDER = ("應用程式", "視窗管理", "工作區", "螢幕擷取", "媒體與硬體", "系統", "其他")
+CATEGORY_ORDER = (
+    "應用程式",
+    "視窗管理",
+    "工作區",
+    "螢幕擷取",
+    "媒體與硬體",
+    "系統",
+    "其他",
+)
 CATEGORY_ALIASES = {
     "應用程式": "applications app launcher browser file manager clipboard",
     "視窗管理": "window focus move layout floating fullscreen",
@@ -69,7 +77,15 @@ class Binding:
 
     @property
     def searchable(self) -> str:
-        return " ".join((self.category, CATEGORY_ALIASES.get(self.category, ""), self.shortcut, self.action, self.aliases)).casefold()
+        return " ".join(
+            (
+                self.category,
+                CATEGORY_ALIASES.get(self.category, ""),
+                self.shortcut,
+                self.action,
+                self.aliases,
+            )
+        ).casefold()
 
 
 def structured_description(description: str) -> tuple[str, str, str]:
@@ -88,7 +104,11 @@ def load_raw_bindings() -> list[RawBinding]:
             text=True,
             timeout=3,
         )
-    except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+    except (
+        FileNotFoundError,
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+    ) as error:
         raise RuntimeError(f"無法讀取目前生效的 Hyprland 快捷鍵：{error}") from error
 
     blocks: list[dict[str, str]] = []
@@ -155,7 +175,9 @@ def format_shortcut(modmask: int, keys: set[str]) -> str:
 def group_bindings(raw_bindings: list[RawBinding]) -> list[Binding]:
     grouped: dict[tuple[int, str, str, str], set[str]] = defaultdict(set)
     for binding in raw_bindings:
-        grouped[(binding.modmask, binding.category, binding.action, binding.aliases)].add(binding.key)
+        grouped[
+            (binding.modmask, binding.category, binding.action, binding.aliases)
+        ].add(binding.key)
 
     bindings = [
         Binding(category, format_shortcut(modmask, keys), action, aliases)
@@ -164,7 +186,9 @@ def group_bindings(raw_bindings: list[RawBinding]) -> list[Binding]:
     return sorted(
         bindings,
         key=lambda binding: (
-            CATEGORY_ORDER.index(binding.category) if binding.category in CATEGORY_ORDER else len(CATEGORY_ORDER),
+            CATEGORY_ORDER.index(binding.category)
+            if binding.category in CATEGORY_ORDER
+            else len(CATEGORY_ORDER),
             binding.action,
             binding.shortcut,
         ),
@@ -180,7 +204,7 @@ def highlight(text: str, query: str) -> str:
     if start < 0:
         return escaped
     end = start + len(query)
-    return f"{html.escape(text[:start])}<span class=\"match\">{html.escape(text[start:end])}</span>{html.escape(text[end:])}"
+    return f'{html.escape(text[:start])}<span class="match">{html.escape(text[start:end])}</span>{html.escape(text[end:])}'
 
 
 class CheatSheetApplication(Adw.Application):
@@ -239,7 +263,12 @@ class CheatSheetApplication(Adw.Application):
                 timeout=3,
             )
             clients = json.loads(result.stdout)
-        except (json.JSONDecodeError, FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        except (
+            json.JSONDecodeError,
+            FileNotFoundError,
+            subprocess.CalledProcessError,
+            subprocess.TimeoutExpired,
+        ):
             return False
 
         for client in clients:
@@ -267,7 +296,13 @@ class CheatSheetApplication(Adw.Application):
         controller.connect("key-pressed", self._on_key_pressed)
         return controller
 
-    def _on_key_pressed(self, _controller: Gtk.EventControllerKey, keyval: int, _keycode: int, state: Gdk.ModifierType) -> bool:
+    def _on_key_pressed(
+        self,
+        _controller: Gtk.EventControllerKey,
+        keyval: int,
+        _keycode: int,
+        state: Gdk.ModifierType,
+    ) -> bool:
         if keyval == Gdk.KEY_Escape:
             if self.search_entry and self.search_entry.get_text():
                 self.search_entry.set_text("")
@@ -283,7 +318,9 @@ class CheatSheetApplication(Adw.Application):
     def _build_content(self) -> Gtk.Widget:
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         header = Adw.HeaderBar()
-        header.set_title_widget(Gtk.Label(label="Hyprland 快捷鍵", css_classes=["title"]))
+        header.set_title_widget(
+            Gtk.Label(label="Hyprland 快捷鍵", css_classes=["title"])
+        )
         self.search_entry = Gtk.SearchEntry(placeholder_text="搜尋快捷鍵、功能或分類")
         self.search_entry.set_width_chars(30)
         self.search_entry.connect("search-changed", self._on_search_changed)
@@ -294,7 +331,9 @@ class CheatSheetApplication(Adw.Application):
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
         self.stack.add_titled(self._category_page(None), "all", "全部")
         for category in CATEGORY_ORDER:
-            category_bindings = [binding for binding in self.bindings if binding.category == category]
+            category_bindings = [
+                binding for binding in self.bindings if binding.category == category
+            ]
             if category_bindings:
                 self.stack.add_titled(self._category_page(category), category, category)
         self.stack.add_titled(self._search_page([]), "search", "搜尋結果")
@@ -323,7 +362,11 @@ class CheatSheetApplication(Adw.Application):
         if not query:
             self.stack.set_visible_child_name("all")
             return
-        results = [binding for binding in self.bindings if query.casefold() in binding.searchable]
+        results = [
+            binding
+            for binding in self.bindings
+            if query.casefold() in binding.searchable
+        ]
         current = self.stack.get_child_by_name("search")
         if current:
             self.stack.remove(current)
@@ -332,9 +375,24 @@ class CheatSheetApplication(Adw.Application):
 
     def _category_page(self, category: str | None) -> Gtk.Widget:
         if category is None:
-            sections = [(name, [binding for binding in self.bindings if binding.category == name]) for name in CATEGORY_ORDER]
+            sections = [
+                (
+                    name,
+                    [binding for binding in self.bindings if binding.category == name],
+                )
+                for name in CATEGORY_ORDER
+            ]
         else:
-            sections = [(category, [binding for binding in self.bindings if binding.category == category])]
+            sections = [
+                (
+                    category,
+                    [
+                        binding
+                        for binding in self.bindings
+                        if binding.category == category
+                    ],
+                )
+            ]
 
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24)
         content.set_margin_top(24)
@@ -344,7 +402,9 @@ class CheatSheetApplication(Adw.Application):
         for name, bindings in sections:
             if not bindings:
                 continue
-            content.append(Gtk.Label(label=name, xalign=0, css_classes=["section-title"]))
+            content.append(
+                Gtk.Label(label=name, xalign=0, css_classes=["section-title"])
+            )
             grid = Gtk.FlowBox()
             grid.set_selection_mode(Gtk.SelectionMode.NONE)
             grid.set_column_spacing(14)
@@ -368,11 +428,24 @@ class CheatSheetApplication(Adw.Application):
         content.set_margin_start(28)
         content.set_margin_end(28)
         if not results:
-            content.append(Adw.StatusPage(title="找不到相符的快捷鍵", description="請嘗試輸入分類、按鍵或英文別名。"))
+            content.append(
+                Adw.StatusPage(
+                    title="找不到相符的快捷鍵",
+                    description="請嘗試輸入分類、按鍵或英文別名。",
+                )
+            )
         else:
             for binding in results:
-                row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=18, css_classes=["search-row"])
-                row.append(Gtk.Label(label=binding.category, xalign=0, css_classes=["category-chip"]))
+                row = Gtk.Box(
+                    orientation=Gtk.Orientation.HORIZONTAL,
+                    spacing=18,
+                    css_classes=["search-row"],
+                )
+                row.append(
+                    Gtk.Label(
+                        label=binding.category, xalign=0, css_classes=["category-chip"]
+                    )
+                )
                 shortcut = Gtk.Label(xalign=0, css_classes=["shortcut"])
                 shortcut.set_markup(highlight(binding.shortcut, query))
                 shortcut.set_hexpand(True)
@@ -389,7 +462,11 @@ class CheatSheetApplication(Adw.Application):
 
     @staticmethod
     def _binding_card(binding: Binding) -> Gtk.FlowBoxChild:
-        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, css_classes=["binding-card"])
+        card = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=8,
+            css_classes=["binding-card"],
+        )
         card.set_margin_top(16)
         card.set_margin_bottom(16)
         card.set_margin_start(18)

@@ -104,9 +104,13 @@ fi
 
 -- Applications
 
-hl.bind('SUPER + Slash', hl.dsp.exec_cmd(managed_app('python3 ~/.config/hypr/keybind-cheatsheet/app.py')), {
-	description = '應用程式 | 快捷鍵總覽 | cheatsheet hotkeys reference',
-})
+hl.bind(
+	'SUPER + Slash',
+	hl.dsp.exec_cmd(managed_app('python3 ~/.config/hypr/keybind-cheatsheet/app.py')),
+	{
+		description = '應用程式 | 快捷鍵總覽 | cheatsheet hotkeys reference',
+	}
+)
 
 hl.bind('SUPER + D', hl.dsp.exec_cmd(launcher_command), {
 	description = '應用程式 | 應用程式啟動器 | app launcher',
@@ -116,15 +120,19 @@ hl.bind('SUPER + E', hl.dsp.exec_cmd(managed_app('dolphin')), {
 	description = '應用程式 | 檔案管理員 | file manager dolphin',
 })
 
-hl.bind('SUPER + SHIFT + Return', hl.dsp.exec_cmd([[
+hl.bind(
+	'SUPER + SHIFT + Return',
+	hl.dsp.exec_cmd([[
 if command -v uwsm >/dev/null 2>&1; then
     exec uwsm app -- zen-browser
 else
     exec zen-browser
 fi
-]]), {
-	description = '應用程式 | 瀏覽器 | browser zen',
-})
+]]),
+	{
+		description = '應用程式 | 瀏覽器 | browser zen',
+	}
+)
 
 hl.bind('SUPER + V', hl.dsp.exec_cmd(clipboard_command), {
 	description = '應用程式 | 剪貼簿歷史 | clipboard copy paste',

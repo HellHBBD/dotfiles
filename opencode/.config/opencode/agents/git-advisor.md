@@ -4,21 +4,21 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  edit: deny
-  bash:
-    "*": ask
-    "git status *": allow
-    "git log *": allow
-    "git diff *": allow
-    "git show *": allow
-    "git rev-parse *": allow
-    "git worktree list*": allow
-  task: deny
-  skill:
-    "*": deny
-    vendor-wshobson-git-advanced-workflows: allow
+    edit: deny
+    bash:
+        "*": ask
+        "git status *": allow
+        "git log *": allow
+        "git diff *": allow
+        "git show *": allow
+        "git rev-parse *": allow
+        "git worktree list*": allow
+    task: deny
+    skill:
+        "*": deny
+        vendor-wshobson-git-advanced-workflows: allow
 ---
 
 Explain Git state and options. Do not mutate branches, history, worktrees, or

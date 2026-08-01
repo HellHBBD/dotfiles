@@ -84,11 +84,7 @@ systemctl --user import-environment \
 
 	-- Core desktop components.
 	start_once('waybar', '(^|/)waybar($| )', 'waybar')
-	start_once(
-		'swayosd-server',
-		'(^|/)swayosd-server($| )',
-		'env GSK_RENDERER=gl swayosd-server'
-	)
+	start_once('swayosd-server', '(^|/)swayosd-server($| )', 'env GSK_RENDERER=gl swayosd-server')
 
 	-- Desktop services are owned by systemd user services.
 	hl.exec_cmd([[
@@ -109,7 +105,10 @@ systemctl --user start \
 	start_once('hyprpaper', '(^|/)hyprpaper($| )', 'hyprpaper')
 
 	-- App rules here apply only to these startup launches, not future windows.
-	start_on_workspace('ghostty', 1, [[
+	start_on_workspace(
+		'ghostty',
+		1,
+		[[
 sh -c '
 script="$HOME/shs/tmux-init.sh"
 if [ -x "$script" ]; then
@@ -118,7 +117,8 @@ fi
 
 exec ghostty -e tmux new-session -A -s home
 '
-]])
+]]
+	)
 
 	local startup_urgent_targets = {
 		[2] = 'zen',
@@ -205,7 +205,10 @@ exec ghostty -e tmux new-session -A -s home
 	end, { timeout = startup_urgent_timeout, type = 'oneshot' })
 
 	start_on_workspace('zen-browser', 2, nil, { suppress_event = 'activate' })
-	start_on_workspace('ghostty', 3, [[
+	start_on_workspace(
+		'ghostty',
+		3,
+		[[
 sh -c '
 if ! command -v herdr >/dev/null 2>&1; then
     exit 0
@@ -213,6 +216,7 @@ fi
 
 exec ghostty -e herdr
 '
-]])
+]]
+	)
 	hl.dispatch(hl.dsp.focus({ workspace = 1 }))
 end)

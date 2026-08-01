@@ -8,170 +8,170 @@
 @define-color red #f38ba8;
 
 :root {
-  --cc-bg: rgba(17, 17, 27, 0.92);
-  --noti-bg: 49, 50, 68;
-  --noti-bg-alpha: 1;
-  --noti-bg-hover: #45475a;
-  --noti-border-color: rgba(137, 180, 250, 0.35);
-  --noti-close-bg: transparent;
-  --noti-close-bg-hover: #f38ba8;
-  --text-color: #cdd6f4;
-  --text-color-disabled: #a6adc8;
-  --notification-icon-size: 48px;
-  --notification-app-icon-size: 16px;
-  --notification-group-icon-size: 28px;
-  --border: 1px solid transparent;
-  --border-radius: 12px;
-  --font-size-body: 14px;
-  --font-size-summary: 14px;
+    --cc-bg: rgba(17, 17, 27, 0.92);
+    --noti-bg: 49, 50, 68;
+    --noti-bg-alpha: 1;
+    --noti-bg-hover: #45475a;
+    --noti-border-color: rgba(137, 180, 250, 0.35);
+    --noti-close-bg: transparent;
+    --noti-close-bg-hover: #f38ba8;
+    --text-color: #cdd6f4;
+    --text-color-disabled: #a6adc8;
+    --notification-icon-size: 48px;
+    --notification-app-icon-size: 16px;
+    --notification-group-icon-size: 28px;
+    --border: 1px solid transparent;
+    --border-radius: 12px;
+    --font-size-body: 14px;
+    --font-size-summary: 14px;
 }
 
 * {
-  font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK TC", sans-serif;
-  font-size: 14px;
-  color: @text;
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK TC", sans-serif;
+    font-size: 14px;
+    color: @text;
 }
 
 .control-center {
-  background: @background;
-  border: 1px solid @card-hover;
-  border-radius: 16px;
-  padding: 12px;
+    background: @background;
+    border: 1px solid @card-hover;
+    border-radius: 16px;
+    padding: 12px;
 }
 
 .control-center-list,
 .notification-content,
 .notification,
 .blank-window {
-  background: transparent;
+    background: transparent;
 }
 
 .notification-row {
-  outline: none;
-  margin: 4px 0;
-  padding: 0;
+    outline: none;
+    margin: 4px 0;
+    padding: 0;
 }
 
 .notification-row:focus,
 .notification-row:hover {
-  background: transparent;
+    background: transparent;
 }
 
 .notification-row .notification-background .notification {
-  background: @card;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 10px;
+    background: @card;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 10px;
 }
 
 .notification-row .notification-background .notification:hover {
-  background: @card-hover;
-  border-color: rgba(137, 180, 250, 0.35);
+    background: @card-hover;
+    border-color: rgba(137, 180, 250, 0.35);
 }
 
 .summary {
-  color: @text;
-  font-weight: 700;
+    color: @text;
+    font-weight: 700;
 }
 
 .time {
-  color: @subtext;
-  font-size: 12px;
+    color: @subtext;
+    font-size: 12px;
 }
 
 .body {
-  color: @subtext;
+    color: @subtext;
 }
 
 .close-button {
-  min-width: 26px;
-  min-height: 26px;
-  color: @subtext;
-  background: transparent;
-  border-radius: 8px;
+    min-width: 26px;
+    min-height: 26px;
+    color: @subtext;
+    background: transparent;
+    border-radius: 8px;
 }
 
 .close-button:hover {
-  color: @surface;
-  background: @red;
+    color: @surface;
+    background: @red;
 }
 
 .notification-default-action,
 .notification-action {
-  color: @text;
-  background: transparent;
-  border: none;
-  border-radius: 10px;
+    color: @text;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
 }
 
 .notification-action {
-  margin: 4px;
-  padding: 6px 10px;
-  background: @card-hover;
+    margin: 4px;
+    padding: 6px 10px;
+    background: @card-hover;
 }
 
 .notification-action:hover {
-  color: @surface;
-  background: @blue;
+    color: @surface;
+    background: @blue;
 }
 
 .widget-title {
-  margin: 2px 4px 10px;
+    margin: 2px 4px 10px;
 }
 
 .widget-title > label {
-  color: @text;
-  font-size: 18px;
-  font-weight: 700;
+    color: @text;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .widget-title > button {
-  color: @subtext;
-  background: @card;
-  border-radius: 10px;
-  padding: 6px 10px;
+    color: @subtext;
+    background: @card;
+    border-radius: 10px;
+    padding: 6px 10px;
 }
 
 .widget-title > button:hover {
-  color: @surface;
-  background: @red;
+    color: @surface;
+    background: @red;
 }
 
 .widget-dnd {
-  margin: 0 4px 10px;
-  padding: 10px 12px;
-  background: @card;
-  border-radius: 12px;
+    margin: 0 4px 10px;
+    padding: 10px 12px;
+    background: @card;
+    border-radius: 12px;
 }
 
 .widget-dnd switch {
-  background: @card-hover;
-  border-radius: 999px;
+    background: @card-hover;
+    border-radius: 999px;
 }
 
 .widget-dnd switch:checked {
-  background: @blue;
+    background: @blue;
 }
 
 .widget-dnd switch slider {
-  min-width: 18px;
-  min-height: 18px;
-  margin: 3px;
-  background: @text;
-  border-radius: 999px;
+    min-width: 18px;
+    min-height: 18px;
+    margin: 3px;
+    background: @text;
+    border-radius: 999px;
 }
 
 .notification-group {
-  margin: 4px 0;
+    margin: 4px 0;
 }
 
 .notification-group-headers {
-  color: @subtext;
-  margin: 4px 6px;
+    color: @subtext;
+    margin: 4px 6px;
 }
 
 notificationwindow,
 blankwindow,
 .floating-notifications {
-  background: transparent;
+    background: transparent;
 }

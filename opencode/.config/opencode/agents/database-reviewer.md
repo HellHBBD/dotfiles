@@ -4,14 +4,14 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-  reasoningEffort: high
+    reasoningEffort: high
 permission:
-  edit: deny
-  bash: ask
-  task: deny
-  skill:
-    "*": deny
-    vendor-wshobson-sql-optimization-patterns: allow
+    edit: deny
+    bash: ask
+    task: deny
+    skill:
+        "*": deny
+        vendor-wshobson-sql-optimization-patterns: allow
 ---
 
 Analyze query plans, index trade-offs, locking, and migration risk. Treat all

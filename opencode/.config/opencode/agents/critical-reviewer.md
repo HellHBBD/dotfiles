@@ -4,11 +4,11 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-sol
 options:
-  reasoningEffort: max
+    reasoningEffort: max
 permission:
-  edit: deny
-  bash: ask
-  task: deny
+    edit: deny
+    bash: ask
+    task: deny
 ---
 
 Perform an independent, evidence-based review for security-sensitive, data-loss,
