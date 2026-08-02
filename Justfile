@@ -3,10 +3,11 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 repo := justfile_directory()
 home := env("HOME")
 
+# 顯示所有可用 Recipe 與用途
 default:
     @just --list
 
-# 共用 Stow 操作
+# 建立或更新指定 Stow 套件的符號連結
 stow package:
     stow \
         --dir "{{ repo }}" \
@@ -14,6 +15,7 @@ stow package:
         --restow \
         "{{ package }}"
 
+# 移除指定 Stow 套件的符號連結
 unstow package:
     stow \
         --dir "{{ repo }}" \
@@ -23,9 +25,11 @@ unstow package:
 
 # 基礎設定
 
+# 建立共用格式化工具設定的 Stow 符號連結
 formatters:
     just stow formatters
 
+# 格式化儲存庫內所有支援的檔案
 format:
     stylua $(git ls-files '*.lua')
     ruff format $(git ls-files '*.py')
@@ -34,6 +38,7 @@ format:
     taplo format $(git ls-files '*.toml')
     just --fmt
 
+# 檢查格式化設定與檔案格式，不修改檔案
 format-check:
     test "$(cat stylua.toml)" = "$(cat formatters/.config/stylua/stylua.toml)"
     test "$(cat .editorconfig)" = "$(cat formatters/.editorconfig)"
@@ -47,6 +52,7 @@ format-check:
     taplo format --check $(git ls-files '*.toml')
     just --fmt --check
 
+# 備份並套用 `/etc` 下的系統 Bash 設定
 system-bash:
     sudo pacman -S --needed bash stow
     if [ -e /etc/bash.bashrc ] && [ ! -L /etc/bash.bashrc ]; then \
@@ -63,7 +69,7 @@ system-bash:
         --no-folding \
         system-bash
 
-# Portable UEFI boot support. This repository expects the ESP at /boot.
+# 建立一般與 fallback UKI、GRUB removable loader 等可攜式 UEFI 開機環境
 boot-compatibility:
     sudo sh -c 'test "$(findmnt --target /boot --noheadings --output FSTYPE)" = vfat'
     sudo pacman -S --needed \
@@ -135,7 +141,7 @@ boot-compatibility:
         --recheck
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-# Verify boot-compatibility artifacts; root reads the protected ESP.
+# 檢查 UEFI loader、UKI、cmdline、microcode 與 fallback modules，不修改既有開機產物
 boot-compatibility-check:
     sudo sh -eu -c ' \
         test "$(findmnt --target /boot --noheadings --output FSTYPE)" = vfat; \
@@ -185,21 +191,26 @@ boot-compatibility-check:
     grep -Fx 'PRETTY_NAME="Arch Linux"' <<<"$default_osrelease"; \
     grep -Fx 'PRETTY_NAME="Arch Linux (fallback)"' <<<"$fallback_osrelease"
 
+# 安裝並套用使用者與系統 Bash 設定
 bash: system-bash
     just stow bash
 
+# 安裝 Git 並套用 Git 使用者設定
 git:
     sudo pacman -S --needed git stow
     just stow git
 
+# 安裝 Ghostty 並套用終端機設定
 ghostty:
     sudo pacman -S --needed ghostty stow
     just stow ghostty
 
+# 安裝 tmux 並套用 tmux 設定
 tmux:
     sudo pacman -S --needed tmux stow
     just stow tmux
 
+# 透過 `yay` 安裝 Herdr 並套用設定
 herdr:
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
@@ -221,6 +232,7 @@ herdr:
         --no-folding \
         herdr
 
+# 安裝 Neovim 與格式化工具，並套用編輯器設定
 nvim: formatters
     sudo pacman -S --needed \
         neovim \
@@ -242,10 +254,12 @@ nvim: formatters
 
 # Hyprland 外部元件
 
+# 建立桌布資源的 Stow 符號連結
 wallpapers:
     sudo pacman -S --needed stow
     just stow wallpapers
 
+# 安裝 SwayNC 並套用通知中心設定
 swaync:
     sudo pacman -S --needed \
         swaync \
@@ -253,6 +267,7 @@ swaync:
         stow
     just stow swaync
 
+# 安裝 SwayOSD 並套用音量與亮度 OSD 設定
 swayosd:
     sudo pacman -S --needed \
         swayosd \
@@ -260,7 +275,7 @@ swayosd:
     sudo usermod --append --groups video "$USER"
     just stow swayosd
 
-# System memory-pressure protection, managed under /etc via GNU Stow.
+# 套用並啟用 systemd-oomd 記憶體壓力保護
 systemd-oomd:
     sudo stow \
         --dir "{{ repo }}" \
@@ -277,6 +292,7 @@ systemd-oomd:
         ManagedOOMMemoryPressureDurationSec=20s
     sudo systemctl restart systemd-oomd.service
 
+# 安裝 Waybar 並套用狀態列與相關元件設定
 waybar: swaync
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
@@ -305,6 +321,7 @@ waybar: swaync
         stow
     just stow waybar
 
+# 安裝 Cliphist 並套用剪貼簿歷史設定
 cliphist:
     sudo pacman -S --needed \
         cliphist \
@@ -314,6 +331,7 @@ cliphist:
     just stow cliphist
     systemctl --user daemon-reload
 
+# 透過 `yay` 安裝 Wlogout 並套用電源選單設定
 wlogout:
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
@@ -323,6 +341,7 @@ wlogout:
     sudo pacman -S --needed stow
     just stow wlogout
 
+# 透過 `yay` 安裝 Spotify，並設定原生 Wayland 啟動
 spotify:
     @command -v yay >/dev/null || { \
         printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
@@ -332,7 +351,7 @@ spotify:
     sudo pacman -S --needed stow
     just stow spotify
 
-# Hyprland 整合層，最後執行
+# 安裝並套用 Hyprland、桌面元件與相關整合設定
 hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
     sudo pacman -S --needed \
         hyprland \
@@ -371,14 +390,14 @@ hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
     systemctl --user daemon-reload
     just stow hyprland
 
-# 登入管理員
+# 安裝 `greetd` 與 `greetd-tuigreet` 登入管理員套件
 login-manager:
     sudo pacman -S --needed greetd greetd-tuigreet
 
-# 完整桌面
+# 安裝完整 Hyprland 桌面環境與登入管理員
 desktop: login-manager hyprland
     @printf '%s\n' "桌面套件與設定已完成"
 
-# 全部設定
+# 安裝並套用 Bash、Git、Neovim 與 Hyprland 核心設定
 all: bash git nvim hyprland
     @printf '%s\n' "所有 dotfiles 已完成"
