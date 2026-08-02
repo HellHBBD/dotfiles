@@ -104,9 +104,11 @@ the current checkout branch. If the requested target differs, stop and ask the
 user to check it out; never switch branches yourself.
 
 Ask whether to keep or delete source worktrees and branches whenever cleanup is
-not explicit. Honor explicit `keep`, `delete`, `remove`, or cleanup wording. Git
-merge success is the only criterion for cleanup; do not claim functional checks
-ran or passed.
+not explicit. Honor explicit `keep`, `delete`, `remove`, or cleanup wording.
+When deleting a registered worktree, the helper closes matching Herdr workspaces
+by exact checkout path before Git cleanup; a Herdr failure is a warning and does
+not stop the already-confirmed Git cleanup. Git merge success is the only
+criterion for cleanup; do not claim functional checks ran or passed.
 
 Before final confirmation, run only helper commands:
 

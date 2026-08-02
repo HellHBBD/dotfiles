@@ -24,6 +24,7 @@ merge_target_status=''
 merge_target_clean=true
 merge_target_changes_json='[]'
 merge_warnings_json='[]'
+merge_cleanup_warnings_json='[]'
 
 usage() {
     cat <<'EOF'
@@ -424,6 +425,7 @@ capture_merge_target_state() {
     merge_target_clean=true
     merge_target_changes_json='[]'
     merge_warnings_json='[]'
+    merge_cleanup_warnings_json='[]'
 
     if [[ -n "$merge_target_status" ]]; then
         merge_target_clean=false
@@ -433,6 +435,82 @@ capture_merge_target_state() {
             merge_warnings_json='["DIRTY_TARGET"]'
         fi
     fi
+}
+
+record_cleanup_warning() {
+    local message="$1"
+
+    if "$json"; then
+        merge_cleanup_warnings_json="$(jq -cn \
+            --argjson warnings "$merge_cleanup_warnings_json" \
+            --arg message "$message" \
+            '$warnings + [$message]')"
+    else
+        printf '警告：%s\n' "$message" >&2
+    fi
+}
+
+close_herdr_workspaces_for_worktree() {
+    local worktree_path="$1"
+    local workspace_list
+    local workspace_ids
+    local workspace_id
+
+    command -v herdr >/dev/null 2>&1 || return
+    if ! command -v jq >/dev/null 2>&1; then
+        record_cleanup_warning "找不到 jq，可能留下對應 Herdr 視窗：$worktree_path"
+        return
+    fi
+
+    if ! workspace_list="$(herdr workspace list 2>&1)"; then
+        record_cleanup_warning "無法查詢 Herdr workspace，可能留下對應視窗：$worktree_path"
+        return
+    fi
+
+    if ! workspace_ids="$(jq -r --arg path "$worktree_path" \
+        '.result.workspaces[]? | select(.worktree.checkout_path? == $path) | .workspace_id' \
+        <<<"$workspace_list")"; then
+        record_cleanup_warning "無法解析 Herdr workspace，可能留下對應視窗：$worktree_path"
+        return
+    fi
+
+    while IFS= read -r workspace_id; do
+        [[ -n "$workspace_id" ]] || continue
+        progress "關閉 Herdr workspace：$workspace_id"
+        if ! herdr workspace close "$workspace_id" >&2; then
+            record_cleanup_warning "無法關閉 Herdr workspace $workspace_id：$worktree_path"
+        fi
+    done <<<"$workspace_ids"
+}
+
+dry_run_herdr_cleanup() {
+    local worktree_path="$1"
+    local workspace_list
+    local workspace_ids
+    local workspace_id
+
+    command -v herdr >/dev/null 2>&1 || return
+    command -v jq >/dev/null 2>&1 || {
+        printf 'DRY RUN: unable to parse Herdr workspace without jq for %q\n' "$worktree_path"
+        return
+    }
+
+    if ! workspace_list="$(herdr workspace list 2>/dev/null)"; then
+        printf 'DRY RUN: unable to query Herdr workspace for %q\n' "$worktree_path"
+        return
+    fi
+
+    if ! workspace_ids="$(jq -r --arg path "$worktree_path" \
+        '.result.workspaces[]? | select(.worktree.checkout_path? == $path) | .workspace_id' \
+        <<<"$workspace_list")"; then
+        printf 'DRY RUN: unable to parse Herdr workspace for %q\n' "$worktree_path"
+        return
+    fi
+
+    while IFS= read -r workspace_id; do
+        [[ -n "$workspace_id" ]] || continue
+        printf 'DRY RUN: herdr workspace close %q\n' "$workspace_id"
+    done <<<"$workspace_ids"
 }
 
 warn_dirty_merge_target() {
@@ -513,7 +591,11 @@ merge_branches() {
         else
             for branch in "${branches[@]}"; do
                 printf 'DRY RUN: git -C %q merge --no-ff --no-edit %q\n' "$repo_root" "$branch"
-                "$merge_delete" && printf 'DRY RUN: remove worktree and delete branch %q\n' "$branch"
+                if "$merge_delete"; then
+                    worktree_path="$(worktree_path_for_branch "$branch")"
+                    [[ -n "$worktree_path" ]] && dry_run_herdr_cleanup "$worktree_path"
+                    printf 'DRY RUN: remove worktree and delete branch %q\n' "$branch"
+                fi
             done
         fi
         return
@@ -557,7 +639,7 @@ merge_branches() {
             --argjson deleted "$merge_delete" \
             --argjson target_clean "$merge_target_clean" \
             --argjson target_changes_before "$merge_target_changes_json" \
-            --argjson warnings "$merge_warnings_json" \
+            --argjson warnings "$(jq -cn --argjson target "$merge_warnings_json" --argjson cleanup "$merge_cleanup_warnings_json" '$target + $cleanup')" \
             '{status: "OK", command: "merge", target: $target, merged: $merged, deleted: $deleted,
               target_clean: $target_clean, target_changes_before: $target_changes_before,
               warnings: $warnings}'
@@ -572,6 +654,7 @@ cleanup_branch() {
 
     worktree_path="$(worktree_path_for_branch "$branch")"
     if [[ -n "$worktree_path" ]]; then
+        close_herdr_workspaces_for_worktree "$worktree_path"
         progress "移除 worktree：$worktree_path"
         if ! git -C "$repo_root" worktree remove "$worktree_path" >&2; then
             fail "$EXIT_CLEANUP" 'WORKTREE_REMOVE_FAILED' "無法移除 worktree：$worktree_path"
