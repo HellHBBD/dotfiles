@@ -69,6 +69,36 @@ system-bash:
         --no-folding \
         system-bash
 
+# 啟用繁體中文 locale 並以 Stow 管理系統預設語言
+system-locale:
+    sudo -v
+    if [ -e /etc/locale.conf ] && [ ! -L /etc/locale.conf ] && [ -e /etc/locale.conf.pre-stow ]; then \
+        printf '%s\n' '/etc/locale.conf.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
+        exit 1; \
+    fi
+    if ! sudo grep -Eq '^[[:space:]]*zh_TW\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)' /etc/locale.gen; then \
+        if sudo grep -Eq '^[[:space:]]*#[[:space:]]*zh_TW\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)' /etc/locale.gen; then \
+            sudo sed -i -E 's@^[[:space:]]*#[[:space:]]*zh_TW\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)@zh_TW.UTF-8 UTF-8@' /etc/locale.gen; \
+        else \
+            printf '%s\n' '找不到 zh_TW.UTF-8 UTF-8 locale 定義，停止作業' >&2; \
+            exit 1; \
+        fi; \
+    fi
+    if [ -e /etc/locale.conf ] && [ ! -L /etc/locale.conf ]; then \
+        if [ -e /etc/locale.conf.pre-stow ]; then \
+            printf '%s\n' '/etc/locale.conf.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
+            exit 1; \
+        fi; \
+        sudo mv -- /etc/locale.conf /etc/locale.conf.pre-stow; \
+    fi
+    sudo stow \
+        --dir "{{ repo }}" \
+        --target / \
+        --restow \
+        --no-folding \
+        system-locale
+    sudo locale-gen
+
 # 建立一般與 fallback UKI、GRUB removable loader 等可攜式 UEFI 開機環境
 boot-compatibility:
     sudo sh -c 'test "$(findmnt --target /boot --noheadings --output FSTYPE)" = vfat'
@@ -398,6 +428,6 @@ login-manager:
 desktop: login-manager hyprland
     @printf '%s\n' "桌面套件與設定已完成"
 
-# 安裝並套用 Bash、Git、Neovim 與 Hyprland 核心設定
-all: bash git nvim hyprland
+# 安裝並套用 Bash、Git、Neovim、系統 locale 與 Hyprland 核心設定
+all: bash git nvim system-locale hyprland
     @printf '%s\n' "所有 dotfiles 已完成"

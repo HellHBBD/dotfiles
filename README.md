@@ -52,6 +52,7 @@ just --list
 | `formatters`                                                       | Stow `formatters` 設定。                                                                                                                                                                    |
 | `bash`                                                             | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。                                                                                                                           |
 | `system-bash`                                                      | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。                                                                                                                      |
+| `system-locale`                                                    | 啟用 `zh_TW.UTF-8`、產生 locale，並將 `/etc/locale.conf` 設為繁體中文。                                                                                                                     |
 | `git`、`ghostty`、`tmux`、`nvim`                                   | 安裝各自所需套件並 Stow 對應的基礎設定；`nvim` 會先執行 `formatters`。                                                                                                                      |
 | `herdr`                                                            | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。                                |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。              |
@@ -62,7 +63,7 @@ just --list
 | `hyprland`                                                         | 先執行 `ghostty`、`tmux`、`wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout`，再安裝 Hyprland/UWSM 與桌面相依套件、啟用 NetworkManager 與 Bluetooth，最後 Stow `hyprland`。 |
 | `login-manager`                                                    | **只**安裝 `greetd` 與 `greetd-tuigreet` 套件；不會 Stow、複製設定檔，也不會啟用任何服務。                                                                                                  |
 | `desktop`                                                          | 執行 `login-manager` 與 `hyprland`，適合準備桌面與登入管理員套件。                                                                                                                          |
-| `all`                                                              | 執行 `bash`、`git`、`nvim` 與 `hyprland`；它**不會**執行 `login-manager`。                                                                                                                  |
+| `all`                                                              | 執行 `bash`、`git`、`nvim`、`system-locale` 與 `hyprland`；它**不會**執行 `login-manager`。                                                                                                 |
 
 例如，只安裝桌面套件與設定可執行：
 
@@ -132,6 +133,24 @@ readlink -f /etc/bash.bashrc
 
 sudo stow --dir ~/dotfiles --target / --delete --no-folding system-bash
 sudo mv -- /etc/bash.bashrc.pre-stow /etc/bash.bashrc
+```
+
+## system-locale
+
+`just system-locale` 會在 `/etc/locale.gen` 啟用 `zh_TW.UTF-8 UTF-8`，以 `locale-gen` 產生 locale，並將原本的實體 `/etc/locale.conf` 移至 `/etc/locale.conf.pre-stow`，再以 Stow 管理預設 `LANG=zh_TW.UTF-8`。既有備份檔存在時 recipe 會停止而不覆蓋。完成後必須重新登入，讓現有 shell、systemd user session 與圖形應用程式使用新 locale。
+
+```sh
+locale -a | grep '^zh_TW\.utf8$'
+locale
+LC_TIME=zh_TW.UTF-8 date
+```
+
+還原時先移除 Stow link，確認備份後再還原：
+
+```sh
+sudo stow --dir ~/dotfiles --target / --delete --no-folding system-locale
+sudo mv -- /etc/locale.conf.pre-stow /etc/locale.conf
+sudo locale-gen
 ```
 
 ## systemd-oomd

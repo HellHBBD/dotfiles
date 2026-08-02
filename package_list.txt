@@ -110,7 +110,7 @@ upd72020x-fw
 ### App ###
 firefox
 libreoffice-still
-libreoffice-still-zh-cn
+libreoffice-still-zh-tw
 zen-browser-bin
 spotify
 prismlauncher
