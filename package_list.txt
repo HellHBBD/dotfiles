@@ -55,7 +55,6 @@ swayosd
 fuzzel
 ghostty
 wlogout
-kitty
 dolphin
 cliphist
 grim
@@ -109,6 +108,9 @@ wd719x-firmware
 upd72020x-fw
 
 ### App ###
+firefox
+libreoffice-still
+libreoffice-still-zh-cn
 zen-browser-bin
 spotify
 prismlauncher
