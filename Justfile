@@ -33,7 +33,7 @@ formatters:
 format:
     stylua $(git ls-files '*.lua')
     ruff format $(git ls-files '*.py')
-    shfmt -w $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
+    shfmt -w $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'hyprland/.config/uwsm/env' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
     prettier --write $(git ls-files '*.json' '*.jsonc' '*.css' '*.md')
     taplo format $(git ls-files '*.toml')
     just --fmt
@@ -47,7 +47,7 @@ format-check:
     test "$(cat taplo.toml)" = "$(cat formatters/.config/taplo/taplo.toml)"
     stylua --check $(git ls-files '*.lua')
     ruff format --check $(git ls-files '*.py')
-    shfmt -d $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
+    shfmt -d $(git ls-files '*.sh' 'bash/.bash*' 'system-bash/etc/bash.bashrc' 'spotify/.local/bin/spotify-wayland' 'hyprland/.config/uwsm/env' 'boot-compatibility/etc/grub.d/*' 'boot-compatibility/etc/mkinitcpio.d/*' 'extra/.xinitrc')
     prettier --check $(git ls-files '*.json' '*.jsonc' '*.css' '*.md')
     taplo format --check $(git ls-files '*.toml')
     just --fmt --check

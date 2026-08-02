@@ -58,4 +58,8 @@ hl.config({
 	debug = {
 		vfr = true,
 	},
+
+	xwayland = {
+		force_zero_scaling = true,
+	},
 })

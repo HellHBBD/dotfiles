@@ -97,6 +97,8 @@ GRUB 應列出 `Arch Linux` 與 `Arch Linux (fallback)`。第一次手動選擇 
 
 `hyprland/monitors.lua` 提供所有機器共用的 preferred-mode、auto-position、1.25 倍縮放 fallback。`custom/init.lua` 目前不含覆寫；新電腦先使用通用規則，僅在必要時才加入特定 output、縮放或位置。GPU 專屬環境變數應放在主機專屬設定或 UWSM host layer，不能寫入 `/etc/environment`。
 
+`hyprland/.config/uwsm/env` 將 Electron 程式偏好設為 Wayland，並讓 LibreOffice 使用 GTK3 Wayland backend；`hyprland/env.lua` 保留同樣的設定供未透過 UWSM 啟動的工作階段使用。`xwayland.force_zero_scaling` 會避免 1.25 倍縮放重取樣 XWayland 視窗以保持清晰，但這些視窗會比原生 Wayland 視窗小約 20%。完成 Stow 後請重新登入，並以 `hyprctl clients -j` 確認目標視窗的 `xwayland` 為 `false`。
+
 若要還原，先移除 Stow links，再確認 `.pre-stow` 備份後手動還原；完成後重建 UKI 與 GRUB menu：
 
 ```sh
