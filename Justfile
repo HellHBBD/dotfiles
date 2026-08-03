@@ -29,6 +29,15 @@ unstow package:
 formatters:
     just stow formatters
 
+# 建立 OpenCode 全域 commands 的 Stow 符號連結，不接管既有設定目錄
+opencode:
+    stow \
+        --dir "{{ repo }}/opencode/.config/opencode" \
+        --target "{{ home }}/.config/opencode" \
+        --restow \
+        --no-folding \
+        commands
+
 # 格式化儲存庫內所有支援的檔案
 format:
     stylua $(git ls-files '*.lua')
