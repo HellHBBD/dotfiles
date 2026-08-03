@@ -50,6 +50,7 @@ just --list
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `stow <package>` / `unstow <package>`                              | 為指定 Stow 套件建立/更新連結，或移除連結。                                                                                                                                                 |
 | `formatters`                                                       | Stow `formatters` 設定。                                                                                                                                                                    |
+| `opencode`                                                         | Stow 全域 OpenCode commands，不接管既有的 OpenCode 設定目錄。                                                                                                                               |
 | `bash`                                                             | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。                                                                                                                           |
 | `system-bash`                                                      | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。                                                                                                                      |
 | `system-locale`                                                    | 啟用 `zh_TW.UTF-8`、產生 locale，並將 `/etc/locale.conf` 設為繁體中文。                                                                                                                     |
@@ -72,6 +73,18 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## OpenCode 系統升級檢查
+
+以 `just opencode` Stow `opencode` package 後，重新啟動 OpenCode，便可使用全域唯讀 command：
+
+```text
+/arch-upgrade-check [quick|pre|post|aur|full|help]
+```
+
+這個 command 不會安裝、移除或更新套件，不會修改設定、服務、bootloader 或檔案，也不會執行任何提權、登出或重開機指令。需要這些操作時，它只會顯示精確命令，等待使用者在另一個終端執行並貼回完整輸出與 exit status。
+
+`pre` 用於升級前與 `pacman -Syu` 完成後的重開機閘門；它會依本 repository 的 UKI 配置檢查 `/boot/vmlinuz-linux`、default UKI 與 fallback UKI。`post` 用於重開機後的桌面服務與登入流程檢查。`aur` 只分類 AUR 更新風險並提出建議。`quick` 是日常健康檢查，`full` 是完整的目前系統健康檢查。
 
 ## 跨主機開機
 
