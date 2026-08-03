@@ -10,8 +10,8 @@ file="$directory/$(date '+%Y-%m-%d_%H-%M-%S').png"
 
 if grim -g "$selection" "$file"; then
     wl-copy <"$file"
-    notify-send "Screenshot saved" "$file"
+    notify-send "截圖已儲存" "$file"
 else
-    notify-send -u critical "Screenshot failed" "grim could not capture the selected area"
+    notify-send -u critical "截圖失敗" "grim 無法擷取選取區域"
     exit 1
 fi

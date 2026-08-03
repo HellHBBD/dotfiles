@@ -22,6 +22,7 @@
         "format": "{id}",
         "sort-by": "number",
         "enable-bar-scroll": false,
+        "tooltip": false,
     },
     "group/tools": {
         "orientation": "horizontal",
@@ -43,13 +44,13 @@
     "custom/screenshot": {
         "format": " 󰄀",
         "tooltip": true,
-        "tooltip-format": "Capture selected area",
+        "tooltip-format": "擷取選取區域",
         "on-click": "bash ~/.config/hypr/scripts/screenshot-area.sh",
     },
     "custom/colorpicker": {
         "format": " 󰈋",
         "tooltip": true,
-        "tooltip-format": "Pick color to clipboard",
+        "tooltip-format": "取色並複製到剪貼簿",
         "on-click": "hyprpicker -a",
     },
     "cpu": {
@@ -69,7 +70,8 @@
             "headphone": "",
             "default": ["", "", ""],
         },
-        "on-click": "pavucontrol",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "pavucontrol",
         "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
     },
