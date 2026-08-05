@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-wshobson-ui-a11y-c4b82b0ad771",
+  "sourceUrl": "https://github.com/wshobson/agents",
+  "requestedRef": "main",
+  "resolvedCommit": "c4b82b0ad771190355eb8e204b1329732a18449a",
+  "componentType": "command",
+  "originalSourcePath": "plugins/ui-design/commands/accessibility-audit.md",
+  "targetPath": "~/.config/opencode/commands/vendor-wshobson-ui-a11y.md",
+  "originalName": "accessibility-audit",
+  "installedName": "vendor-wshobson-ui-a11y",
+  "scope": "global",
+  "riskClassification": "low",
+  "installedAt": "2026-08-04T13:21:27+08:00",
+  "backupRevision": "c4b82b0ad771190355eb8e204b1329732a18449a",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-wshobson-ui-a11y-c4b82b0ad771/baseline-c4b82b0ad771190355eb8e204b1329732a18449a",
+  "governed": true,
+  "notes": "Rewritten as a read-only audit without automatic reports, state directories, guided fixes, or tool installation."
+}

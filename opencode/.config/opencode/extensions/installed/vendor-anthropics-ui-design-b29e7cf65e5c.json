@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-anthropics-ui-design-b29e7cf65e5c",
+  "sourceUrl": "https://github.com/anthropics/skills",
+  "requestedRef": "main",
+  "resolvedCommit": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "componentType": "command",
+  "originalSourcePath": "skills/frontend-design",
+  "targetPath": "~/.config/opencode/commands/vendor-anthropics-ui-design.md",
+  "originalName": "frontend-design",
+  "installedName": "vendor-anthropics-ui-design",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installedAt": "2026-08-04T13:21:27+08:00",
+  "backupRevision": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-anthropics-ui-design-b29e7cf65e5c/baseline-b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "governed": true,
+  "notes": "Rewritten as an explicit read-only planning command; Apache-2.0 license retained alongside the command."
+}
