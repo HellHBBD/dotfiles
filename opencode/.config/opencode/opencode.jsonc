@@ -143,7 +143,7 @@
             "vendor-wshobson-design-system-patterns": "allow",
             "vendor-wshobson-accessibility-compliance": "allow",
             "vendor-wshobson-responsive-design": "allow",
-            "vendor-wshobson-interaction-design": "ask",
+            "vendor-wshobson-interaction-design": "allow",
         },
     },
     "agent": {
@@ -179,7 +179,7 @@
                     "vendor-wshobson-design-system-patterns": "allow",
                     "vendor-wshobson-accessibility-compliance": "allow",
                     "vendor-wshobson-responsive-design": "allow",
-                    "vendor-wshobson-interaction-design": "ask",
+                    "vendor-wshobson-interaction-design": "allow",
                 },
             },
         },

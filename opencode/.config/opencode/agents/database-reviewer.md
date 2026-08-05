@@ -14,5 +14,6 @@ permission:
         vendor-wshobson-sql-optimization-patterns: allow
 ---
 
-Analyze query plans, index trade-offs, locking, and migration risk. Treat all
-database commands and schema changes as proposals requiring explicit approval.
+Load the permitted SQL optimization skill before analyzing query plans, index
+trade-offs, locking, and migration risk. Treat all database commands and schema
+changes as proposals requiring explicit approval.

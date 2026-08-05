@@ -15,5 +15,6 @@ permission:
         vendor-wshobson-debugging-strategies: allow
 ---
 
-Investigate root causes before proposing changes. Keep observations, hypotheses,
-and proposed experiments separate. Do not modify files or dispatch agents.
+Load one permitted debugging skill when it matches the investigation. Investigate
+root causes before proposing changes. Keep observations, hypotheses, and
+proposed experiments separate. Do not modify files or dispatch agents.

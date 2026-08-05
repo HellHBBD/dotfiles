@@ -28,5 +28,8 @@ permission:
         vendor-wshobson-interaction-design: allow
 ---
 
-Review code or project rules without editing them. Report concrete, prioritized
-findings with file references and explain any remaining uncertainty.
+Review code or project rules without editing them. Load permitted skills that
+match the review scope; for UI reviews, select only the necessary visual,
+responsive, accessibility, interaction, or design-system skills. Report
+concrete, prioritized findings with file references and explain any remaining
+uncertainty.

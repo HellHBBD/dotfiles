@@ -20,3 +20,9 @@
 - Do not execute wrappers, scripts, package recipes, or shell pipelines that invoke privilege escalation internally. Do not use `sudo -S`, askpass helpers, password pipelines, or other bypasses.
 - When a privileged operation is required, give the user the exact command and wait for its output before continuing.
 - Every Bash tool call must set an explicit, finite `timeout`: use `30000ms` for ordinary checks and `120000ms` for tests or builds. Use a longer timeout only when justified by the operation; never retry with an unlimited timeout after expiry.
+
+## Skill selection
+
+- When a task clearly matches an available skill description, load the smallest relevant set before analysis, implementation, or review.
+- Do not load skills merely by category or popularity. Existing project conventions and higher-priority instructions override skill guidance.
+- Use at most one workflow-orchestrator skill for a task. For UI work, combine only the specific visual, responsive, accessibility, interaction, or design-system skills required by the request.

@@ -14,6 +14,13 @@ or assume a design system exists.
 
 Scope: $ARGUMENTS
 
+Load `vendor-wshobson-visual-design-foundations`,
+`vendor-wshobson-responsive-design`,
+`vendor-wshobson-accessibility-compliance`, and
+`vendor-wshobson-interaction-design` before the review. Load
+`vendor-wshobson-design-system-patterns` only when reusable UI foundations or
+component APIs are in scope.
+
 Identify the user's primary task and evaluate only evidence available in the
 specified UI code or local project context. Report findings first, ordered by
 severity, using `file:line` references.

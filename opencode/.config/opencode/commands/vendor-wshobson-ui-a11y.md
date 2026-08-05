@@ -12,6 +12,9 @@ read-only audit.
 
 Target: $ARGUMENTS
 
+Load `vendor-wshobson-accessibility-compliance` and
+`vendor-wshobson-responsive-design` before the audit.
+
 Audit the provided path or UI scope against WCAG 2.2 AA by default. Do not
 create `.ui-design/`, reports, state files, tests, or dependencies. Do not
 modify code or enter guided-fix mode.
