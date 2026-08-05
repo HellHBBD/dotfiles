@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-microsoft-ui-review-4a2873faffc",
+  "sourceUrl": "https://github.com/microsoft/skills",
+  "requestedRef": "main",
+  "resolvedCommit": "4a2873faffc1b101a33a0b59c24713d4ed78142f",
+  "componentType": "command",
+  "originalSourcePath": ".github/skills/frontend-design-review",
+  "targetPath": "~/.config/opencode/commands/vendor-microsoft-ui-review.md",
+  "originalName": "frontend-design-review",
+  "installedName": "vendor-microsoft-ui-review",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installedAt": "2026-08-04T13:21:27+08:00",
+  "backupRevision": "4a2873faffc1b101a33a0b59c24713d4ed78142f",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-microsoft-ui-review-4a2873faffc/baseline-4a2873faffc1b101a33a0b59c24713d4ed78142f",
+  "governed": true,
+  "notes": "Rewritten as an explicit read-only review command without external Figma or Storybook requirements."
+}

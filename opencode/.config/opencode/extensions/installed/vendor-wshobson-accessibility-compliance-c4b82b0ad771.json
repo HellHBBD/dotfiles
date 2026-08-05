@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-wshobson-accessibility-compliance-c4b82b0ad771",
+  "sourceUrl": "https://github.com/wshobson/agents",
+  "requestedRef": "main",
+  "resolvedCommit": "c4b82b0ad771190355eb8e204b1329732a18449a",
+  "componentType": "skill",
+  "originalSourcePath": "plugins/ui-design/skills/accessibility-compliance",
+  "targetPath": "~/.config/opencode/skills/vendor-wshobson-accessibility-compliance",
+  "originalName": "accessibility-compliance",
+  "installedName": "vendor-wshobson-accessibility-compliance",
+  "scope": "global",
+  "riskClassification": "low",
+  "installedAt": "2026-08-04T13:21:27+08:00",
+  "backupRevision": "c4b82b0ad771190355eb8e204b1329732a18449a",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-wshobson-accessibility-compliance-c4b82b0ad771/baseline-c4b82b0ad771190355eb8e204b1329732a18449a",
+  "governed": true,
+  "notes": "Corrects target-size guidance and supports HTML/CSS desktop plus platform-native accessibility APIs."
+}

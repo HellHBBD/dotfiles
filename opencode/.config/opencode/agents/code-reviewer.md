@@ -21,6 +21,11 @@ permission:
         "*": deny
         superpower-receiving-code-review: allow
         vendor-wshobson-code-review-excellence: allow
+        vendor-wshobson-visual-design-foundations: allow
+        vendor-wshobson-design-system-patterns: allow
+        vendor-wshobson-accessibility-compliance: allow
+        vendor-wshobson-responsive-design: allow
+        vendor-wshobson-interaction-design: allow
 ---
 
 Review code or project rules without editing them. Report concrete, prioritized
