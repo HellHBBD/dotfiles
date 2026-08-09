@@ -1,38 +1,10 @@
 ---
-description: Inspect, install, update, remove, and audit third-party OpenCode extensions
+description: Inspect and manage third-party OpenCode extensions using natural language.
 agent: extension-manager
-subtask: true
+subtask: false
 ---
 
-Manage third-party OpenCode extensions according to this request:
+Interpret this third-party OpenCode extension request naturally. Preserve the
+manager's inspection, approval, and governance requirements:
 
 $ARGUMENTS
-
-Supported syntax:
-
-- help
-- inspect <git-url> [--ref <git-ref>]
-- install <git-url> [--ref <git-ref>] [--scope project|global] [--only <component-selector>]
-- install <source-id> [--scope project|global] [--only <component-selector>]
-- update <installation-id>
-- remove <installation-id>
-- list [--scope project|global|all]
-- show <installation-id>
-- doctor [--scope project|global|all]
-
-Component selectors:
-
-- skill:<relative-path>
-- command:<relative-path>
-- plugin:<relative-path>
-- npm-plugin:<module>
-
-Multiple selectors are comma-separated.
-
-Defaults:
-
-- With no action, show help.
-- With no scope, use project scope.
-- With no selector, inspect and present available components only; never install all components.
-- A repository URL is not approval to activate its contents.
-- Never skip inspection or explicit approval.
