@@ -8,6 +8,8 @@ readonly EXIT_SESSION=5
 readonly EXIT_MERGE=6
 readonly EXIT_CLEANUP=7
 
+readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly WORKTREE_BIN_DIR="$SCRIPT_DIR/worktree-bin"
 WORKTREE_BASE="${XDG_DATA_HOME:-$HOME/.local/share}/worktrees"
 DEFAULT_INITIALIZATION_PROMPT='初始化 worktree 工作階段。請勿讀取或修改檔案、執行工具或開始工作，只回覆「已初始化」。'
 
@@ -25,6 +27,15 @@ merge_target_clean=true
 merge_target_changes_json='[]'
 merge_warnings_json='[]'
 merge_cleanup_warnings_json='[]'
+sandbox_worktree=''
+sandbox_git_dir=''
+sandbox_git_common_dir=''
+sandbox_runtime_dir=''
+sandbox_data_home=''
+sandbox_state_home=''
+sandbox_cache_home=''
+sandbox_tmpdir=''
+sandbox_branch=''
 
 usage() {
     cat <<'EOF'
@@ -258,8 +269,43 @@ validate_add() {
             fail "$EXIT_USAGE" 'OPENCODE_NOT_FOUND' '找不到 opencode'
         command -v herdr >/dev/null 2>&1 ||
             fail "$EXIT_USAGE" 'HERDR_NOT_FOUND' '找不到 herdr'
+        command -v bwrap >/dev/null 2>&1 ||
+            fail "$EXIT_USAGE" 'BWRAP_NOT_FOUND' '找不到 bwrap'
+        [[ -x "$WORKTREE_BIN_DIR/opencode" && -x "$WORKTREE_BIN_DIR/git" ]] ||
+            fail "$EXIT_USAGE" 'SANDBOX_WRAPPER_NOT_FOUND' "找不到 sandbox wrapper：$WORKTREE_BIN_DIR"
         require_command jq
     fi
+}
+
+prepare_sandbox() {
+    local worktree_path="$1"
+    local branch="$2"
+
+    sandbox_worktree="$(realpath -e -- "$worktree_path")" || return 1
+    sandbox_git_dir="$(git -C "$sandbox_worktree" rev-parse --absolute-git-dir)" || return 1
+    sandbox_git_common_dir="$(git -C "$sandbox_worktree" rev-parse --git-common-dir)" || return 1
+    sandbox_git_dir="$(realpath -e -- "$sandbox_git_dir")" || return 1
+    sandbox_git_common_dir="$(realpath -e -- "$sandbox_git_common_dir")" || return 1
+    sandbox_runtime_dir="$project_dir/.opencode/$branch"
+    sandbox_data_home="$sandbox_runtime_dir/data"
+    sandbox_state_home="$sandbox_runtime_dir/state"
+    sandbox_cache_home="$sandbox_runtime_dir/cache"
+    sandbox_tmpdir="$sandbox_runtime_dir/tmp"
+    sandbox_branch="$branch"
+
+    mkdir -p "$sandbox_data_home" "$sandbox_state_home" "$sandbox_cache_home" "$sandbox_tmpdir"
+}
+
+run_sandboxed_opencode() {
+    WORKTREE_SANDBOX_WORKTREE="$sandbox_worktree" \
+        WORKTREE_SANDBOX_GIT_DIR="$sandbox_git_dir" \
+        WORKTREE_SANDBOX_GIT_COMMON_DIR="$sandbox_git_common_dir" \
+        WORKTREE_SANDBOX_DATA_HOME="$sandbox_data_home" \
+        WORKTREE_SANDBOX_STATE_HOME="$sandbox_state_home" \
+        WORKTREE_SANDBOX_CACHE_HOME="$sandbox_cache_home" \
+        WORKTREE_SANDBOX_TMPDIR="$sandbox_tmpdir" \
+        WORKTREE_SANDBOX_BRANCH="$sandbox_branch" \
+        "$WORKTREE_BIN_DIR/opencode" "$@"
 }
 
 open_herdr_workspace() {
@@ -284,7 +330,7 @@ initialize_opencode_session() {
     local worktree_path="$1"
     local session_title="$2"
 
-    if ! opencode run --pure --format json --dir "$worktree_path" --title "$session_title" \
+    if ! run_sandboxed_opencode run --pure --format json --dir "$worktree_path" --title "$session_title" \
         --agent "$add_agent" "$add_prompt" >"$session_log" 2>&1; then
         return 1
     fi
@@ -293,9 +339,51 @@ initialize_opencode_session() {
     [[ -n "$session_id" ]]
 }
 
+configure_herdr_sandbox() {
+    local value
+    local assignment
+    local command=''
+    local sentinel="WORKTREE_SANDBOX_READY:${herdr_root_pane}:${session_id}"
+    local -a names=(
+        WORKTREE_SANDBOX_WORKTREE
+        WORKTREE_SANDBOX_GIT_DIR
+        WORKTREE_SANDBOX_GIT_COMMON_DIR
+        WORKTREE_SANDBOX_DATA_HOME
+        WORKTREE_SANDBOX_STATE_HOME
+        WORKTREE_SANDBOX_CACHE_HOME
+        WORKTREE_SANDBOX_TMPDIR
+        WORKTREE_SANDBOX_BRANCH
+        PATH
+    )
+    local -a values=(
+        "$sandbox_worktree"
+        "$sandbox_git_dir"
+        "$sandbox_git_common_dir"
+        "$sandbox_data_home"
+        "$sandbox_state_home"
+        "$sandbox_cache_home"
+        "$sandbox_tmpdir"
+        "$sandbox_branch"
+        "$WORKTREE_BIN_DIR:$PATH"
+    )
+    local index
+
+    for index in "${!names[@]}"; do
+        value="${values[index]}"
+        printf -v assignment '%s=%q' "${names[index]}" "$value"
+        command+="export $assignment; "
+    done
+    printf -v value '%q' "$sentinel"
+    command+="printf '%s\\n' $value"
+
+    herdr pane run "$herdr_root_pane" "$command" >&2 || return 1
+    herdr pane wait-output "$herdr_root_pane" --match "$sentinel" --timeout 30000 >&2
+}
+
 start_herdr_opencode() {
     local agent_name="wt-${BASHPID}"
 
+    configure_herdr_sandbox || return 1
     herdr agent start "$agent_name" --kind opencode --pane "$herdr_root_pane" -- \
         --session "$session_id" --agent "$add_agent" >>"$session_log" 2>&1
 }
@@ -328,9 +416,11 @@ add_branch() {
                 --argjson create_session "$add_session" \
                 '{status: "DRY_RUN", command: "add", branch: $branch, worktree: $worktree,
                   operations: (["git worktree add -b " + $branch + " " + $worktree + " " + $base] +
-                  (if $create_session then ["herdr worktree open --path " + $worktree,
-                    "opencode run --agent " + $agent,
-                    "herdr agent start --kind opencode"] else [] end)),
+                   (if $create_session then ["create isolated OpenCode sandbox runtime",
+                     "herdr worktree open --path " + $worktree,
+                     "sandboxed opencode run --agent " + $agent,
+                     "configure Herdr sandbox environment",
+                     "herdr agent start --kind opencode"] else [] end)),
                   session: $session}'
         else
             printf 'DRY RUN: git -C %q worktree add -b %q %q %q\n' \
@@ -338,8 +428,11 @@ add_branch() {
             if "$add_session"; then
                 printf 'DRY RUN: herdr worktree open --cwd %q --path %q --label %q --no-focus\n' \
                     "$repo_root" "$worktree_path" "$session_title"
-                printf 'DRY RUN: opencode run --pure --format json --agent %q --dir %q\n' \
+                printf 'DRY RUN: create isolated OpenCode runtime under %q/.opencode/%q\n' \
+                    "$project_dir" "$branch"
+                printf 'DRY RUN: sandboxed opencode run --pure --format json --agent %q --dir %q\n' \
                     "$add_agent" "$worktree_path"
+                printf 'DRY RUN: export sandbox environment in the Herdr root pane\n'
                 printf 'DRY RUN: herdr agent start wt-<pid> --kind opencode --pane <root-pane> -- --session <session-id> --agent %q\n' \
                     "$add_agent"
             fi
@@ -356,6 +449,11 @@ add_branch() {
     if ! "$add_session"; then
         emit_add_result 'OK' "$branch" "$worktree_path" ''
         return
+    fi
+
+    if ! prepare_sandbox "$worktree_path" "$branch"; then
+        emit_add_result 'WORKTREE_CREATED_SANDBOX_FAILED' "$branch" "$worktree_path" "$session_title"
+        exit "$EXIT_SESSION"
     fi
 
     progress "建立 Herdr workspace：$session_title"
@@ -651,6 +749,7 @@ merge_branches() {
 cleanup_branch() {
     local branch="$1"
     local worktree_path
+    local worktree_runtime_dir
 
     worktree_path="$(worktree_path_for_branch "$branch")"
     if [[ -n "$worktree_path" ]]; then
@@ -664,6 +763,14 @@ cleanup_branch() {
     progress "刪除 branch：$branch"
     if ! git -C "$repo_root" branch -d "$branch" >&2; then
         fail "$EXIT_CLEANUP" 'BRANCH_DELETE_FAILED' "無法刪除 branch：$branch"
+    fi
+
+    worktree_runtime_dir="$project_dir/.opencode/$branch"
+    if [[ -d "$worktree_runtime_dir" ]]; then
+        progress "移除 OpenCode sandbox runtime：$worktree_runtime_dir"
+        if ! rm -rf -- "$worktree_runtime_dir"; then
+            record_cleanup_warning "無法移除 OpenCode sandbox runtime：$worktree_runtime_dir"
+        fi
     fi
 }
 

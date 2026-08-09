@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly REAL_OPENCODE='/usr/bin/opencode'
+readonly REAL_GIT_SOURCE='/usr/bin/git'
+
+fail() {
+    printf 'worktree sandbox: %s\n' "$1" >&2
+    exit 126
+}
+
+require_directory() {
+    [[ -d "$1" ]] || fail "找不到目錄：$1"
+}
+
+require_directory "${WORKTREE_SANDBOX_WORKTREE:-}"
+require_directory "${WORKTREE_SANDBOX_GIT_DIR:-}"
+require_directory "${WORKTREE_SANDBOX_GIT_COMMON_DIR:-}"
+require_directory "${WORKTREE_SANDBOX_DATA_HOME:-}"
+require_directory "${WORKTREE_SANDBOX_STATE_HOME:-}"
+require_directory "${WORKTREE_SANDBOX_CACHE_HOME:-}"
+require_directory "${WORKTREE_SANDBOX_TMPDIR:-}"
+[[ -x "$REAL_OPENCODE" ]] || fail "找不到 OpenCode：$REAL_OPENCODE"
+[[ -x "$REAL_GIT_SOURCE" ]] || fail "找不到 Git：$REAL_GIT_SOURCE"
+command -v bwrap >/dev/null 2>&1 || fail '找不到 bwrap'
+
+worktree="$(realpath -e -- "$WORKTREE_SANDBOX_WORKTREE")"
+git_dir="$(realpath -e -- "$WORKTREE_SANDBOX_GIT_DIR")"
+git_common_dir="$(realpath -e -- "$WORKTREE_SANDBOX_GIT_COMMON_DIR")"
+data_home="$(realpath -e -- "$WORKTREE_SANDBOX_DATA_HOME")"
+state_home="$(realpath -e -- "$WORKTREE_SANDBOX_STATE_HOME")"
+cache_home="$(realpath -e -- "$WORKTREE_SANDBOX_CACHE_HOME")"
+tmpdir="$(realpath -e -- "$WORKTREE_SANDBOX_TMPDIR")"
+git_runtime_dir="$state_home/git-bin"
+git_real="$git_runtime_dir/git-real"
+
+mkdir -p "$git_runtime_dir"
+[[ -e "$git_real" ]] || : >"$git_real"
+
+for path in \
+    "$git_common_dir/objects" \
+    "$git_common_dir/refs/heads" \
+    "$git_common_dir/logs/refs/heads"; do
+    require_directory "$path"
+done
+
+# The linked-worktree index and HEAD are private to this checkout. Git objects
+# and the current branch's loose ref remain shared metadata required by commit.
+args=(
+    --unshare-all
+    --share-net
+    --die-with-parent
+    --new-session
+    --ro-bind / /
+    --dev /dev
+    --proc /proc
+    --tmpfs /tmp
+    --bind "$worktree" "$worktree"
+    --bind "$git_dir" "$git_dir"
+    --bind "$git_common_dir/objects" "$git_common_dir/objects"
+    --bind "$git_common_dir/refs/heads" "$git_common_dir/refs/heads"
+    --bind "$git_common_dir/logs/refs/heads" "$git_common_dir/logs/refs/heads"
+    --bind "$data_home" "$data_home"
+    --bind "$state_home" "$state_home"
+    --bind "$cache_home" "$cache_home"
+    --bind "$tmpdir" "$tmpdir"
+    --ro-bind "$REAL_GIT_SOURCE" "$git_real"
+    --ro-bind "$SCRIPT_DIR/git" /usr/bin/git
+    --chdir "$worktree"
+    --setenv HOME "$HOME"
+    --setenv XDG_DATA_HOME "$data_home"
+    --setenv XDG_STATE_HOME "$state_home"
+    --setenv XDG_CACHE_HOME "$cache_home"
+    --setenv TMPDIR "$tmpdir"
+    --setenv WORKTREE_SANDBOX_WORKTREE "$worktree"
+    --setenv WORKTREE_SANDBOX_GIT_DIR "$git_dir"
+    --setenv WORKTREE_SANDBOX_GIT_COMMON_DIR "$git_common_dir"
+    --setenv WORKTREE_SANDBOX_GIT_REAL "$git_real"
+    --setenv WORKTREE_SANDBOX_BRANCH "$WORKTREE_SANDBOX_BRANCH"
+    --setenv OPENCODE_PERMISSION '{"external_directory":"allow"}'
+    --setenv PATH "$SCRIPT_DIR:$PATH"
+)
+
+auth_file="$HOME/.local/share/opencode/auth.json"
+if [[ -f "$auth_file" ]]; then
+    runtime_auth="$data_home/opencode/auth.json"
+    mkdir -p "$(dirname -- "$runtime_auth")"
+    [[ -e "$runtime_auth" ]] || : >"$runtime_auth"
+    args+=(--ro-bind "$auth_file" "$runtime_auth")
+fi
+
+exec bwrap "${args[@]}" "$REAL_OPENCODE" "$@"

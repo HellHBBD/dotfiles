@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly REAL_GIT="${WORKTREE_SANDBOX_GIT_REAL:-/usr/bin/git}"
+
+fail() {
+    printf 'worktree sandbox git: %s\n' "$1" >&2
+    exit 126
+}
+
+run_real_git() {
+    (
+        unset GIT_DIR GIT_WORK_TREE
+        exec -a git "$REAL_GIT" -C "$worktree" "$@"
+    )
+}
+
+[[ -x "$REAL_GIT" ]] || fail "找不到受信任的 Git binary：$REAL_GIT"
+[[ -n "${WORKTREE_SANDBOX_WORKTREE:-}" ]] || fail '缺少 WORKTREE_SANDBOX_WORKTREE'
+[[ -n "${WORKTREE_SANDBOX_GIT_DIR:-}" ]] || fail '缺少 WORKTREE_SANDBOX_GIT_DIR'
+[[ -n "${WORKTREE_SANDBOX_BRANCH:-}" ]] || fail '缺少 WORKTREE_SANDBOX_BRANCH'
+
+worktree="$(realpath -e -- "$WORKTREE_SANDBOX_WORKTREE")" || fail 'worktree 不存在'
+git_dir="$(realpath -e -- "$WORKTREE_SANDBOX_GIT_DIR")" || fail 'Git admin directory 不存在'
+
+actual_worktree="$(run_real_git rev-parse --show-toplevel)" ||
+    fail 'worktree 不是 Git repository'
+actual_git_dir="$(run_real_git rev-parse --absolute-git-dir)" ||
+    fail '無法取得 Git admin directory'
+actual_branch="$(run_real_git symbolic-ref --quiet --short HEAD)" ||
+    fail '只允許操作有 branch 的 worktree'
+
+[[ "$actual_worktree" == "$worktree" ]] || fail 'worktree 範圍不符'
+[[ "$actual_git_dir" == "$git_dir" ]] || fail 'Git admin directory 範圍不符'
+[[ "$actual_branch" == "$WORKTREE_SANDBOX_BRANCH" ]] || fail '目前 branch 不符'
+
+command_name=''
+for argument in "$@"; do
+    case "$argument" in
+    -C | --git-dir | --work-tree | --namespace | --config-env | -c | --exec-path)
+        fail "不允許改變 Git 範圍：$argument"
+        ;;
+    -C* | --git-dir=* | --work-tree=* | --namespace=* | --config-env=* | --exec-path=* | -c?*)
+        fail "不允許改變 Git 範圍：$argument"
+        ;;
+    --)
+        break
+        ;;
+    -*)
+        ;;
+    *)
+        command_name="$argument"
+        break
+        ;;
+    esac
+done
+
+case "$command_name" in
+add | blame | cat-file | check-attr | check-ignore | check-mailmap | cherry-pick | commit | describe | diff | diff-files | diff-index | diff-tree | for-each-ref | grep | log | ls-files | ls-tree | merge | name-rev | rebase | reset | restore | revert | rev-list | rev-parse | rm | show | shortlog | status | whatchanged)
+    ;;
+*)
+    fail "不允許 Git 子命令：${command_name:-<none>}"
+    ;;
+esac
+
+GIT_DIR="$git_dir" \
+    GIT_WORK_TREE="$worktree" \
+    GIT_CEILING_DIRECTORIES="$worktree" \
+    exec -a git "$REAL_GIT" "$@"
