@@ -6,7 +6,7 @@ model: openai/gpt-5.6-terra
 options:
     reasoningEffort: high
 permission:
-    edit: allow
+    edit: ask
     task: deny
 ---
 

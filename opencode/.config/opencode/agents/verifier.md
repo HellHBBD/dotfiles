@@ -8,6 +8,8 @@ options:
 permission:
     edit: deny
     bash:
+        "cargo metadata --no-deps --locked": allow
+        "cargo fmt --check": allow
         "git add*": deny
         "git -C * add*": deny
         "git commit*": deny

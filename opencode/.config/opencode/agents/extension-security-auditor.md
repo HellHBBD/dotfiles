@@ -11,6 +11,7 @@ permission:
     websearch: deny
     webfetch: deny
     edit: deny
+    grep: allow
     bash: deny
     external_directory:
         "*": deny

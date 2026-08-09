@@ -7,7 +7,6 @@ options:
     reasoningEffort: high
 permission:
     edit: ask
-    bash: ask
     task: deny
     skill:
         "*": deny

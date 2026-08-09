@@ -7,7 +7,6 @@ options:
     reasoningEffort: max
 permission:
     edit: deny
-    bash: ask
     task: deny
 ---
 

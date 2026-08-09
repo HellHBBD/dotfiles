@@ -7,6 +7,7 @@ options:
     reasoningEffort: high
 permission:
     skill: deny
+    grep: allow
     question: allow
     task:
         "*": deny
@@ -15,9 +16,12 @@ permission:
     webfetch: deny
     edit:
         "*": ask
-        "~/.local/share/opencode-extension-manager/**": allow
-        "~/.claude/skills/**": deny
-        "~/.agents/skills/**": deny
+        ".local/share/opencode-extension-manager/**": allow
+        "*/.local/share/opencode-extension-manager/**": allow
+        ".claude/skills/**": deny
+        "*/.claude/skills/**": deny
+        ".agents/skills/**": deny
+        "*/.agents/skills/**": deny
     external_directory:
         "*": deny
         "~/.config/opencode/**": ask
@@ -25,7 +29,6 @@ permission:
         "~/.claude/skills/**": allow
         "~/.agents/skills/**": allow
     bash:
-        "*": ask
         "git rev-parse *": allow
         "git status *": allow
         "git log *": allow

@@ -8,7 +8,6 @@ options:
 permission:
     edit: deny
     bash:
-        "*": ask
         "git status*": allow
         "git diff*": allow
         "git show*": allow

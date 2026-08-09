@@ -14,7 +14,81 @@ permission:
     webfetch: allow
     websearch: deny
     mobile: deny
-    bash: allow
+    bash:
+        uname: allow
+        "uname -r": allow
+        "pacman -Q": allow
+        "pacman -Q *": allow
+        "pacman -Dk": allow
+        checkupdates: allow
+        "yay -Qua": allow
+        "findmnt --target /boot --noheadings --output TARGET,SOURCE,FSTYPE": allow
+        "df --human-readable /boot": allow
+        "free --human": allow
+        uptime: allow
+        "lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS": allow
+        lscpu: allow
+        "lspci -nnk": allow
+        lsusb: allow
+        "dkms status": allow
+        "modinfo -F version nvidia": allow
+        "systemctl is-enabled greetd.service": allow
+        "systemctl is-active greetd.service": allow
+        "systemctl status greetd.service --no-pager": allow
+        "systemctl status NetworkManager.service --no-pager": allow
+        "systemctl status bluetooth.service --no-pager": allow
+        "systemctl list-units --failed --no-pager": allow
+        "systemctl list-unit-files --state=enabled --no-pager": allow
+        "systemctl --user is-active pipewire.service": allow
+        "systemctl --user is-active wireplumber.service": allow
+        "systemctl --user is-active xdg-desktop-portal-hyprland.service": allow
+        "systemctl --user status pipewire.service --no-pager": allow
+        "systemctl --user status wireplumber.service --no-pager": allow
+        "systemctl --user status xdg-desktop-portal-hyprland.service --no-pager": allow
+        "systemctl --user list-units --failed --no-pager": allow
+        "loginctl list-sessions --no-legend": allow
+        "loginctl list-users --no-legend": allow
+        "journalctl -b --no-pager": allow
+        "journalctl -b -p warning --no-pager": allow
+        "journalctl --user -b --no-pager": allow
+        "journalctl --user -b -p warning --no-pager": allow
+        "coredumpctl list --boot 0 --no-pager": allow
+        "coredumpctl info --boot 0 --no-pager": allow
+        nvidia-smi: allow
+        "nvidia-smi -q": allow
+        "nvidia-smi --query-gpu=name,driver_version,memory.total,memory.used --format=csv,noheader": allow
+        lsmod: allow
+        "hyprctl version": allow
+        "hyprctl monitors": allow
+        "hyprctl clients": allow
+        "hyprctl activewindow": allow
+        "hyprctl activeworkspace": allow
+        "hyprctl workspaces": allow
+        "hyprctl layers": allow
+        "hyprctl devices": allow
+        "wpctl status": allow
+        "playerctl status": allow
+        "playerctl metadata": allow
+        "nmcli general status": allow
+        "nmcli device status": allow
+        "nmcli device show": allow
+        "bluetoothctl show": allow
+        "bluetoothctl devices": allow
+        "pgrep -a *": allow
+        "pidof *": allow
+        "ps -eo *": allow
+        "pacman -Qi *": allow
+        "pacman -Ql *": allow
+        "pacman -Qo *": allow
+        "pacman -Qm": allow
+        "pacman -Qdt": allow
+        "pacman -Qk *": allow
+        "command -v *": allow
+        "readlink -f *": allow
+        "readelf -p .uname /boot/EFI/Linux/arch-linux.efi": allow
+        "readelf -p .uname /boot/EFI/Linux/arch-linux-fallback.efi": allow
+        "readelf -p .osrel /boot/EFI/Linux/arch-linux.efi": allow
+        "readelf -p .osrel /boot/EFI/Linux/arch-linux-fallback.efi": allow
 ---
 
 Interpret the user's Arch Linux upgrade and desktop-health request naturally.

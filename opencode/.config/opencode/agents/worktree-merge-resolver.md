@@ -7,7 +7,7 @@ options:
     reasoningEffort: high
     textVerbosity: low
 permission:
-    edit: allow
+    edit: ask
     task: deny
     skill: deny
     question: deny
@@ -27,7 +27,7 @@ permission:
         "git ls-files -u*": allow
         "git show :*": allow
         "git add -- *": allow
-        "git commit --no-edit": allow
+        "git commit --no-edit": ask
         "git rev-list --parents*": allow
 ---
 

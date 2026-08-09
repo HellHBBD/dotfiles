@@ -16,7 +16,6 @@ permission:
     webfetch: deny
     websearch: deny
     mobile: deny
-    bash: ask
 ---
 
 Interpret a user request, then invoke only `$HOME/shs/worktree.sh`. Do not
