@@ -12,8 +12,8 @@
   "scope": "global",
   "riskClassification": "high",
   "installedAt": "2026-08-09T13:17:36+08:00",
-  "backupRevision": "9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
-  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-skill-9f25a3aaa105/baseline-9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
+  "backupRevision": "baseline-local-policy-20260809",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-skill-9f25a3aaa105/baseline-local-policy-20260809",
   "governed": true,
-  "notes": "Restricted adaptation: explicit invocation, code-only local corpus, and existing Graphify CLI 0.9.35 only. Package installation, remote backends, MCP, watchers, hooks, plugins, and database export are disabled. The short name was explicitly requested by the user."
+  "notes": "Restricted local policy: explicit invocation; code-only active-worktree extraction and update; explicitly named external code-only graphs are read-only query baselines. Package installation, remote backends, MCP, watchers, hooks, plugins, database export, and external graph mutation are disabled. The short name was explicitly requested by the user."
 }
