@@ -388,7 +388,12 @@ spotify:
     }
     yay -S --needed spotify
     sudo pacman -S --needed stow
-    just stow spotify
+    stow \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
+        --restow \
+        --no-folding \
+        spotify
 
 # 安裝並套用 Hyprland、桌面元件與相關整合設定
 hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
