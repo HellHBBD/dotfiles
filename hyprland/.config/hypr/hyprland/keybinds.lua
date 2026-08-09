@@ -67,10 +67,20 @@ local screenshot_screen_command = [[
 command -v grim >/dev/null 2>&1 || exit 1
 command -v wl-copy >/dev/null 2>&1 || exit 1
 
-grim - | wl-copy
+directory="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$directory"
+file="$directory/$(date '+%Y-%m-%d_%H-%M-%S').png"
 
-if command -v notify-send >/dev/null 2>&1; then
-    notify-send "Screenshot" "Full screen copied to clipboard"
+if grim "$file"; then
+    wl-copy <"$file"
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send "截圖已儲存" "$file"
+    fi
+else
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -u critical "截圖失敗" "grim 無法擷取全螢幕"
+    fi
+    exit 1
 fi
 ]]
 
