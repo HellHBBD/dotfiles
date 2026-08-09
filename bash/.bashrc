@@ -110,6 +110,7 @@ path_append() {
 }
 path_prepend "$HOME/shs"
 path_prepend "/opt/cuda/bin"
+path_prepend "$HOME/.local/bin"
 
 export PATH
 
