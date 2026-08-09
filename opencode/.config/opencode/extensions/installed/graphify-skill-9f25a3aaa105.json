@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "graphify-skill-9f25a3aaa105",
+  "sourceUrl": "https://github.com/Graphify-Labs/graphify",
+  "requestedRef": "v0.9.35",
+  "resolvedCommit": "9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
+  "componentType": "skill",
+  "originalSourcePath": "graphify/skill-opencode.md",
+  "targetPath": "~/.config/opencode/skills/graphify",
+  "originalName": "graphify",
+  "installedName": "graphify",
+  "scope": "global",
+  "riskClassification": "high",
+  "installedAt": "2026-08-09T13:17:36+08:00",
+  "backupRevision": "9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-skill-9f25a3aaa105/baseline-9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
+  "governed": true,
+  "notes": "Restricted adaptation: explicit invocation, code-only local corpus, and existing Graphify CLI 0.9.35 only. Package installation, remote backends, MCP, watchers, hooks, plugins, and database export are disabled. The short name was explicitly requested by the user."
+}

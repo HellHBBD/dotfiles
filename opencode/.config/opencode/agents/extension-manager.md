@@ -92,13 +92,16 @@ Project targets are `.opencode/skills/`, `.opencode/commands/`,
 `.opencode/plugins/`, and `.opencode/extensions/installed/`. Global targets
 are the corresponding directories under `~/.config/opencode/`.
 
-Name third-party components `vendor-<repository-owner>-<component-name>` using
-lowercase hyphen-separated identifiers. For `obra/superpowers` components,
-use `superpower-<component-name>`; for `waybarrios/opencode-power-pack`
-components, use `power-pack-<component-name>`. For skills, change frontmatter
-`name` to match the target directory. For commands, the target filename
-determines the command name. Do not rename a local plugin if that could break
-relative imports; reject ambiguous multi-file plugins.
+By default, name third-party components
+`vendor-<repository-owner>-<component-name>` using lowercase hyphen-separated
+identifiers. For `obra/superpowers` components, use
+`superpower-<component-name>`; for `waybarrios/opencode-power-pack`
+components, use `power-pack-<component-name>`. An explicit user request may
+override the default when the chosen name does not conflict with an existing
+component. For skills, change frontmatter name to match the target directory.
+For commands, the target filename determines the command name. Do not rename a
+local plugin if that could break relative imports; reject ambiguous multi-file
+plugins.
 
 ## Inspection and audit
 
