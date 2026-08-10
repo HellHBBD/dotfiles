@@ -12,8 +12,8 @@
   "scope": "global",
   "riskClassification": "high",
   "installedAt": "2026-08-09T13:17:36+08:00",
-  "backupRevision": "baseline-local-policy-20260809",
-  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-skill-9f25a3aaa105/baseline-local-policy-20260809",
+  "backupRevision": "baseline-local-policy-approval-gated-readonly-query-20260810",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-skill-9f25a3aaa105/baseline-local-policy-approval-gated-readonly-query-20260810",
   "governed": true,
-  "notes": "Restricted local policy: explicit invocation; code-only active-worktree extraction and update; explicitly named external code-only graphs are read-only query baselines. Package installation, remote backends, MCP, watchers, hooks, plugins, database export, and external graph mutation are disabled. The short name was explicitly requested by the user."
+  "notes": "Restricted local policy: build and plan may proactively load the skill for approval-gated query, explain, or path against an existing verified code-only active-workspace graph, then verify findings against canonically confined current source. Explicit /graphify invocation is required for initial and incremental extraction with graphify extract --code-only --no-cluster and code-only postconditions. Explicitly named external code-only graphs remain read-only graph-only query baselines. Other Graphify commands, package installation, remote backends, MCP, watchers, hooks, plugins, database export, and external graph mutation are disabled. The short name was explicitly requested by the user."
 }

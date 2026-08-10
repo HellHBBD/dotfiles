@@ -98,6 +98,15 @@
             "dx --version*": "allow",
             "opencode --version*": "allow",
 
+            // Approval-gated Graphify command allowlist
+            "graphify": "deny",
+            "graphify *": "deny",
+            "graphify --version": "ask",
+            "graphify query *": "ask",
+            "graphify explain *": "ask",
+            "graphify path *": "ask",
+            "graphify extract * --code-only --no-cluster": "ask",
+
             "*;*": "ask",
             "*&&*": "ask",
             "*||*": "ask",
@@ -197,6 +206,8 @@
             // Explicit approved command exceptions
 
             // Hard deny
+            "graphify update*": "deny",
+            "*/graphify update*": "deny",
             "sudo": "deny",
             "sudo *": "deny",
             "* sudo *": "deny",
@@ -273,6 +284,7 @@
                 },
                 "skill": {
                     "*": "ask",
+                    "graphify": "allow",
                     "core-*": "allow",
                     "project-*": "allow",
                     "vendor-*": "ask",
@@ -304,6 +316,7 @@
                 "edit": "deny",
                 "skill": {
                     "*": "deny",
+                    "graphify": "allow",
                     "core-analysis-*": "allow",
                     "core-architecture-*": "allow",
                     "project-planning-*": "allow",

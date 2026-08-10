@@ -12,8 +12,8 @@
   "scope": "global",
   "riskClassification": "high",
   "installedAt": "2026-08-09T13:17:36+08:00",
-  "backupRevision": "9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
-  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-command-9f25a3aaa105/baseline-9f25a3aaa1050913c2d8a1b9f0b0f0ed18296abd",
+  "backupRevision": "baseline-local-policy-skill-routing-20260810",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/graphify-command-9f25a3aaa105/baseline-local-policy-skill-routing-20260810",
   "governed": true,
-  "notes": "Restricted command wrapper for the user-approved short name. See the paired skill manifest for the enforced operational limits."
+  "notes": "Restricted command wrapper for the user-approved short name. It reloads the paired graphify skill for each invocation and routes active-workspace builds and refreshes only through graphify extract --code-only --no-cluster."
 }
