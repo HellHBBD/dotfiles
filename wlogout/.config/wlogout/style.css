@@ -13,10 +13,10 @@ window {
 }
 
 button {
-    min-width: 240px;
-    min-height: 164px;
+    min-width: 280px;
+    min-height: 195px;
     margin: 0;
-    padding: 0 0 12px;
+    padding: 0 0 14px;
     color: #cdd6f4;
     background-color: rgba(49, 50, 68, 0.94);
     border-style: solid;
@@ -24,8 +24,8 @@ button {
     border-color: #45475a;
     border-radius: 12px;
     background-repeat: no-repeat;
-    background-position: center 42%;
-    background-size: 24%;
+    background-position: center 41%;
+    background-size: 28%;
     text-shadow: none;
     outline-style: none;
     transition:

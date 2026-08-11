@@ -27,7 +27,9 @@
 }
 
 * {
-    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK TC", sans-serif;
+    font-family:
+        "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC",
+        sans-serif;
     font-size: 14px;
     color: @text;
 }

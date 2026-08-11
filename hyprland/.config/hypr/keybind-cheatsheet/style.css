@@ -1,12 +1,39 @@
 window {
-    background: #242231;
-    color: #e8e6f0;
+    background: #111318;
+    color: #cdd6f4;
+    font-family:
+        "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC",
+        monospace;
 }
 
 headerbar {
     min-height: 52px;
-    background: #2b293a;
-    border-bottom: 1px solid rgba(196, 181, 253, 0.22);
+    background: #1a1d24;
+    border-bottom: 1px solid rgba(92, 156, 245, 0.22);
+    color: #cdd6f4;
+}
+
+headerbar button {
+    color: #cdd6f4;
+}
+
+headerbar button:hover {
+    background: rgba(137, 180, 250, 0.14);
+}
+
+entry {
+    background: #252a33;
+    border: 1px solid rgba(137, 180, 250, 0.35);
+    border-radius: 10px;
+    color: #cdd6f4;
+}
+
+entry:focus {
+    border-color: #89b4fa;
+}
+
+entry placeholder {
+    color: #a6adc8;
 }
 
 .title {
@@ -17,48 +44,50 @@ headerbar {
 .sidebar {
     min-width: 180px;
     padding: 12px 8px;
-    background: #2b293a;
-    border-right: 1px solid rgba(196, 181, 253, 0.18);
+    background: #1a1d24;
+    border-right: 1px solid rgba(92, 156, 245, 0.18);
 }
 
 .section-title {
-    color: #c4b5fd;
+    color: #89b4fa;
     font-size: 16px;
     font-weight: 700;
 }
 
 .binding-card {
     min-height: 70px;
-    background: rgba(49, 46, 66, 0.88);
-    border: 1px solid rgba(196, 181, 253, 0.18);
+    background: rgba(42, 47, 58, 0.92);
+    border: 1px solid rgba(137, 180, 250, 0.18);
     border-radius: 12px;
 }
 
 .shortcut {
-    color: #d8d4f7;
-    font-family: "JetBrains Mono", "Noto Sans CJK TC";
+    color: #89b4fa;
+    font-family:
+        "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans CJK TC",
+        monospace;
     font-weight: 700;
 }
 
 .action {
-    color: #e8e6f0;
+    color: #cdd6f4;
     font-size: 14px;
 }
 
 .search-row {
     padding: 12px 14px;
-    background: rgba(49, 46, 66, 0.72);
+    background: rgba(42, 47, 58, 0.78);
     border-radius: 10px;
 }
 
 .category-chip {
     min-width: 100px;
-    color: #c4b5fd;
+    color: #89b4fa;
     font-size: 12px;
     font-weight: 700;
 }
 
 .match {
-    background: rgba(196, 181, 253, 0.38);
+    background: rgba(137, 180, 250, 0.38);
     color: #ffffff;
 }

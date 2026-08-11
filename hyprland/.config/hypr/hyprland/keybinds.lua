@@ -90,25 +90,30 @@ if pgrep -x wlogout >/dev/null 2>&1; then
     exit 0
 fi
 
+dimensions=$(hyprctl -j monitors 2>/dev/null |
+    jq -r 'map(select(.focused))[0] | "\((.width / .scale | floor)) \((.height / .scale | floor))"' 2>/dev/null)
+set -- $dimensions
+
+if [ "$#" -eq 2 ] && [ "$1" -ge 576 ] && [ "$2" -ge 195 ]; then
+    horizontal_margin=$((($1 - 576) / 2))
+    vertical_margin=$((($2 - 195) / 2))
+fi
+
+set -- wlogout -p layer-shell --buttons-per-row 2 --column-spacing 16
+if [ -n "${horizontal_margin:-}" ]; then
+    # Constrain the grid to the configured 280x195 button size.
+    set -- "$@" \
+        --margin-left "$horizontal_margin" \
+        --margin-right "$horizontal_margin" \
+        --margin-top "$vertical_margin" \
+        --margin-bottom "$vertical_margin"
+fi
+
 if command -v uwsm >/dev/null 2>&1 &&
    systemctl --user is-active --quiet 'wayland-session@*.target'; then
-    exec uwsm app -- wlogout \
-        -p layer-shell \
-        --buttons-per-row 2 \
-        --column-spacing 16 \
-        --margin-left 520 \
-        --margin-right 520 \
-        --margin-top 344 \
-        --margin-bottom 344
+    exec uwsm app -- "$@"
 else
-    exec wlogout \
-        -p layer-shell \
-        --buttons-per-row 2 \
-        --column-spacing 16 \
-        --margin-left 520 \
-        --margin-right 520 \
-        --margin-top 344 \
-        --margin-bottom 344
+    exec "$@"
 fi
 ]]
 

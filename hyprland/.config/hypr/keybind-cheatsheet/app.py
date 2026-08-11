@@ -210,6 +210,7 @@ def highlight(text: str, query: str) -> str:
 class CheatSheetApplication(Adw.Application):
     def __init__(self) -> None:
         super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.NON_UNIQUE)
+        Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.FORCE_DARK)
         self.window: Adw.ApplicationWindow | None = None
         self.bindings: list[Binding] = []
         self.search_entry: Gtk.SearchEntry | None = None

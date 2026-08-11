@@ -7,15 +7,44 @@ format_duration() {
     printf '%d:%02d' "$((seconds / 60))" "$((seconds % 60))"
 }
 
+active_player() {
+    local player
+    local first_player=""
+    local status
+
+    while IFS= read -r player; do
+        [[ -n $player ]] || continue
+        status=$(playerctl --player="$player" status 2>/dev/null || true)
+        [[ -n $first_player ]] || first_player=$player
+        if [[ $status == "Playing" ]]; then
+            printf '%s\n' "$player"
+            return
+        fi
+    done < <(playerctl -l 2>/dev/null)
+
+    printf '%s\n' "$first_player"
+}
+
 if ! command -v playerctl >/dev/null 2>&1; then
     printf '%s\n' '{"text":"󰝛 No media","class":"idle","tooltip":"playerctl is unavailable"}'
     exit 0
 fi
 
-player=$(playerctl -l 2>/dev/null | head -n 1 || true)
+player=$(active_player)
 if [[ -z $player ]]; then
     printf '%s\n' '{"text":"󰝛 No media","class":"idle","tooltip":"No MPRIS player is available"}'
     exit 0
+fi
+
+if (($# > 0)); then
+    case $1 in
+    play-pause | previous | next)
+        exec playerctl --player="$player" "$1"
+        ;;
+    *)
+        exit 2
+        ;;
+    esac
 fi
 
 status=$(playerctl --player="$player" status 2>/dev/null || true)
@@ -44,15 +73,15 @@ empty=${empty// /░}
 
 case $status in
 Playing)
-    icon="󰐊"
+    icon="󰏤"
     class="playing"
     ;;
 Paused)
-    icon="󰏤"
+    icon="󰐊"
     class="paused"
     ;;
 *)
-    icon="󰏤"
+    icon="󰐊"
     class="idle"
     ;;
 esac

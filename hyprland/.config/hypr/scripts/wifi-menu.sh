@@ -18,13 +18,13 @@ connected_device() {
 }
 
 if wifi_enabled; then
-    power_action="󰖪 Turn Wi-Fi off"
+    power_action="󰖪 關閉 Wi-Fi"
 else
-    power_action="󰖩 Turn Wi-Fi on"
+    power_action="󰖩 開啟 Wi-Fi"
 fi
 
 selection=$({
-    printf '%s\n' "$power_action" '󰖩 Disconnect' '󰑓 Rescan'
+    printf '%s\n' "$power_action" '󰖩 中斷連線' '󰑓 重新掃描'
     if wifi_enabled; then
         nmcli --terse --fields SSID device wifi list --rescan yes 2>/dev/null |
             sed '/^$/d' |
@@ -33,38 +33,38 @@ selection=$({
 } | fuzzel --dmenu --prompt 'Wi-Fi > ') || exit 0
 
 case $selection in
-'󰖪 Turn Wi-Fi off')
-    nmcli radio wifi off && notify "Wi-Fi turned off"
+'󰖪 關閉 Wi-Fi')
+    nmcli radio wifi off && notify "Wi-Fi 已關閉"
     ;;
-'󰖩 Turn Wi-Fi on')
-    nmcli radio wifi on && notify "Wi-Fi turned on"
+'󰖩 開啟 Wi-Fi')
+    nmcli radio wifi on && notify "Wi-Fi 已開啟"
     ;;
-'󰖩 Disconnect')
+'󰖩 中斷連線')
     device=$(connected_device)
     if [[ -n $device ]]; then
-        nmcli device disconnect "$device" && notify "Disconnected"
+        nmcli device disconnect "$device" && notify "已中斷連線"
     else
-        notify "No active Wi-Fi connection"
+        notify "沒有作用中的 Wi-Fi 連線"
     fi
     ;;
-'󰑓 Rescan')
-    nmcli device wifi rescan && notify "Network scan requested"
+'󰑓 重新掃描')
+    nmcli device wifi rescan && notify "已要求掃描網路"
     ;;
 '')
     exit 0
     ;;
 *)
     if nmcli device wifi connect "$selection"; then
-        notify "Connected to $selection"
+        notify "已連線至 $selection"
         exit 0
     fi
 
-    password=$(fuzzel --dmenu --prompt-only 'Wi-Fi password > ' --password) || exit 0
+    password=$(fuzzel --dmenu --prompt-only 'Wi-Fi 密碼 > ' --password) || exit 0
     [[ -n $password ]] || exit 0
     if nmcli device wifi connect "$selection" password "$password"; then
-        notify "Connected to $selection"
+        notify "已連線至 $selection"
     else
-        notify "Could not connect to $selection"
+        notify "無法連線至 $selection"
     fi
     ;;
 esac
