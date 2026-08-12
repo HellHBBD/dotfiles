@@ -16,6 +16,22 @@ permission:
     webfetch: deny
     websearch: deny
     mobile: deny
+    bash:
+        "*": deny
+        "$HOME/shs/worktree.sh --json list": allow
+        "$HOME/shs/worktree.sh --json status": allow
+        "$HOME/shs/worktree.sh --dry-run add *": allow
+        "$HOME/shs/worktree.sh --dry-run merge *": allow
+        "$HOME/shs/worktree.sh *": ask
+        "*;*": deny
+        "*&&*": deny
+        "*||*": deny
+        "*&*": deny
+        "*>*": deny
+        "*<*": deny
+        "*|*": deny
+        "*$(*": deny
+        "*`*": deny
 ---
 
 Interpret a user request, then invoke only `$HOME/shs/worktree.sh`. Do not

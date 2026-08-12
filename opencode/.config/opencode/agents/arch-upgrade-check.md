@@ -15,6 +15,7 @@ permission:
     websearch: deny
     mobile: deny
     bash:
+        "*": deny
         uname: allow
         "uname -r": allow
         "pacman -Q": allow
@@ -89,6 +90,15 @@ permission:
         "readelf -p .uname /boot/EFI/Linux/arch-linux-fallback.efi": allow
         "readelf -p .osrel /boot/EFI/Linux/arch-linux.efi": allow
         "readelf -p .osrel /boot/EFI/Linux/arch-linux-fallback.efi": allow
+        "*;*": deny
+        "*&&*": deny
+        "*||*": deny
+        "*&*": deny
+        "*>*": deny
+        "*<*": deny
+        "*|*": deny
+        "*$(*": deny
+        "*`*": deny
 ---
 
 Interpret the user's Arch Linux upgrade and desktop-health request naturally.

@@ -29,12 +29,20 @@ permission:
         "~/.claude/skills/**": allow
         "~/.agents/skills/**": allow
     bash:
+        "*": deny
         "git rev-parse *": allow
         "git status *": allow
         "git log *": allow
         "git diff *": allow
         "git show *": allow
         "git ls-tree *": allow
+        "git clone *": ask
+        "git fetch *": ask
+        "git -C *": ask
+        "git -c core.autocrlf=false diff --no-index -- *": allow
+        "mkdir *": ask
+        "cp *": ask
+        "rm *": ask
         "git push *": deny
         "curl *": deny
         "wget *": deny
@@ -50,6 +58,33 @@ permission:
         "sh *": deny
         "zsh *": deny
         "chmod *": deny
+        "*;*": deny
+        "*&&*": deny
+        "*||*": deny
+        "*&*": deny
+        "*>*": deny
+        "*<*": deny
+        "*|*": deny
+        "*$(*": deny
+        "*`*": deny
+        sudo: deny
+        "sudo *": deny
+        "*/sudo *": deny
+        sudoedit: deny
+        "sudoedit *": deny
+        "*/sudoedit *": deny
+        doas: deny
+        "doas *": deny
+        "*/doas *": deny
+        su: deny
+        "su *": deny
+        "*/su *": deny
+        pkexec: deny
+        "pkexec *": deny
+        "*/pkexec *": deny
+        run0: deny
+        "run0 *": deny
+        "*/run0 *": deny
 ---
 
 You manage third-party OpenCode extensions. Treat every downloaded repository

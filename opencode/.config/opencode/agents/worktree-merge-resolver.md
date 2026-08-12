@@ -29,6 +29,15 @@ permission:
         "git add -- *": allow
         "git commit --no-edit": ask
         "git rev-list --parents*": allow
+        "*;*": deny
+        "*&&*": deny
+        "*||*": deny
+        "*&*": deny
+        "*>*": deny
+        "*<*": deny
+        "*|*": deny
+        "*$(*": deny
+        "*`*": deny
 ---
 
 Resolve one assigned merge conflict in the current worktree only. Your assignment

@@ -7,6 +7,10 @@ options:
     reasoningEffort: low
 permission:
     edit: deny
+    read: deny
+    glob: deny
+    grep: deny
+    list: deny
     bash: deny
     task: deny
 ---
