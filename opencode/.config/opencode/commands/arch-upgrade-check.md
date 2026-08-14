@@ -1,6 +1,6 @@
 ---
 description: Check Arch Linux upgrade readiness and desktop health using natural language.
-agent: arch-upgrade-check
+agent: arch-diagnostics
 subtask: false
 ---
 
