@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-microsoft-playwright-mcp-0.0.79",
+  "sourceUrl": "https://github.com/microsoft/playwright-mcp.git",
+  "requestedRef": "v0.0.79",
+  "resolvedCommit": "4c5077651542f68525a0b51e97bab2a32abc9290",
+  "componentType": "mcp-runtime",
+  "targetPath": "~/.local/share/opencode-extension-manager/runtime/vendor-microsoft-playwright-mcp/0.0.79",
+  "configPath": "~/.config/opencode/opencode.jsonc#mcp.playwright",
+  "launcherPath": "~/.config/opencode/scripts/playwright-mcp-launcher.js",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installedAt": "2026-08-12T00:00:00+08:00",
+  "backupRevision": null,
+  "backupPath": null,
+  "governed": true,
+  "packages": [
+    {
+      "name": "@playwright/mcp",
+      "version": "0.0.79",
+      "integrity": "sha512-VpqD4a3vFyGQMY9sh3UJiO6wjcurggkljKfAyCHL0QWGY5m6Ehr3MNsAAHPDHO//n13g0PCjpHatAOiulrqdZQ=="
+    },
+    {
+      "name": "playwright",
+      "version": "1.63.0-alpha-2026-08-05",
+      "integrity": "sha512-zbGZUK+JYkoDV3cUgfvh2czTBJL34Gmz5gHVI25xiIpvYSR17Q1M7TS8hnwECUe+IkKaeXbKrSyJTyogm2DVWw=="
+    },
+    {
+      "name": "playwright-core",
+      "version": "1.63.0-alpha-2026-08-05",
+      "integrity": "sha512-YussvUybTfBtyYbGXWh43f+5kNP03wg98M6mu4DphYET7PSbNVajsdLGjWE1xrsjqOw32i2wFlRP7U5mcOpMZg=="
+    }
+  ],
+  "browser": {
+    "name": "chromium",
+    "revision": "1237",
+    "version": "152.0.7977.8",
+    "sourceUrl": "https://storage.googleapis.com/chrome-for-testing-public/152.0.7977.8/linux64/chrome-linux64.zip",
+    "retrievedIntegrity": "sha512-zmqkBoA6dC/1R6NdwNNHV7u0kOx2IWtOXU7NTG/1ZQxEFYH0f4la05A7UycZ57aki7dHHSvMtmUWI1s6ySnKAQ==",
+    "upstreamIntegrity": null
+  },
+  "notes": "Installed from registry tarballs after integrity verification. Production closure is exactly @playwright/mcp, playwright, and playwright-core; source lockfile entries outside this closure are dev-only. Chromium archive lacks an upstream published digest, so the recorded digest is retrieval evidence rather than an expected upstream checksum. Launcher uses a user-owned 0700 runtime artifact directory and allows only loopback application origins plus exact static-resource origins https://fonts.googleapis.com, https://fonts.gstatic.com, and https://cdn.jsdelivr.net. Globally denied pending scoped ui-inspector activation; the first-party guard rejects agent-selected artifact filenames and non-loopback navigation."
+}

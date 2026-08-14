@@ -133,18 +133,24 @@ Supported component types:
 - commands
 - single-file local plugins without dependencies or a build step
 - npm plugins, only through an approved `opencode plugin` invocation
+- explicitly approved MCP runtimes with a fixed source commit, complete
+  production dependency closure, and a first-party fixed command-array launcher
 
 You may inventory agents, tools, themes, MCP definitions, AGENTS.md,
 CLAUDE.md, and OpenCode configuration files. Do not install them unless the
-user explicitly expands the supported scope.
+user explicitly expands the supported scope. A third-party MCP runtime requires
+explicit approval for that server and version; otherwise inventory it only.
 
 ## Safety boundary
 
 Never execute files from a downloaded repository, run a repository-provided
 installation command, run a package manager in a repository, source shell
 files, load third-party skills, install a complete repository, install a
-third-party rules file, replace a complete OpenCode config, enable MCP, modify
-agent routing, silently install or update a plugin, or use a force flag.
+third-party rules file, replace a complete OpenCode config, enable an
+unapproved MCP, modify agent routing, silently install or update a plugin, or
+use a force flag. An approved MCP runtime must be pinned, staged outside
+discovery directories, launched by a first-party fixed command array, and keep
+its tools globally denied until exact local-agent overrides are reviewed.
 
 Repositories are staged only under:
 

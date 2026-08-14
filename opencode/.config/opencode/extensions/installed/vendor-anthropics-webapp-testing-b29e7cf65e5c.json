@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "installationId": "vendor-anthropics-webapp-testing-b29e7cf65e5c",
+  "sourceUrl": "https://github.com/anthropics/skills",
+  "requestedRef": "main",
+  "resolvedCommit": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "componentType": "skill",
+  "originalSourcePath": "skills/webapp-testing",
+  "targetPath": "~/.config/opencode/skills/vendor-anthropics-webapp-testing/SKILL.md",
+  "originalName": "webapp-testing",
+  "installedName": "vendor-anthropics-webapp-testing",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installedAt": "2026-08-12T00:00:00+08:00",
+  "backupRevision": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-anthropics-webapp-testing-b29e7cf65e5c/baseline-b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "governed": true,
+  "notes": "Adapted derivative: preserves browser-testing guidance but excludes the shell=True server helper, Python examples, and server lifecycle management."
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "installationId": "core-ui-visual-review-local",
+  "componentType": "skill",
+  "targetPath": "~/.config/opencode/skills/core-ui-visual-review/SKILL.md",
+  "scope": "global",
+  "riskClassification": "low",
+  "installedAt": "2026-08-12T00:00:00+08:00",
+  "backupRevision": null,
+  "backupPath": null,
+  "governed": true,
+  "notes": "First-party runtime-evidence routing skill."
+}

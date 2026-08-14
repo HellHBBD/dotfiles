@@ -38,6 +38,10 @@
             "~/.local/share/opencode/**": "deny",
         },
         "doom_loop": "ask",
+        "playwright_*": "deny",
+        "ui_screenshot": "deny",
+        "ui_window_list": "deny",
+        "ui_window_match": "deny",
         "task": {
             "*": "allow",
             "critical-reviewer": "deny",
@@ -476,6 +480,17 @@
                     "critical-reviewer": "deny",
                 },
             },
+        },
+    },
+    "mcp": {
+        "playwright": {
+            "type": "local",
+            "command": [
+                "node",
+                "/home/hellhbbd/dotfiles/opencode/.config/opencode/scripts/playwright-mcp-launcher.js",
+            ],
+            "enabled": true,
+            "timeout": 30000,
         },
     },
     "plugin": ["opencode-mobile@latest"],
