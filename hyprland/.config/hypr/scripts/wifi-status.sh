@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -u
 
+# Keep nmcli's machine-readable fields stable across desktop locales.
+export LC_ALL=C
+
 emit() {
     jq -cn --arg text "$1" --arg class "$2" --arg tooltip "$3" \
         '{text: $text, class: $class, tooltip: $tooltip}'

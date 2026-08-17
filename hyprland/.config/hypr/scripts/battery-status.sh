@@ -30,10 +30,10 @@ battery_icon() {
     local status=$2
     local level=$(((capacity + 9) / 10))
     local -a battery_icons=(
-        '󰂎' '󰁺' '󰁻' '󰁼' '󰁽' '󰁾' '󰁿' '󰂀' '󰂁' '󰂂' '󰁹'
+        ' 󰂎' ' 󰁺' ' 󰁻' ' 󰁼' ' 󰁽' ' 󰁾' ' 󰁿' ' 󰂀' ' 󰂁' ' 󰂂' ' 󰁹'
     )
     local -a charging_icons=(
-        '󰢜' '󰢜' '󰂆' '󰂇' '󰂈' '󰢝' '󰂉' '󰢞' '󰂊' '󰂋' '󰂅'
+        ' 󰢜' ' 󰢜' ' 󰂆' ' 󰂇' ' 󰂈' ' 󰢝' ' 󰂉' ' 󰢞' ' 󰂊' ' 󰂋' ' 󰂅'
     )
 
     if ((level > 10)); then
