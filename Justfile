@@ -367,8 +367,23 @@ cliphist:
         wl-clipboard \
         fuzzel \
         stow
-    just stow cliphist
+    stow \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
+        --restow \
+        --no-folding \
+        cliphist
     systemctl --user daemon-reload
+
+# 透過 `yay` 安裝 Espanso，並啟用套件提供的 user service
+espanso:
+    @command -v yay >/dev/null || { \
+        printf '%s\n' "找不到 yay，請先安裝 yay" >&2; \
+        exit 1; \
+    }
+    yay -S --needed espanso-wayland
+    systemctl --user daemon-reload
+    systemctl --user enable --now espanso.service
 
 # 透過 `yay` 安裝 Wlogout 並套用電源選單設定
 wlogout:
@@ -396,7 +411,7 @@ spotify:
         spotify
 
 # 安裝並套用 Hyprland、桌面元件與相關整合設定
-hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist wlogout
+hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist espanso wlogout
     sudo pacman -S --needed \
         hyprland \
         hyprshutdown \

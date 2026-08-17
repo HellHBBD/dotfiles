@@ -57,6 +57,7 @@ ghostty
 wlogout
 dolphin
 cliphist
+espanso-wayland
 grim
 slurp
 hyprpicker
