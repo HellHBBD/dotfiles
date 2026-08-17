@@ -10,6 +10,16 @@ permission:
     bash:
         "cargo metadata --no-deps --locked": allow
         "cargo fmt --check": allow
+        "cargo check": allow
+        "cargo check --locked": allow
+        "cargo test": allow
+        "cargo test --locked": allow
+        "cargo clippy": allow
+        "cargo clippy --locked": allow
+        "pnpm test": allow
+        "pnpm run lint": allow
+        "pnpm run typecheck": allow
+        "pnpm exec tsc --noEmit": allow
         "git add*": deny
         "git -C * add*": deny
         "git commit*": deny

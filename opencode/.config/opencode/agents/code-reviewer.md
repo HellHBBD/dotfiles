@@ -16,6 +16,21 @@ permission:
         "git rev-parse*": allow
         "git branch --show-current*": allow
         "git merge-base*": allow
+        "git blame*": allow
+        "git for-each-ref*": allow
+        "git count-objects -v*": allow
+        "git submodule status*": allow
+        "gh pr view*": allow
+        "gh pr diff*": allow
+        "gh pr checks*": allow
+        "gh run list*": allow
+        "gh run view*": allow
+        "gh workflow view*": allow
+        "git blame*--contents=*": ask
+        "git blame*--contents *": ask
+        "git blame*--ignore-revs-file=*": ask
+        "git blame*--ignore-revs-file *": ask
+        "git for-each-ref*--stdin*": ask
         "git diff*--output=*": ask
         "git diff*--output *": ask
         "git show*--output=*": ask
@@ -30,6 +45,13 @@ permission:
         "git log*--textconv*": ask
         "git show*--show-signature*": ask
         "git log*--show-signature*": ask
+        "gh pr view*--web*": ask
+        "gh pr diff*--web*": ask
+        "gh pr diff*--allow-escape-sequences*": ask
+        "gh pr checks*--watch*": ask
+        "gh pr checks*--web*": ask
+        "gh run view*--web*": ask
+        "gh workflow view*--web*": ask
         "*;*": ask
         "*&&*": ask
         "*||*": ask
@@ -39,6 +61,17 @@ permission:
         "*|*": ask
         "*$(*": ask
         "*`*": ask
+        "opencode debug agent *--tool*": deny
+        "*/opencode debug agent *--tool*": deny
+        "opencode debug agent *--params*": deny
+        "*/opencode debug agent *--params*": deny
+        "nmcli *--show-secrets*": deny
+        "* nmcli *--show-secrets*": deny
+        "nmcli -s*": deny
+        "nmcli * -s*": deny
+        "* nmcli * -s*": deny
+        "nmcli *show-password*": deny
+        "* nmcli *show-password*": deny
         sudo: deny
         "sudo *": deny
         "*/sudo *": deny
