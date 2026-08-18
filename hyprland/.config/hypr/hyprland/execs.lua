@@ -88,16 +88,18 @@ systemctl --user import-environment \
 
 	-- Desktop services are owned by systemd user services.
 	hl.exec_cmd([[
-systemctl --user reset-failed \
+	systemctl --user reset-failed \
     swaync.service \
     hyprpolkitagent.service \
     cliphist.service \
+    audio-output-policy.service \
     >/dev/null 2>&1 || true
 
 systemctl --user start \
     swaync.service \
     hyprpolkitagent.service \
     cliphist.service \
+    audio-output-policy.service \
     >/dev/null 2>&1 || true
 ]])
 

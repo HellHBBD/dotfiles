@@ -110,7 +110,9 @@ GRUB 應列出 `Arch Linux` 與 `Arch Linux (fallback)`。第一次手動選擇 
 
 ## 主機專屬 Hyprland 設定
 
-`hyprland/monitors.lua` 提供所有機器共用的 preferred-mode、auto-position、1.25 倍縮放 fallback。`custom/init.lua` 目前不含覆寫；新電腦先使用通用規則，僅在必要時才加入特定 output、縮放或位置。GPU 專屬環境變數應放在主機專屬設定或 UWSM host layer，不能寫入 `/etc/environment`。
+`hyprland/monitors.lua` 提供所有機器共用的 preferred-mode、auto-position、1.25 倍縮放 fallback。新電腦先使用通用規則，僅在必要時才透過 `custom/` 加入特定 output、縮放或位置。GPU 專屬環境變數應放在主機專屬設定或 UWSM host layer，不能寫入 `/etc/environment`。
+
+目前主機的 `custom/monitors.lua` 將 NVIDIA 實體 `HDMI-A-1` mirror 至內建 `eDP-1`。`audio-output-policy.service` 持續維持 `Bluetooth > HDMI-A-1 > WirePlumber fallback` 的輸出優先序；只有 HDMI connector 已連線且 PipeWire 回報對應 HDMI port 可用時才會切換，並會移動既有播放串流。藍牙音訊輸出出現時會優先於 HDMI。
 
 `hyprland/.config/uwsm/env` 將 Electron 程式偏好設為 Wayland，並讓 LibreOffice 使用 GTK3 Wayland backend；`hyprland/env.lua` 保留同樣的設定供未透過 UWSM 啟動的工作階段使用。`xwayland.force_zero_scaling` 會避免 1.25 倍縮放重取樣 XWayland 視窗以保持清晰，但這些視窗會比原生 Wayland 視窗小約 20%。完成 Stow 後請重新登入，並以 `hyprctl clients -j` 確認目標視窗的 `xwayland` 為 `false`。
 

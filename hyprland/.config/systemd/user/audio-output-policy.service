@@ -1,0 +1,9 @@
+[Unit]
+Description=Prefer Bluetooth and HDMI audio outputs
+After=pipewire-pulse.service wireplumber.service
+Wants=pipewire-pulse.service wireplumber.service
+
+[Service]
+ExecStart=%h/.config/hypr/scripts/audio-output-policy.sh
+Restart=always
+RestartSec=2
