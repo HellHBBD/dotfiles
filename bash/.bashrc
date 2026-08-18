@@ -42,6 +42,7 @@ alias cls='clear'
 alias su='sudo -s'
 alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
 alias ip6="ip a | grep -Eo '(2[0-9a-fA-F]{0,3}:)([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}'"
+alias bios='systemctl reboot --firmware-setup'
 
 ### HISTORY ###
 export HISTCONTROL=ignoreboth:erasedups
@@ -108,7 +109,6 @@ path_append() {
     *) PATH="$PATH:$1" ;;
     esac
 }
-path_prepend "$HOME/shs"
 path_prepend "/opt/cuda/bin"
 path_prepend "$HOME/.local/bin"
 

@@ -18,11 +18,11 @@ permission:
     mobile: deny
     bash:
         "*": deny
-        "$HOME/shs/worktree.sh --json list": allow
-        "$HOME/shs/worktree.sh --json status": allow
-        "$HOME/shs/worktree.sh --dry-run add *": allow
-        "$HOME/shs/worktree.sh --dry-run merge *": allow
-        "$HOME/shs/worktree.sh *": ask
+        "$HOME/.local/bin/worktree.sh --json list": allow
+        "$HOME/.local/bin/worktree.sh --json status": allow
+        "$HOME/.local/bin/worktree.sh --dry-run add *": allow
+        "$HOME/.local/bin/worktree.sh --dry-run merge *": allow
+        "$HOME/.local/bin/worktree.sh *": ask
         "*;*": deny
         "*&&*": deny
         "*||*": deny
@@ -34,7 +34,7 @@ permission:
         "*`*": deny
 ---
 
-Interpret a user request, then invoke only `$HOME/shs/worktree.sh`. Do not
+Interpret a user request, then invoke only `$HOME/.local/bin/worktree.sh`. Do not
 inspect project files, implement code, create an implementation plan, or run raw
 Git commands. Do not dispatch subagents during normal add, list, status, or
 successful merge operations. You may dispatch only `worktree-merge-resolver`
@@ -78,7 +78,7 @@ For an add request:
    supplies an unmistakable branch list such as `fix/icon, fix/webkit` or one
    branch-like ref per line. Use surrounding meaning, not punctuation alone. If
    text could be either a branch list or a task request, ask which it means.
-6. Validate every explicit branch with only `$HOME/shs/worktree.sh --dry-run add
+6. Validate every explicit branch with only `$HOME/.local/bin/worktree.sh --dry-run add
 "<branch>"`. If it succeeds, never normalize, translate, prefix, or otherwise
    alter that branch. If it fails, show the exact error and ask the user for a
    replacement; a suggested valid name is never applied without confirmation.
@@ -94,7 +94,7 @@ For an add request:
 After confirmation, invoke once per task in order:
 
 ```bash
-$HOME/shs/worktree.sh add "<confirmed-branch>" \
+$HOME/.local/bin/worktree.sh add "<confirmed-branch>" \
   --title "<confirmed-title>" \
   --prompt "初始化 worktree 工作階段。請勿讀取或修改檔案、執行工具或開始工作，只回覆「已初始化」。"
 ```
@@ -104,7 +104,7 @@ failure; do not retry, force, clean up, or run other commands.
 
 ## Merge Interpretation
 
-For a merge request, first run `$HOME/shs/worktree.sh --json list`. Resolve
+For a merge request, first run `$HOME/.local/bin/worktree.sh --json list`. Resolve
 source branches by case-sensitive exact match only. Branches listed in user text
 may be separated by commas, whitespace, or newlines; preserve their stated order.
 Do not normalize, prefix, or fuzzy-match names. When the user refers to
@@ -127,10 +127,10 @@ criterion for cleanup; do not claim functional checks ran or passed.
 
 Before final confirmation, run only helper commands:
 
-1. `$HOME/shs/worktree.sh --json list` to validate target and source existence.
-2. For every registered source worktree, `$HOME/shs/worktree.sh --repo
+1. `$HOME/.local/bin/worktree.sh --json list` to validate target and source existence.
+2. For every registered source worktree, `$HOME/.local/bin/worktree.sh --repo
 "<worktree-path>" --json status` to report uncommitted source changes.
-3. `$HOME/shs/worktree.sh --dry-run merge <sources in order> --target
+3. `$HOME/.local/bin/worktree.sh --dry-run merge <sources in order> --target
 "<target>" --keep|--delete` to validate target/source branch existence,
    duplicate sources, delete eligibility, and capture target local changes.
 

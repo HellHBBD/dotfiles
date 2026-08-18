@@ -244,8 +244,17 @@ ghostty:
     sudo pacman -S --needed ghostty stow
     just stow ghostty
 
+# 安裝個人指令與私有 helper，不接管既有 ~/.local 內容
+scripts:
+    stow \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
+        --restow \
+        --no-folding \
+        script
+
 # 安裝 tmux 並套用 tmux 設定
-tmux:
+tmux: scripts
     sudo pacman -S --needed tmux stow
     just stow tmux
 

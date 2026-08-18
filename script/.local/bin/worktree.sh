@@ -8,8 +8,9 @@ readonly EXIT_SESSION=5
 readonly EXIT_MERGE=6
 readonly EXIT_CLEANUP=7
 
-readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-readonly WORKTREE_BIN_DIR="$SCRIPT_DIR/worktree-bin"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+readonly WORKTREE_BIN_DIR="$SCRIPT_DIR/../libexec/dotfiles/worktree-bin"
 WORKTREE_BASE="${XDG_DATA_HOME:-$HOME/.local/share}/worktrees"
 DEFAULT_INITIALIZATION_PROMPT='初始化 worktree 工作階段。請勿讀取或修改檔案、執行工具或開始工作，只回覆「已初始化」。'
 

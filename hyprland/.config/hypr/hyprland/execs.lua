@@ -112,7 +112,7 @@ systemctl --user start \
 		1,
 		[[
 sh -c '
-script="$HOME/shs/tmux-init.sh"
+script="$HOME/.local/bin/tmux-init.sh"
 if [ -x "$script" ]; then
     "$script"
 fi
