@@ -236,8 +236,15 @@ bash: system-bash
 
 # 安裝 Git 並套用 Git 使用者設定
 git:
-    sudo pacman -S --needed git stow
-    just stow git
+    sudo pacman -S --needed git git-delta gnupg stow
+    stow \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
+        --restow \
+        --no-folding \
+        --ignore='\.gdbinit' \
+        --ignore='\.xinitrc' \
+        extra
 
 # 安裝 Ghostty 並套用終端機設定
 ghostty:
@@ -280,8 +287,8 @@ herdr:
         --no-folding \
         herdr
 
-# 安裝 Neovim 與格式化工具，並套用編輯器設定
-nvim: formatters
+# 安裝 headless Neovim 與格式化工具，並套用編輯器設定
+nvim-headless: formatters
     sudo pacman -S --needed \
         neovim \
         nodejs \
@@ -296,9 +303,13 @@ nvim: formatters
         fd \
         tree-sitter-cli \
         lazygit \
-        wl-clipboard \
+        unzip \
         stow
     just stow nvim
+
+# 安裝 Neovim 的 Wayland clipboard 整合
+nvim: nvim-headless
+    sudo pacman -S --needed wl-clipboard
 
 # Hyprland 外部元件
 
@@ -465,6 +476,18 @@ login-manager:
 # 安裝完整 Hyprland 桌面環境與登入管理員
 desktop: login-manager hyprland
     @printf '%s\n' "桌面套件與設定已完成"
+
+# 安裝 headless server 的終端開發環境與個人 scripts
+server: bash git nvim-headless tmux
+    sudo pacman -S --needed \
+        bash-completion \
+        eza \
+        fzf \
+        jq \
+        gum \
+        less \
+        reflector
+    @printf '%s\n' "Server dotfiles 已完成"
 
 # 安裝並套用 Bash、Git、Neovim、系統 locale 與 Hyprland 核心設定
 all: bash git nvim system-locale hyprland

@@ -11,6 +11,8 @@ ensure_tmux_session() {
     local first_window
     local window_name
 
+    [[ -d "$working_directory" ]] || return
+
     if tmux has-session -t "=$session_name" 2>/dev/null; then
         return
     fi
@@ -34,5 +36,6 @@ ensure_tmux_session() {
 
 ensure_tmux_session "backend" "$HOME" "Backend Process"
 ensure_tmux_session "home" "$HOME"
-# ensure_tmux_session "dotfiles" "$HOME/dotfiles" "Code" "Build"
-# ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"
+ensure_tmux_session "dotfiles" "$HOME/dotfiles" "Code" "Build"
+ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"
+ensure_tmux_session "website" "$HOME/website" "Code" "Build"

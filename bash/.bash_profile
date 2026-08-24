@@ -2,12 +2,14 @@
 # ~/.bash_profile
 #
 
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
-export SDL_IM_MODULE=fcitx
-export INPUT_METHOD=fcitx
-export GLFW_IM_MODULE=ibus
+if command -v fcitx5 >/dev/null 2>&1; then
+    export GTK_IM_MODULE=fcitx
+    export QT_IM_MODULE=fcitx
+    export XMODIFIERS=@im=fcitx
+    export SDL_IM_MODULE=fcitx
+    export INPUT_METHOD=fcitx
+    export GLFW_IM_MODULE=ibus
+fi
 
 ### EXPORT ###
 export EDITOR=nvim

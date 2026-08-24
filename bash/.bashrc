@@ -15,20 +15,20 @@ alias weather='curl wttr.in?lang=zh-tw'
 alias clsmem='sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"'
 
 alias pacman='sudo pacman --color always'
-alias yay='yay --color always --sudoloop'
+if command -v yay >/dev/null 2>&1; then
+    alias yay='yay --color always --sudoloop'
+    alias clean='yay -Scc'
 
-function update() {
-    if [[ $# -eq 0 ]]; then
-        # echo "正在更新系統..."
-        yay -Syu --sudoloop --noconfirm
-    else
-        # echo "正在安裝軟件包: $*"
-        yay -S "$@" --sudoloop --noconfirm
-    fi
-}
+    update() {
+        if [[ $# -eq 0 ]]; then
+            command yay -Syu --sudoloop --noconfirm
+        else
+            command yay -S "$@" --sudoloop --noconfirm
+        fi
+    }
+fi
 
 alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
-alias clean='yay -Scc'
 
 # This will generate a list of explicitly installed packages
 alias list="sudo pacman -Qqe"
@@ -40,7 +40,9 @@ alias listaur="sudo pacman -Qqem"
 ### PERSONAL ###
 alias cls='clear'
 alias su='sudo -s'
-alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
+if command -v upower >/dev/null 2>&1; then
+    alias showBat='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
+fi
 alias ip6="ip a | grep -Eo '(2[0-9a-fA-F]{0,3}:)([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}'"
 alias bios='systemctl reboot --firmware-setup'
 
@@ -114,4 +116,6 @@ path_prepend "$HOME/.local/bin"
 
 export PATH
 
-export BROWSER=zen-browser
+if command -v zen-browser >/dev/null 2>&1; then
+    export BROWSER=zen-browser
+fi

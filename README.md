@@ -55,7 +55,9 @@ just --list
 | `bash`                                                             | 安裝並 Stow 使用者 Bash 設定，以及系統層級的 `system-bash` 設定。                                                                                                                           |
 | `system-bash`                                                      | 將 `/etc/bash.bashrc` 備份後，以 root-target Stow 管理系統 Bash 設定。                                                                                                                      |
 | `system-locale`                                                    | 啟用 `zh_TW.UTF-8`、產生 locale，並將 `/etc/locale.conf` 設為繁體中文。                                                                                                                     |
-| `git`、`ghostty`、`tmux`、`nvim`                                   | 安裝各自所需套件並 Stow 對應的基礎設定；`tmux` 會先執行 `scripts`，`nvim` 會先執行 `formatters`。                                                                                           |
+| `git`、`ghostty`、`tmux`、`nvim`                                   | 安裝各自所需套件並 Stow 對應的基礎設定；`git` 會僅從 `extra` Stow `.gitconfig`，`tmux` 會先執行 `scripts`，`nvim` 會先執行 `nvim-headless` 並加裝 Wayland clipboard 支援。                  |
+| `nvim-headless`                                                    | 安裝 Neovim、formatters 與終端開發工具，但不安裝 `wl-clipboard`；適合 SSH 與純 TTY 環境。                                                                                                   |
+| `server`                                                           | 安裝 Bash、Git、headless Neovim、tmux 與完整 `scripts` package；只使用官方套件，不安裝 GUI、AUR、Herdr、OpenCode、locale 或桌面服務。                                                       |
 | `herdr`                                                            | 透過 `yay` 安裝 `herdr-bin`，備份既有實體 `~/.config/herdr/config.toml` 後以 `--no-folding` Stow 設定；不納管 Herdr 的 session、log、socket 或 plugin lock。                                |
 | `wallpapers`、`swaync`、`swayosd`、`waybar`、`cliphist`、`wlogout` | 安裝並 Stow Hyprland 外部元件；`swayosd` 會將目前使用者加入 `video` 群組以控制背光，完成後須重新登入；`waybar` 依賴 `swaync`，`waybar` 與 `wlogout` 都要求系統已可使用 `yay`。              |
 | `espanso`                                                          | 透過 `yay` 安裝 `espanso-wayland`，並啟用套件提供的 user service。                                                                                                                          |
@@ -75,6 +77,26 @@ just desktop
 ```
 
 `desktop` 不包含 `bash`、`git` 或 `nvim`；反之，`all` 包含這三者與 `hyprland`，但不安裝登入管理員。若要使用 greetd，完成 `just desktop` 或另行執行 `just login-manager` 後，仍須依下一節手動安裝其設定並啟用服務。
+
+## Headless Server
+
+在已完成 Arch Linux 基本安裝的伺服器，以官方 repository packages 建立終端開發環境：
+
+```sh
+just server
+```
+
+`server` 會套用使用者 Bash、Git、Neovim、tmux 與完整 `scripts` package；也會執行 `system-bash`，將現有 `/etc/bash.bashrc` 備份為 `/etc/bash.bashrc.pre-stow` 後以 Stow 管理。它不會執行 `system-locale`，也不會安裝或啟用 GUI、Wayland、AUR、Herdr、OpenCode、NetworkManager、Bluetooth 或其他桌面服務。它不是 SSH、防火牆、帳號或服務 provisioning target。
+
+完整 scripts 會部署至 `~/.local/bin` 與 `~/.local/libexec/dotfiles`，包含 `tmux-init.sh`、sessionizer、Git maintenance、mirror update 及 worktree helper。安裝不會建立 tmux sessions；需要時手動執行：
+
+```sh
+tmux-init.sh
+```
+
+缺少的專案目錄會被略過。`worktree.sh list`、`status`、`merge` 和 `add --no-session` 可在 server 使用；預設的 `add` session 流程需要另行準備 Herdr、OpenCode 與 bubblewrap。`tmux` 的 `Ctrl-Space` 後按 `f` 在 sessionizer 已部署時可用；`b` 或 `h` 找不到預設 session 時會提示執行 `tmux-init.sh`。
+
+首次啟動 Neovim 仍會由 Lazy.nvim 與 Mason 下載 plugins、LSP 與 tools。Git 設定保留個人 identity 與強制 GPG signing；在 server commit 前，必須先以安全的既有流程匯入相符的 GPG private key，否則 Git 會拒絕建立 signed commit。
 
 ## OpenCode 系統升級檢查
 
