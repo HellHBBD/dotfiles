@@ -93,6 +93,14 @@ system-locale:
             exit 1; \
         fi; \
     fi
+    if ! sudo grep -Eq '^[[:space:]]*en_US\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)' /etc/locale.gen; then \
+        if sudo grep -Eq '^[[:space:]]*#[[:space:]]*en_US\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)' /etc/locale.gen; then \
+            sudo sed -i -E 's@^[[:space:]]*#[[:space:]]*en_US\.UTF-8[[:space:]]+UTF-8([[:space:]]|$)@en_US.UTF-8 UTF-8@' /etc/locale.gen; \
+        else \
+            printf '%s\n' '找不到 en_US.UTF-8 UTF-8 locale 定義，停止作業' >&2; \
+            exit 1; \
+        fi; \
+    fi
     if [ -e /etc/locale.conf ] && [ ! -L /etc/locale.conf ]; then \
         if [ -e /etc/locale.conf.pre-stow ]; then \
             printf '%s\n' '/etc/locale.conf.pre-stow 已存在，為避免覆蓋備份而停止' >&2; \
@@ -429,6 +437,25 @@ spotify:
         --restow \
         --no-folding \
         spotify
+
+# 安裝 Intel 與 NVIDIA 混合顯示卡的 Steam 與 32-bit Vulkan 驅動
+steam:
+    @pacman-conf --repo-list | grep -Fx multilib >/dev/null || { \
+        printf '%s\n' '請先在 /etc/pacman.conf 啟用 [multilib] 後再執行 just steam' >&2; \
+        exit 1; \
+    }
+    @locale -a | grep -Fx en_US.utf8 >/dev/null || { \
+        printf '%s\n' '找不到 en_US.UTF-8；請先執行 just system-locale' >&2; \
+        exit 1; \
+    }
+    sudo pacman -Syu --needed \
+        steam \
+        xorg-xwayland \
+        nvidia-utils \
+        lib32-nvidia-utils \
+        vulkan-intel \
+        lib32-vulkan-intel \
+        ntsync-autoload
 
 # 安裝並套用 Hyprland、桌面元件與相關整合設定
 hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist espanso wlogout

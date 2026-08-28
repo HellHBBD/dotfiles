@@ -53,6 +53,24 @@ just login-manager
 
 `just all` 會安裝 Bash、Git、Neovim、locale 與 Hyprland。`just login-manager` 僅安裝 greetd 套件，不會寫入 greetd 設定或啟用服務。
 
+## 安裝 Steam
+
+先在 `/etc/pacman.conf` 取消註解：
+
+```ini
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
+
+此 target 適用於 Intel + NVIDIA 混合顯示卡，會安裝 Steam、XWayland、兩張顯示卡的 32-bit Vulkan driver 與 NTSync：
+
+```bash
+cd ~/dotfiles
+just steam
+```
+
+首次啟動後，在 `Steam -> Settings -> Compatibility` 啟用 Steam Play，並以 `Proton Experimental` 為預設。個別遊戲的 Proton 版本與相容性可參考 [ProtonDB](https://www.protondb.com/)。
+
 ## 安裝純伺服器
 
 ```bash
@@ -75,6 +93,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 ```bash
 just herdr
 just spotify
+just steam
 just systemd-oomd
 just boot-compatibility
 just opencode
@@ -88,6 +107,7 @@ just --list
 - Desktop recipes 需要先安裝 `yay`。
 - Stow 前請備份可能衝突的既有設定。
 - `just all` 與 `just server` 會管理 `/etc/bash.bashrc`；既有檔案會備份為 `.pre-stow`。
+- Steam 需要 `multilib` 與 `en_US.UTF-8`；`just system-locale` 會產生 `zh_TW.UTF-8` 和 `en_US.UTF-8`，但不會將系統預設語言改為英文。
 - Git 設定強制 GPG signing；提交前需自行匯入對應的 private key。
 - Neovim 首次啟動需要網路下載 plugins 與 Mason tools。
 - 使用 Hyprland 前，請檢查螢幕、鍵盤與觸控板設定。
