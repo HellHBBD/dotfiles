@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly EXIT_USAGE=2
+
+# Defaults tuned for:
+# Intel Core i7-12700H (20 logical CPUs)
+# 16 GiB RAM
+# 4 GiB zram swap
+jobs=8
+nice_level=10
+cpu_weight=25
+cpu_quota=1200%
+io_weight=50
+memory_high=10G
+memory_max=12G
+swap_max=2G
+
+usage() {
+    cat <<'EOF'
+Usage:
+  guard-run [options] -- <command> [arguments...]
+
+Run a command in a low-priority systemd user scope with CPU, memory,
+swap, I/O, and build-parallelism limits.
+
+Options:
+  --jobs <count>          Build parallelism (default: 8)
+  --nice <level>          CPU nice level, 0-19 (default: 10)
+  --cpu-weight <weight>   systemd CPU weight, 1-10000 (default: 25)
+  --cpu-quota <percent>   Maximum total CPU usage (default: 1200%)
+  --io-weight <weight>    systemd I/O weight, 1-10000 (default: 50)
+  --memory-high <size>    Memory throttle threshold (default: 10G)
+  --memory-max <size>     Memory hard limit (default: 12G)
+  --swap-max <size>       Swap hard limit (default: 2G)
+  --help                  Show this help
+
+Examples:
+  guard-run -- makepkg -si
+  guard-run -- yay -S webkit2gtk
+  guard-run --jobs 10 --cpu-quota 1400% -- yay -S webkit2gtk
+  guard-run --jobs 4 --memory-max 10G -- cargo build --release
+EOF
+}
+
+fail() {
+    printf '%s\n' "$1" >&2
+    exit "$EXIT_USAGE"
+}
+
+require_value() {
+    local option="$1"
+    local value="${2-}"
+
+    [[ -n "$value" ]] || fail "$option requires a value"
+}
+
+require_positive_integer() {
+    local option="$1"
+    local value="$2"
+
+    [[ "$value" =~ ^[1-9][0-9]*$ ]] ||
+        fail "$option must be a positive integer"
+}
+
+require_weight() {
+    local option="$1"
+    local value="$2"
+
+    require_positive_integer "$option" "$value"
+    ((value >= 1 && value <= 10000)) ||
+        fail "$option must be from 1 to 10000"
+}
+
+require_cpu_quota() {
+    local option="$1"
+    local value="$2"
+
+    [[ "$value" =~ ^[1-9][0-9]*%$ ]] ||
+        fail "$option must be a positive percentage, e.g. 1200%"
+}
+
+while (($# > 0)); do
+    case "$1" in
+    --jobs)
+        require_value "$1" "${2-}"
+        require_positive_integer "$1" "$2"
+        jobs="$2"
+        shift 2
+        ;;
+
+    --nice)
+        require_value "$1" "${2-}"
+        [[ "$2" =~ ^([0-9]|1[0-9])$ ]] ||
+            fail '--nice must be an integer from 0 to 19'
+        nice_level="$2"
+        shift 2
+        ;;
+
+    --cpu-weight)
+        require_value "$1" "${2-}"
+        require_weight "$1" "$2"
+        cpu_weight="$2"
+        shift 2
+        ;;
+
+    --cpu-quota)
+        require_value "$1" "${2-}"
+        require_cpu_quota "$1" "$2"
+        cpu_quota="$2"
+        shift 2
+        ;;
+
+    --io-weight)
+        require_value "$1" "${2-}"
+        require_weight "$1" "$2"
+        io_weight="$2"
+        shift 2
+        ;;
+
+    --memory-high)
+        require_value "$1" "${2-}"
+        memory_high="$2"
+        shift 2
+        ;;
+
+    --memory-max)
+        require_value "$1" "${2-}"
+        memory_max="$2"
+        shift 2
+        ;;
+
+    --swap-max)
+        require_value "$1" "${2-}"
+        swap_max="$2"
+        shift 2
+        ;;
+
+    --help | -h)
+        usage
+        exit 0
+        ;;
+
+    --)
+        shift
+        break
+        ;;
+
+    *)
+        fail "unknown option: $1"
+        ;;
+    esac
+done
+
+(($# > 0)) ||
+    fail 'a command is required after --'
+
+((EUID != 0)) ||
+    fail 'run guard-run as a regular user, not root'
+
+command -v systemd-run >/dev/null 2>&1 ||
+    fail 'systemd-run is required'
+
+exec systemd-run \
+    --user \
+    --collect \
+    --wait \
+    --pipe \
+    --setenv="MAKEFLAGS=-j${jobs}" \
+    --setenv="CMAKE_BUILD_PARALLEL_LEVEL=${jobs}" \
+    --setenv="CARGO_BUILD_JOBS=${jobs}" \
+    --setenv="NINJAFLAGS=-j${jobs}" \
+    -p "CPUWeight=${cpu_weight}" \
+    -p "CPUQuota=${cpu_quota}" \
+    -p "IOWeight=${io_weight}" \
+    -p "MemoryHigh=${memory_high}" \
+    -p "MemoryMax=${memory_max}" \
+    -p "MemorySwapMax=${swap_max}" \
+    -p 'OOMPolicy=kill' \
+    nice -n "$nice_level" \
+    "$@"
