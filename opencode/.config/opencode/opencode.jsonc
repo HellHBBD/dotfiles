@@ -174,7 +174,7 @@
             // Approval-gated Graphify command allowlist
             "graphify": "deny",
             "graphify *": "deny",
-            "graphify --version": "ask",
+            "graphify --version": "allow",
             "graphify query *": "ask",
             "graphify explain *": "ask",
             "graphify path *": "ask",
@@ -270,6 +270,43 @@
             "helm upgrade*": "ask",
             "helm uninstall*": "ask",
             "terraform apply*": "ask",
+
+            // Approved read-only crash and resource diagnostics
+            "uptime -s": "allow",
+            "last -x --time-format iso": "allow",
+            "free -h": "allow",
+            "swapon --show --bytes": "allow",
+            "ps -eo pid,ppid,stat,pcpu,pmem,rss,comm,args --sort=-rss": "allow",
+            "nproc": "allow",
+            "getconf _PHYS_PAGES": "allow",
+            "du -sh /home/hellhbbd/.cache/yay/webkit2gtk*": "allow",
+            "oomctl": "allow",
+
+            // Approved read-only systemd queries
+            "systemctl show user@1000.service -p ManagedOOMMemoryPressure -p ManagedOOMMemoryPressureLimit -p ManagedOOMSwap -p MemoryCurrent -p MemoryPeak": "allow",
+            "systemctl show user@1000.service -p ManagedOOMSwap -p ManagedOOMMemoryPressure -p ManagedOOMMemoryPressureLimit -p ManagedOOMMemoryPressureDurationUSec -p EffectiveMemoryNodes -p Delegate": "allow",
+            "systemctl show systemd-oomd.service -p OOMScoreAdjust -p CPUWeight -p IOWeight -p MemoryMin -p MemoryLow": "allow",
+            "systemctl --user show tmux-spawn-*.scope -p MemoryPeak -p CPUUsageNSec -p IOReadBytes -p IOWriteBytes -p Result": "allow",
+            "systemctl --user show wireplumber.service -p MainPID -p ActiveState -p SubState -p MemoryCurrent -p MemoryPeak -p NRestarts": "allow",
+            "systemctl cat user@.service": "allow",
+            "systemd-analyze cat-config systemd/oomd.conf": "allow",
+            "systemd-analyze --version": "allow",
+
+            // Approved read-only package queries
+            "pacman -Qsq *": "allow",
+            "pactree -r *": "allow",
+            "pacman -Si webkit2gtk webkit2gtk-4.1": "allow",
+            "yay -Si webkit2gtk": "allow",
+
+            // Approved read-only session metadata
+            "coredumpctl list *--no-pager*": "allow",
+            "loginctl show-user 1000 -p Linger -p State -p RuntimePath": "allow",
+            "getent passwd hellhbbd": "allow",
+
+            // Help and version forms only
+            "systemd-run --help": "allow",
+            "ionice --help": "allow",
+            "nice --version": "allow",
 
             // Family and boundary exceptions
             "bash -n *+n*": "ask",
@@ -714,6 +751,7 @@
                 "skill": {
                     "*": "ask",
                     "graphify": "allow",
+                    "customize-opencode": "allow",
                     "core-*": "allow",
                     "project-*": "allow",
                     "vendor-*": "ask",
@@ -810,6 +848,8 @@
                 "skill": {
                     "*": "deny",
                     "graphify": "allow",
+                    "customize-opencode": "allow",
+                    "core-*": "allow",
                     "core-analysis-*": "allow",
                     "core-architecture-*": "allow",
                     "project-planning-*": "allow",
