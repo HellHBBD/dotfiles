@@ -30,6 +30,14 @@
 - When a privileged operation is required, give the user the exact command and wait for its output before continuing.
 - Every Bash tool call must set an explicit, finite `timeout`: use `30000ms` for ordinary checks and `120000ms` for tests or builds. Use a longer timeout only when justified by the operation; never retry with an unlimited timeout after expiry.
 
+## Bash command dispatch
+
+- Execute each allowlisted command in its own Bash tool call.
+- Never combine commands with `&&`, `;`, `||`, pipes, redirects, command substitutions, or backgrounding merely for convenience.
+- Dispatch independent commands as separate parallel tool calls.
+- For dependent commands, wait for the earlier command to succeed before issuing the next Bash call.
+- Use shell composition only when it is intrinsic to the requested operation and expect permission approval.
+
 ## Skill selection
 
 - When a task clearly matches an available skill description, load the smallest relevant set before analysis, implementation, or review.
