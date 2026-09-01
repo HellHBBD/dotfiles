@@ -5,12 +5,32 @@ name = "tokyo-night"
 
 [keys]
 prefix = "ctrl+space"
-workspace_picker = "prefix+f"
+workspace_picker = "prefix+w"
+goto = "prefix+alt+g"
+split_horizontal = "prefix+double_quote"
+split_vertical = "prefix+percent"
 
 [[keys.command]]
-key = "prefix+alt+g"
+key = "prefix+t"
 type = "popup"
-command = "lazygit"
+command = 'exec "${SHELL:-sh}"'
+description = "open scratch terminal"
+width = "80%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+command = '''path="${HERDR_ACTIVE_PANE_CWD:-$PWD}"; if ! command -v lazygit >/dev/null 2>&1; then printf "%s\n" "lazygit not found; install lazygit first"; read -r -p "Press Enter to close..."; elif ! git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1; then printf "not a Git repository: %s\n" "$path"; read -r -p "Press Enter to close..."; else exec lazygit; fi'''
+description = "open LazyGit in the current repository"
+width = "80%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = 'exec "$HOME/.local/libexec/dotfiles/herdr-sessionizer.sh"'
+description = "find or create a workspace"
 width = "80%"
 height = "80%"
 

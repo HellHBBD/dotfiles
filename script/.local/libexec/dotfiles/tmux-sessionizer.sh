@@ -16,6 +16,26 @@ EXCLUDE_DIRS=(
     ".vscode"
     ".idea"
     "__pycache__"
+    ".bun"
+    ".cargo"
+    ".cherrystudio"
+    ".claude"
+    ".codex"
+    ".devcontainer"
+    ".github"
+    ".gnupg"
+    ".modelscope"
+    ".ngrok"
+    ".npm"
+    ".nv"
+    ".pki"
+    ".ruff_cache"
+    ".rustup"
+    ".steam"
+    "go"
+    "funasr/output"
+    "ncku-moodle-keeper/web-ext-artifacts"
+    "Documents/Codex"
 )
 
 EXCLUDE_ARGS=()
@@ -32,7 +52,7 @@ else
                 fd . "$dir" \
                     --hidden \
                     --type=dir \
-                    --max-depth=3 \
+                    --max-depth=2 \
                     --full-path \
                     "${EXCLUDE_ARGS[@]}"
             fi
