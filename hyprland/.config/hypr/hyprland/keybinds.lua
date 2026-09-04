@@ -167,6 +167,10 @@ hl.bind('SUPER + L', hl.dsp.exec_cmd(managed_app('hyprlock')), {
 	description = '系統 | 鎖定畫面 | lock session hyprlock',
 })
 
+hl.bind('SUPER + SHIFT + P', hl.dsp.exec_cmd('bash ~/.config/hypr/scripts/display-mode.sh'), {
+	description = '系統 | 顯示器模式 | display monitor mode',
+})
+
 hl.bind('CTRL + ALT + Delete', hl.dsp.exec_cmd(wlogout_command), {
 	description = '系統 | 電源選單 | power logout shutdown reboot',
 })

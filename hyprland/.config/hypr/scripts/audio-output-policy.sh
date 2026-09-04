@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Prefer connected Bluetooth audio. Otherwise, use the physical HDMI connector
-# only when PipeWire reports that its HDMI port is available.
+# only when both Hyprland and PipeWire report that it is available.
 
 set -u -o pipefail
 
@@ -10,6 +10,7 @@ readonly NVIDIA_AUDIO_BUS_PATH=pci-0000:01:00.1
 
 command -v jq >/dev/null 2>&1 || exit 0
 command -v pactl >/dev/null 2>&1 || exit 0
+command -v hyprctl >/dev/null 2>&1 || exit 0
 
 bluetooth_sink() {
     local default_sink=$1
@@ -37,6 +38,22 @@ hdmi_sink() {
 	'
 }
 
+speaker_sink() {
+    jq -r '
+		[.[] | select(.properties["alsa.name"] == "Speaker")] |
+		.[0].name // empty
+	'
+}
+
+hdmi_output_enabled() {
+    hyprctl -j monitors all 2>/dev/null |
+        jq -e 'any(.[]; .name == "HDMI-A-1" and .disabled == false)' >/dev/null 2>&1
+}
+
+is_hdmi_sink() {
+    [[ $1 == alsa_output.pci-0000_01_00.1.* ]]
+}
+
 apply_policy() {
     local sinks
     local default_sink
@@ -48,8 +65,13 @@ apply_policy() {
     target_sink=$(bluetooth_sink "$default_sink" <<<"$sinks")
 
     if [[ -z $target_sink && -r $HDMI_STATUS ]] &&
+        hdmi_output_enabled &&
         [[ $(<"$HDMI_STATUS") == connected ]]; then
         target_sink=$(hdmi_sink <<<"$sinks")
+    fi
+
+    if [[ -z $target_sink ]] && is_hdmi_sink "$default_sink"; then
+        target_sink=$(speaker_sink <<<"$sinks")
     fi
 
     # No preferred device is available, so leave fallback selection to WirePlumber.
@@ -60,6 +82,11 @@ apply_policy() {
         pactl move-sink-input "$sink_input" "$target_sink" || true
     done < <(pactl -f json list sink-inputs 2>/dev/null | jq -r '.[].index')
 }
+
+if [[ ${1:-} == --apply ]]; then
+    apply_policy
+    exit 0
+fi
 
 while true; do
     apply_policy
