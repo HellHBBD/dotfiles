@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "installationId": "core-xlsx-local",
+  "componentType": "skill",
+  "targetPath": "~/.config/opencode/skills/core-xlsx/SKILL.md",
+  "scope": "global",
+  "riskClassification": "medium",
+  "installedAt": "2026-09-01T00:00:00+08:00",
+  "backupRevision": null,
+  "backupPath": null,
+  "governed": true,
+  "notes": "First-party clean-room document workflow. No third-party skill content, scripts, schemas, or templates retained or adapted."
+}
