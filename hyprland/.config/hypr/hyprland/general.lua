@@ -56,7 +56,8 @@ hl.config({
 	},
 
 	debug = {
-		vfr = true,
+		-- Keep frames flowing after DPMS wake so native Wayland clients redraw promptly.
+		vfr = false,
 	},
 
 	xwayland = {
