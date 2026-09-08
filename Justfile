@@ -51,6 +51,7 @@ format:
 format-check:
     test "$(cat stylua.toml)" = "$(cat formatters/.config/stylua/stylua.toml)"
     test "$(cat .editorconfig)" = "$(cat formatters/.editorconfig)"
+    test "$(cat .clang-format)" = "$(cat formatters/.clang-format)"
     test "$(cat .prettierrc.json)" = "$(cat formatters/.config/prettier/config.json)"
     test "$(cat pyproject.toml)" = "$(cat formatters/.config/ruff/pyproject.toml)"
     test "$(cat taplo.toml)" = "$(cat formatters/.config/taplo/taplo.toml)"
