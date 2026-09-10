@@ -50,6 +50,7 @@ permission:
         "uname -r": allow
         "command -v *": allow
         "readlink -f *": allow
+        "readlink /proc/*/exe": allow
         "printenv XDG_SESSION_TYPE": allow
         "printenv XDG_CURRENT_DESKTOP": allow
         "printenv XDG_SESSION_ID": allow
@@ -83,6 +84,53 @@ permission:
         modinfo: allow
         "modinfo *": allow
         "modinfo -F version nvidia": allow
+
+        # Exact desktop preflight: validate the newly installed binaries rather
+        # than relying on possibly stale processes from before an upgrade.
+        "greetd --version": allow
+        "tuigreet --version": allow
+        "uwsm --version": allow
+        "Hyprland --version": allow
+        "Hyprland --verify-config --config /home/hellhbbd/.config/hypr/hyprland.lua": allow
+        "waybar --version": allow
+        "swaync --version": allow
+        "swayosd-server --version": allow
+        "hypridle --version": allow
+        "hyprpaper --version": allow
+        "hyprlock --version": allow
+        "pipewire --version": allow
+        "wireplumber --version": allow
+        "fcitx5 --version": allow
+        "cliphist --version": allow
+        "fuzzel --version": allow
+        "ghostty --version": allow
+        "wlogout --version": allow
+        "ldd /usr/bin/Hyprland": allow
+        "ldd /usr/bin/greetd": allow
+        "ldd /usr/bin/tuigreet": allow
+        "ldd /usr/bin/uwsm": allow
+        "ldd /usr/bin/waybar": allow
+        "ldd /usr/bin/swaync": allow
+        "ldd /usr/bin/swayosd-server": allow
+        "ldd /usr/bin/hypridle": allow
+        "ldd /usr/bin/hyprpaper": allow
+        "ldd /usr/bin/hyprlock": allow
+        "ldd /usr/lib/hyprpolkitagent/hyprpolkitagent": allow
+        "ldd /usr/lib/xdg-desktop-portal-hyprland": allow
+        "ldd /usr/bin/pipewire": allow
+        "ldd /usr/bin/wireplumber": allow
+        "ldd /usr/bin/fcitx5": allow
+        "ldd /usr/bin/cliphist": allow
+        "ldd /usr/bin/fuzzel": allow
+        "ldd /usr/bin/ghostty": allow
+        "ldd /usr/bin/wlogout": allow
+        "bash -n /home/hellhbbd/.config/hypr/scripts/*.sh": allow
+        "bash -n /home/hellhbbd/.config/uwsm/env": allow
+        "systemd-analyze verify /usr/lib/systemd/system/greetd.service": allow
+        "systemd-analyze verify /usr/lib/systemd/user/hyprpolkitagent.service": allow
+        "systemd-analyze verify /usr/lib/systemd/user/xdg-desktop-portal-hyprland.service": allow
+        "systemd-analyze verify /usr/lib/systemd/user/pipewire.service": allow
+        "systemd-analyze verify /usr/lib/systemd/user/wireplumber.service": allow
 
         "systemctl is-enabled greetd.service": allow
         "systemctl is-active greetd.service": allow
@@ -133,6 +181,7 @@ permission:
         "hyprctl workspaces": allow
         "hyprctl layers": allow
         "hyprctl devices": allow
+        "hyprctl configerrors": allow
 
         "wpctl status": allow
         "wpctl list": allow
@@ -161,7 +210,10 @@ permission:
         "pgrep -a -x yay": allow
         "pgrep -a -x makepkg": allow
         "pgrep -a -x swaync": allow
+        "pgrep -a -x swayosd-server": allow
+        "pgrep -a -x hypridle": allow
         "pgrep -a -x hyprpaper": allow
+        "pgrep -a -x fcitx5": allow
         "pgrep -a -x waybar": allow
         "pgrep -a -x Hyprland": allow
         "pgrep -a -x uwsm": allow
@@ -428,9 +480,11 @@ scope and state it before running checks.
 
 ## System profile
 
-This desktop uses greetd + tuigreet, UWSM, Hyprland, NVIDIA open DKMS, SwayNC,
-xdg-desktop-portal-hyprland, hyprpaper, PipeWire + WirePlumber, and
-NetworkManager. It uses UKIs, with expected artifacts:
+This desktop uses greetd + tuigreet, UWSM, Hyprland, NVIDIA open DKMS, Waybar,
+SwayNC, SwayOSD, hypridle, hyprpaper, hyprlock, hyprpolkitagent,
+xdg-desktop-portal-hyprland, PipeWire + WirePlumber, Fcitx5, Cliphist, Fuzzel,
+Ghostty, Wlogout, NetworkManager, and Bluetooth. It uses UKIs, with expected
+artifacts:
 
 ```text
 /boot/vmlinuz-linux
@@ -472,8 +526,49 @@ firmware, bootloader, and microcode updates as high risk.
 
 After a successful user-supplied upgrade transaction, verify matching kernel
 and headers, NVIDIA DKMS for the installed kernel, boot artifacts, and UKI
-`.uname` sections when readable without elevation. Do not recommend rebooting
-unless all required reboot-gate evidence passes.
+`.uname` sections when readable without elevation. Also run the complete,
+read-only desktop preflight below. Do not recommend rebooting unless every
+required reboot-gate and desktop-preflight check passes.
+
+### Desktop preflight before reboot
+
+This preflight validates the installed next-boot desktop, not merely the
+currently running desktop. Run each command separately; do not use shell
+wrappers, pipelines, redirections, or commands that start, stop, reload, or
+restart a component.
+
+1. Verify the required packages and executable paths exist: greetd, tuigreet,
+   uwsm, Hyprland, waybar-git, swaync, swayosd, hypridle, hyprpaper, hyprlock,
+   hyprpolkitagent, xdg-desktop-portal-hyprland, pipewire, wireplumber,
+   fcitx5, cliphist, fuzzel, ghostty, and wlogout. Run the allowed version
+   checks for each executable; a loader error or nonzero result is a failure.
+2. Run the allowed `ldd` checks for every dynamically linked desktop binary.
+   Any `not found` dependency, missing binary, or dynamic-loader error is a
+   `FAIL`. This is mandatory even when an older still-running process appears
+   healthy.
+3. Run `Hyprland --verify-config` against the configured entry file, the
+   allowed shell syntax validation for configured Hyprland scripts, and the
+   allowed systemd unit validation. Any parser or unit verification error is a
+   `FAIL`.
+4. Inspect greetd plus the user services for hyprpolkitagent,
+   xdg-desktop-portal-hyprland, PipeWire, WirePlumber, SwayNC, Cliphist, and
+   audio output policy. Check active/failed state and report a required service
+   that cannot be active in the current graphical session as `FAIL`.
+5. Inspect Hyprland config errors, monitors, input devices, Waybar and
+   hyprpaper layers, and the expected Waybar, SwayNC, SwayOSD, hypridle,
+   hyprpaper, Fcitx5, Hyprland, and UWSM processes. For every discovered
+   required process, inspect its `/proc/<pid>/exe` target. A target ending in
+   `(deleted)` is a `FAIL`: the current runtime does not prove that the newly
+   installed binary will start after reboot.
+6. Check PipeWire/WirePlumber status and `wpctl status`, NetworkManager status
+   and device state, plus Bluetooth controller state. Treat unavailable core
+   audio, network, or Bluetooth services as `FAIL`; lack of an optional paired
+   Bluetooth device is not a failure.
+
+The preflight cannot click a workspace, produce sound, authenticate, or create
+a portal request without changing or interacting with the session. List those
+as required post-reboot manual tests, never simulate them by restarting
+components.
 
 For post-reboot checks, inspect the running kernel, NVIDIA, failed system and
 user units, greetd/LightDM, session type, Hyprland/UWSM, SwayNC, portals,
@@ -496,3 +591,9 @@ Manual tests, Suggested commands. Use only `PASS`, `WARN`, and `FAIL` statuses.
 Only `FAIL` may produce `DO NOT REBOOT`. Focused scopes may use the same
 sections but must label untested gates as out of scope and use `NOT ASSESSED`
 for reboot status unless direct evidence supports a decision.
+
+For the post-transaction reboot gate, include a `Desktop preflight` line in
+`Passed checks` or `Blocking failures`. Any required desktop binary, dynamic
+dependency, Hyprland configuration, unit, required runtime service, or deleted
+process executable failure is a `FAIL / DO NOT REBOOT`; do not downgrade it to
+a warning because the current session still appears usable.

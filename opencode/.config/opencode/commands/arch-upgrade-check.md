@@ -1,5 +1,5 @@
 ---
-description: Check Arch Linux upgrade readiness and desktop health using natural language.
+description: Check Arch Linux upgrade readiness, including a read-only desktop preflight before rebooting.
 agent: arch-diagnostics
 subtask: false
 ---
