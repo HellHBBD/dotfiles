@@ -1,6 +1,7 @@
 [user]
 email = "paulyu602@gmail.com"
 name = "Hell HBBD"
+	signingkey = 3911BEA1D7EAF56D
 
 [core]
 editor = "nvim"
