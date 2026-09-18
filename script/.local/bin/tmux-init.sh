@@ -37,5 +37,6 @@ ensure_tmux_session() {
 ensure_tmux_session "backend" "$HOME" "Backend Process"
 ensure_tmux_session "home" "$HOME"
 ensure_tmux_session "dotfiles" "$HOME/dotfiles" "Code" "Build"
-ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"
-ensure_tmux_session "website" "$HOME/website" "Code" "Build"
+# ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"
+# ensure_tmux_session "website" "$HOME/website" "Code" "Build"
+ensure_tmux_session "codetrial" "$HOME/codetrial" "Code" "Build"
