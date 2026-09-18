@@ -218,11 +218,6 @@ permission:
         "pgrep -a -x Hyprland": allow
         "pgrep -a -x uwsm": allow
 
-        "readelf -p .uname /boot/EFI/Linux/arch-linux.efi": allow
-        "readelf -p .uname /boot/EFI/Linux/arch-linux-fallback.efi": allow
-        "readelf -p .osrel /boot/EFI/Linux/arch-linux.efi": allow
-        "readelf -p .osrel /boot/EFI/Linux/arch-linux-fallback.efi": allow
-
         # ASK covers bounded diagnostics that can block or disclose extensive data.
         "df *--sync*": ask
         "findmnt *--poll*": ask
@@ -525,10 +520,32 @@ kernel, headers, systemd, glibc, graphics, NVIDIA, Hyprland, portals, audio,
 firmware, bootloader, and microcode updates as high risk.
 
 After a successful user-supplied upgrade transaction, verify matching kernel
-and headers, NVIDIA DKMS for the installed kernel, boot artifacts, and UKI
-`.uname` sections when readable without elevation. Also run the complete,
-read-only desktop preflight below. Do not recommend rebooting unless every
-required reboot-gate and desktop-preflight check passes.
+and headers plus NVIDIA DKMS for the installed kernel. Also run the complete,
+read-only desktop preflight below.
+
+This host mounts `/boot` with `fmask=0077,dmask=0077`, so only root can
+traverse and read its boot artifacts. Run `findmnt`, `df`, `uname`, `pacman -Q`,
+`pacman -Dk`, and `dkms status` directly without elevation. Do not attempt to
+read `/boot` unprivileged and do not interpret `Permission denied` as a missing
+artifact.
+
+For the following two required, read-only checks, explain why elevation is
+needed, show one command at a time, and wait for the user's complete output and
+exit status. Never run or construct `sudo` yourself:
+
+```bash
+sudo stat /boot/vmlinuz-linux /boot/EFI/Linux/arch-linux.efi /boot/EFI/Linux/arch-linux-fallback.efi
+```
+
+After the artifact check passes, request the UKI version check:
+
+```bash
+sudo objdump -s -j .uname /boot/EFI/Linux/arch-linux.efi /boot/EFI/Linux/arch-linux-fallback.efi
+```
+
+UKIs are PE/COFF binaries, so use `objdump`, not `readelf`. Do not recommend
+rebooting unless both privileged checks and every required reboot-gate and
+desktop-preflight check pass.
 
 ### Desktop preflight before reboot
 
