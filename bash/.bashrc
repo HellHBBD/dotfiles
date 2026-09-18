@@ -113,6 +113,7 @@ path_append() {
 }
 path_prepend "/opt/cuda/bin"
 path_prepend "$HOME/.local/bin"
+path_prepend "/usr/google/appinventor/commands-for-Appinventor"
 
 export PATH
 
