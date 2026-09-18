@@ -16,9 +16,10 @@ Build or query a knowledge graph for local source code only. This is a restricte
 - Load proactively when a task would benefit from cross-file control-flow,
   dependency, architecture, or impact analysis. Do not load it for a trivial
   known-file edit or exact-text lookup.
-- Automatic use is read-only and limited to `query`, `explain`, or `path`
-  against the active workspace's existing verified
-  `graphify-out/graph.json`.
+- Automatic use is limited to `query`, `explain`, or `path` against the active
+  workspace's existing verified `graphify-out/graph.json`. These commands do
+  not modify the graph or source files, but Graphify records a best-effort
+  `cache/last_query_stamp` beside the queried graph.
 - Treat the active workspace as its canonical real path. Its graph must be the
   regular, non-symlink file at `graphify-out/graph.json`, and its manifest must
   be the regular, non-symlink file at `graphify-out/manifest.json`.

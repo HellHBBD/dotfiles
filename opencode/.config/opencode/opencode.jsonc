@@ -171,14 +171,14 @@
             "systemctl --user cat cliphist.service": "allow",
             "journalctl *--no-pager*": "allow",
 
-            // Approval-gated Graphify command allowlist
+            // Restricted Graphify command allowlist
             "graphify": "deny",
             "graphify *": "deny",
             "graphify --version": "allow",
-            "graphify query *": "ask",
-            "graphify explain *": "ask",
-            "graphify path *": "ask",
-            "graphify extract * --code-only --no-cluster": "ask",
+            "graphify query *": "allow",
+            "graphify explain *": "allow",
+            "graphify path *": "allow",
+            "graphify extract * --code-only --no-cluster": "allow",
 
             // Approval-gated mutation
             "rm *": "ask",
