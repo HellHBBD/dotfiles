@@ -6,6 +6,11 @@
 
 set -u
 
+session_script="$HOME/.config/hypr/scripts/workspace-session.sh"
+if [[ -x "$session_script" ]]; then
+    "$session_script" save >/dev/null 2>&1 || true
+fi
+
 user_uid="$(id -u)"
 
 find_graphical_session() {
