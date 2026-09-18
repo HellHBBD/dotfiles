@@ -22,7 +22,7 @@ permission:
         "$HOME/.local/bin/worktree.sh --json status": allow
         "$HOME/.local/bin/worktree.sh --dry-run add *": allow
         "$HOME/.local/bin/worktree.sh --dry-run merge *": allow
-        "$HOME/.local/bin/worktree.sh *": ask
+        "$HOME/.local/bin/worktree.sh *": allow
         "*;*": deny
         "*&&*": deny
         "*||*": deny
