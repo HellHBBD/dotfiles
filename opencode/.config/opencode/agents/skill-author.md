@@ -2,7 +2,7 @@
 description: Draft and review narrowly scoped OpenCode skill documents.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-sol
+model: openai/gpt-5.6-terra
 options:
     reasoningEffort: high
 permission:

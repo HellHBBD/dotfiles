@@ -4,7 +4,7 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-terra
 options:
-    reasoningEffort: high
+    reasoningEffort: medium
 permission:
     skill: deny
     grep: allow

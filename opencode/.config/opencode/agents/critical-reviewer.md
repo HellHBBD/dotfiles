@@ -4,7 +4,7 @@ mode: subagent
 hidden: true
 model: openai/gpt-5.6-sol
 options:
-    reasoningEffort: max
+    reasoningEffort: high
 permission:
     edit: deny
     task: deny
