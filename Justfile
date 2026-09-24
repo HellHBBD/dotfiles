@@ -3,9 +3,13 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 repo := justfile_directory()
 home := env("HOME")
 
-# 顯示所有可用 Recipe 與用途
+# 顯示 Just target 之間的靜態依賴樹
 default:
-    @just --list
+    @python3 "{{ repo }}/tools/just-tree.py"
+
+# 顯示所有 target 或指定 target 的靜態依賴樹
+tree target="":
+    @python3 "{{ repo }}/tools/just-tree.py" "{{ target }}"
 
 # 建立或更新指定 Stow 套件的符號連結
 stow package:
@@ -458,6 +462,26 @@ steam:
         lib32-vulkan-intel \
         ntsync-autoload
 
+# 備份既有 Dolphin 偏好並建立 Stow 符號連結
+dolphin:
+    @for path in "{{ home }}/.config/dolphinrc" "{{ home }}/.config/kdeglobals"; do \
+        if [ -e "$path" ] && [ ! -L "$path" ]; then \
+            backup="$path.pre-stow"; \
+            if [ -e "$backup" ] || [ -L "$backup" ]; then \
+                printf '%s\n' "$backup 已存在，為避免覆蓋備份而停止" >&2; \
+                exit 1; \
+            fi; \
+            mv -- "$path" "$backup"; \
+        fi; \
+    done
+    stow \
+        --dir "{{ repo }}" \
+        --target "{{ home }}" \
+        --restow \
+        --no-folding \
+        dolphin
+    bash "{{ home }}/.local/bin/dolphin-apply-view-properties"
+
 # 安裝並套用 Hyprland、桌面元件與相關整合設定
 hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist espanso wlogout
     sudo pacman -S --needed \
@@ -495,6 +519,7 @@ hyprland: ghostty tmux wallpapers swaync swayosd waybar cliphist espanso wlogout
     sudo systemctl enable --now bluetooth.service
 
     systemctl --user daemon-reload
+    just dolphin
     just stow hyprland
 
 # 安裝 `greetd` 與 `greetd-tuigreet` 登入管理員套件

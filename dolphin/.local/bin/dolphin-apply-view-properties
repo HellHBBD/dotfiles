@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config="$HOME/.config/dolphin/view-properties-global.ini"
+target="$HOME/.local/share/dolphin/view_properties/global"
+attribute="user.kde.fm.viewproperties#1"
+
+if pgrep -x dolphin >/dev/null; then
+    printf '%s\n' '請先關閉所有 Dolphin 視窗，再套用全域檢視設定。' >&2
+    exit 1
+fi
+
+if [[ ! -f "$config" ]]; then
+    printf '%s\n' "找不到檢視設定範本：$config" >&2
+    exit 1
+fi
+
+mkdir -p "$target"
+
+# Dolphin stores view properties in an xattr when the filesystem supports it.
+# Preserve its timestamp so applying dotfiles does not falsely mark a GUI edit.
+timestamp=""
+in_dolphin_group=false
+while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ "$line" == "[Dolphin]" ]]; then
+        in_dolphin_group=true
+    elif [[ "$line" == \[*\] ]]; then
+        in_dolphin_group=false
+    elif $in_dolphin_group && [[ "$line" == Timestamp=* ]]; then
+        timestamp="$line"
+    fi
+done < <(getfattr --only-values --name "$attribute" "$target" 2>/dev/null || :)
+
+contents="$(<"$config")"
+if [[ -n "$timestamp" ]]; then
+    contents+=$'\n'
+    contents+="$timestamp"
+fi
+
+setfattr --name "$attribute" --value "$contents" "$target"

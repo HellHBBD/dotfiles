@@ -1,0 +1,36 @@
+MenuBar=Disabled
+
+[ContextMenu]
+ShowCopyMoveMenu=true
+
+[General]
+AlwaysShowTabBar=false
+BrowseThroughArchives=true
+ColorScheme=BreezeDark
+EnlargeSmallPreviews=true
+GlobalViewProps=true
+HideXTrashFile=true
+LockPanels=true
+RememberOpenedTabs=true
+RenameInline=true
+ShowCloseButtonOnTabs=true
+ShowFullPath=false
+ShowFullPathInTitlebar=false
+ShowStatusBar=0
+ShowToolTips=false
+ShowZoomSlider=false
+SortingChoice=0
+Version=202
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+
+[PreviewSettings]
+Plugins=directorythumbnail,windowsexethumbnail,kraorathumbnail,jpegthumbnail,windowsimagethumbnail,appimagethumbnail,comicbookthumbnail,imagethumbnail,opendocumentthumbnail,cursorthumbnail,fontthumbnail,audiothumbnail,svgthumbnail,ebookthumbnail,djvuthumbnail,exrthumbnail,glycin-heif,glycin-jxl,glycin-svg,glycin-image-rs
+
+[UiSettings]
+ColorScheme=BreezeDark

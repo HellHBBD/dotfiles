@@ -53,6 +53,37 @@ just login-manager
 
 `just all` 會安裝 Bash、Git、Neovim、locale 與 Hyprland。`just login-manager` 僅安裝 greetd 套件，不會寫入 greetd 設定或啟用服務。
 
+## Just 依賴樹
+
+不帶參數執行 `just` 會顯示所有頂層 target 的靜態依賴樹。也可查看特定
+target 的子樹：
+
+```bash
+just
+just tree hyprland
+just tree server
+```
+
+一般節點是 Just 宣告的前置依賴；`[本體呼叫]` 表示 recipe 執行到該行時才會
+遞迴呼叫的 `just` target。`just --list` 保留原有平面 recipe 清單。
+
+## Dolphin 設定
+
+`dolphin` Stow 套件管理固定偏好，包括 `~/.config/dolphinrc`、
+`~/.config/kdeglobals` 的 Dolphin 相關項目，以及全域檢視範本。套用前請關閉
+所有 Dolphin 視窗：
+
+```bash
+just dolphin
+```
+
+首次套用時，既有檔案會備份為 `.pre-stow`。全域檢視偏好以
+`~/.config/dolphin/view-properties-global.ini` 為來源；Dolphin 支援延伸屬性
+時會將實際設定儲存在 `~/.local/share/dolphin/view_properties/global` 的 xattr，
+由套用腳本更新。Places 書籤 (`~/.local/share/user-places.xbel`)、資料夾個別
+檢視狀態與工具列／右鍵選單不納管。從 GUI 修改固定偏好後，使用 `git diff`
+檢查是否要保留變更；修改全域檢視後，請同步更新範本。
+
 ## 安裝 Steam
 
 先在 `/etc/pacman.conf` 取消註解：
