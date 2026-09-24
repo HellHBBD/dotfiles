@@ -8,7 +8,13 @@ Before any Graphify execution, load the installed `graphify` skill with the
 `skill` tool for this invocation. Do not rely on Graphify instructions
 previously loaded in this conversation.
 
-Follow that skill for this explicit request:
+Invocation authorization: this command template is running because the user
+explicitly invoked `/graphify $ARGUMENTS`. This satisfies the loaded skill's
+explicit `/graphify` requirement for any extraction it otherwise permits. Do
+not ask the user to invoke `/graphify` again or claim that no Graphify action
+was requested.
+
+The requested Graphify action is:
 
 $ARGUMENTS
 
