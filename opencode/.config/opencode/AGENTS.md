@@ -23,12 +23,21 @@
 - Updates require review of the diff and must never be applied automatically.
 - Compare installed content with its backup using `git diff --no-index`; do not use platform-specific checksum commands.
 
-## Privilege escalation and command timeouts
+## Privilege escalation, resource guards, and command timeouts
 
 - Never execute privilege-escalation commands: `sudo`, `sudoedit`, `doas`, `su`, `pkexec`, or `run0`.
 - Do not execute wrappers, scripts, package recipes, or shell pipelines that invoke privilege escalation internally. Do not use `sudo -S`, askpass helpers, password pipelines, or other bypasses.
 - When a privileged operation is required, give the user the exact command and wait for its output before continuing.
-- Every Bash tool call must set an explicit, finite `timeout`: use `30000ms` for ordinary checks and `120000ms` for tests or builds. Use a longer timeout only when justified by the operation; never retry with an unlimited timeout after expiry.
+- Every Bash tool call must set an explicit, finite `timeout`: use `30000ms` for ordinary checks and diagnostics. Use a longer timeout only when justified by the operation; never retry with an unlimited timeout after expiry.
+- Before an authorized command runs, classify its actual work, input scope, arguments, invoked scripts or recipes, and available prior resource evidence. Do not decide from the executable or recipe name alone.
+- For a finite foreground job that may consume substantial CPU, memory, I/O, or parallel workers, automatically use `guard-run` with an inner finite timeout. High-load evidence includes compilation, linking, compression, conversion, indexing, large static analysis, multi-worker tests, whole-workspace scans, batch data processing, full rebuilds, or scripts and recipes that invoke such work.
+- The default protected form is `guard-run -- timeout --signal=TERM --kill-after=10s 120s <command> <arguments...>` with a Bash tool timeout of `150000ms`. Put any required leading `NAME=VALUE` assignments immediately after `guard-run --` so `guard-run` preserves them for the wrapped command.
+- Use `guard-run` for a heavy operation even when it is read-only. Do not use it solely because a command might wait: lightweight queries, metadata reads, version checks, help, and small diagnostics normally need only the ordinary Bash timeout.
+- Inspect a task runner, script, or recipe before classifying it. If its work is unknown but has concrete high-load indicators, protect it conservatively; if its behavior, authority, or lifecycle is unknown, clarify or inspect it instead of running it unprotected.
+- Do not apply the batch-job form to long-lived services, watchers, interactive programs, or commands that manage their own lifecycle. Establish an explicit lifecycle and stopping method first.
+- Preserve the command's working directory, arguments, and required environment. If a command already has compatible resource limits or a finite timeout, do not wrap it again; verify that its limits remain suitable.
+- `guard-run` limits resources; it is not a sandbox, a permission grant, or a way around Ask, Deny, Plan Mode, or privilege restrictions. The wrapped command remains subject to the original policy.
+- If `guard-run`, `timeout`, or the user systemd service is unavailable, report the blocker rather than falling back to an unprotected high-load run. After a timeout or resource failure, report the result and investigate before retrying.
 
 ## Bash command dispatch
 
