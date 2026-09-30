@@ -9,30 +9,6 @@ keymap('n', '<F5>', function()
 	print('reload nvim config')
 end, { desc = 'Reload nvim config' })
 
-local function find_build_system(directory)
-	while directory do
-		for _, name in ipairs({ 'Makefile', 'makefile', 'GNUmakefile' }) do
-			if vim.uv.fs_stat(vim.fs.joinpath(directory, name)) then
-				return directory, 'make'
-			end
-		end
-
-		if vim.uv.fs_stat(vim.fs.joinpath(directory, 'CMakeLists.txt')) then
-			return directory, 'cmake'
-		end
-
-		if vim.uv.fs_stat(vim.fs.joinpath(directory, 'Cargo.toml')) then
-			return directory, 'cargo'
-		end
-
-		local parent = vim.fs.dirname(directory)
-		if parent == directory then
-			return nil
-		end
-		directory = parent
-	end
-end
-
 local function open_build_popup(command, directory)
 	if vim.env.TMUX == nil or vim.env.TMUX_PANE == nil then
 		vim.notify('F6/F7 requires Neovim to run inside tmux', vim.log.levels.WARN)
@@ -71,51 +47,37 @@ local function build_current_file(run)
 
 	vim.cmd('update')
 
-	local directory = vim.fs.dirname(file)
-	local root, build_system = find_build_system(directory)
-	local command
-
-	if build_system == 'make' then
-		command = run and 'make && make run' or 'make'
-	elseif build_system == 'cmake' then
-		command = 'cmake -S . -B build && cmake --build build'
-		if run then
-			command = command .. ' --target run'
-		end
-	elseif build_system == 'cargo' then
-		command = run and 'cargo run' or 'cargo build'
-	else
-		local compiler = ({ c = 'gcc', cpp = 'g++' })[vim.bo.filetype]
-		if compiler == nil then
-			vim.notify(
-				'No build system or C/C++ compiler for ' .. vim.bo.filetype,
-				vim.log.levels.WARN
-			)
-			return
-		end
-
-		root = directory
-		local output = vim.fs.joinpath(directory, vim.fn.fnamemodify(file, ':t:r'))
-		command = compiler
-			.. ' '
-			.. vim.fn.shellescape(file)
-			.. ' -o '
-			.. vim.fn.shellescape(output)
-		if run then
-			command = command .. ' && ' .. vim.fn.shellescape(output)
-		end
+	local compiler = ({ c = 'gcc', cpp = 'g++' })[vim.bo.filetype]
+	if compiler == nil then
+		vim.notify('No C/C++ compiler for ' .. vim.bo.filetype, vim.log.levels.WARN)
+		return
+	end
+	if vim.fn.executable(compiler) ~= 1 then
+		vim.notify(compiler .. ' is not available in PATH', vim.log.levels.ERROR)
+		return
 	end
 
-	open_build_popup(command, root)
+	local directory = vim.fs.dirname(file)
+	local output = vim.fs.joinpath(directory, vim.fn.fnamemodify(file, ':t:r'))
+	local command = compiler
+		.. ' '
+		.. vim.fn.shellescape(file)
+		.. ' -o '
+		.. vim.fn.shellescape(output)
+	if run then
+		command = command .. ' && ' .. vim.fn.shellescape(output)
+	end
+
+	open_build_popup(command, directory)
 end
 
 keymap('n', '<F6>', function()
 	build_current_file(false)
-end, { desc = 'Build project or current C/C++ file' })
+end, { desc = 'Build current C/C++ file' })
 
 keymap('n', '<F7>', function()
 	build_current_file(true)
-end, { desc = 'Build and run project or current C/C++ file' })
+end, { desc = 'Build and run current C/C++ file' })
 
 -- indent shorcut
 keymap('n', '<tab>', '>>', { desc = 'Indent to the right' })
