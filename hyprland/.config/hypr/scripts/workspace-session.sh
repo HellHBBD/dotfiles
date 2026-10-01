@@ -243,13 +243,28 @@ tmux_home_command() {
     managed_command "$command"
 }
 
+herdr_command() {
+    local executable=$1
+    local herdr_executable
+    local command
+
+    herdr_executable="$(command -v herdr)" || {
+        log 'herdr not found; skipping Herdr terminal'
+        return 1
+    }
+    printf -v command '%q ' "$executable" -e "$herdr_executable"
+    managed_command "${command% }"
+}
+
 restore_default_session() {
-    local herdr_command="sh -c 'command -v herdr >/dev/null 2>&1 || exit 0; exec ghostty -e herdr'"
+    local command
 
     initialize_tmux_sessions
     launch_on_workspace 1 "$(tmux_home_command "$(command -v ghostty)")"
     launch_on_workspace 2 "$(managed_command 'zen-browser')"
-    launch_on_workspace 3 "$(managed_command "$herdr_command")"
+    if command="$(herdr_command "$(command -v ghostty)")"; then
+        launch_on_workspace 3 "$command"
+    fi
     visit_restored_workspaces 1 1 2 3
 }
 
@@ -303,7 +318,11 @@ restore_session() {
             argv="$(jq -c '.argv' <<<"$client")"
             [[ "$(jq -r '.[0]' <<<"$argv")" == "$executable" ]] || continue
             if [[ "$(basename "$executable")" == 'ghostty' && "$(jq 'length' <<<"$argv")" == 1 ]]; then
-                command="$(tmux_home_command "$executable")"
+                case "$workspace" in
+                1) command="$(tmux_home_command "$executable")" ;;
+                3) command="$(herdr_command "$executable")" || continue ;;
+                *) command="$(managed_command "$(shell_command_from_argv "$argv")")" ;;
+                esac
             else
                 command="$(managed_command "$(shell_command_from_argv "$argv")")"
             fi
