@@ -2,3 +2,6 @@ tmux/.config/tmux/plugins
 lazy-lock.json
 lazyvim.json
 opencode/.config/opencode/plugins/herdr-agent-state.js
+opencode/.config/opencode/herdr-tui-session.js
+opencode/.config/opencode/herdr-opencode/
+opencode/.config/opencode/tui.jsonc
