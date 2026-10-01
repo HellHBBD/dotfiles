@@ -2,9 +2,9 @@
 description: Gather read-only codebase evidence for large-repository analysis and return concise file references.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6-luna
 options:
-    reasoningEffort: medium
+    reasoningEffort: high
     textVerbosity: low
 permission:
     edit: deny

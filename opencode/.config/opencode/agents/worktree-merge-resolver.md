@@ -2,7 +2,7 @@
 description: Resolve only unambiguous Git merge conflicts in an assigned worktree.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: high
     textVerbosity: low

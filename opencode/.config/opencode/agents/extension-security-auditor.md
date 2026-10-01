@@ -2,7 +2,7 @@
 description: Perform read-only security audits of staged third-party OpenCode extensions.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-sol
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: high
 permission:

@@ -2,7 +2,7 @@
 description: Audit and manage third-party OpenCode skills, commands, and plugins
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: medium
 permission:

@@ -2,7 +2,7 @@
 description: Interpret Arch Linux upgrade and desktop-health requests, then run only safe read-only diagnostics.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: medium
     textVerbosity: low

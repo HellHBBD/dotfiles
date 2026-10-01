@@ -2,7 +2,7 @@
 description: Select an optional workflow entry point for an explicitly stated goal.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 options:
     reasoningEffort: low
 permission:

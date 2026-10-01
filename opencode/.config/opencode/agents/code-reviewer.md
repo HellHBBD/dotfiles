@@ -2,7 +2,7 @@
 description: Perform read-only, evidence-based code and project-rules reviews.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: high
 permission:

@@ -1,7 +1,7 @@
 ---
 description: Review running Web or Desktop UI evidence and optionally fix visual issues with fresh verification.
 mode: subagent
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
     reasoningEffort: high
 permission:

@@ -2,7 +2,7 @@
 description: Evaluate current evidence for completion, test, build, and verification claims.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 options:
     reasoningEffort: medium
 permission:

@@ -2,9 +2,9 @@
 description: Refactor approved code changes for clarity and maintainability.
 mode: subagent
 hidden: true
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 options:
-    reasoningEffort: high
+    reasoningEffort: medium
 permission:
     edit: ask
     task: deny
