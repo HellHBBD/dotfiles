@@ -9,31 +9,45 @@ keymap('n', '<F5>', function()
 	print('reload nvim config')
 end, { desc = 'Reload nvim config' })
 
-local function open_build_popup(command, directory)
+local function open_build_pane(command, directory)
 	if vim.env.TMUX == nil or vim.env.TMUX_PANE == nil then
 		vim.notify('F6/F7 requires Neovim to run inside tmux', vim.log.levels.WARN)
 		return false
 	end
 
-	local popup_command = "printf '%s\\n\\n' "
-		.. vim.fn.shellescape('$ ' .. command)
-		.. '; '
-		.. command
-		.. '; status=$?; printf \'\\nExit status: %d. Press Enter to close.\' "$status"; read -r _'
+	local pane_script = [[
+printf '$ %s\n\n' "$1"
+bash -c "$1"
+status=$?
+printf '\nExit status: %d. Press Enter or Esc to close.\n' "$status"
+while IFS= read -r -s -n 1 key; do
+	case "$key" in
+		$'\e'|'') exit "$status" ;;
+	esac
+done
+exit "$status"
+]]
 
 	vim.system({
 		'tmux',
-		'display-popup',
-		'-E',
+		'new-pane',
 		'-t',
 		vim.env.TMUX_PANE,
-		'-d',
+		'-c',
 		directory,
-		'-w',
+		'-x',
 		'80%',
-		'-h',
+		'-y',
 		'80%',
-		popup_command,
+		'-X',
+		'10%',
+		'-Y',
+		'10%',
+		'bash',
+		'-c',
+		pane_script,
+		'bash',
+		command,
 	})
 	return true
 end
@@ -68,7 +82,7 @@ local function build_current_file(run)
 		command = command .. ' && ' .. vim.fn.shellescape(output)
 	end
 
-	open_build_popup(command, directory)
+	open_build_pane(command, directory)
 end
 
 keymap('n', '<F6>', function()
