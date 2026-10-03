@@ -585,6 +585,7 @@
         },
         "skill": {
             "*": "ask",
+            "document-workflow": "allow",
             "core-*": "allow",
             "project-*": "allow",
             "vendor-*": "ask",
@@ -878,6 +879,7 @@
                 },
                 "skill": {
                     "*": "ask",
+                    "document-workflow": "allow",
                     "graphify": "allow",
                     "customize-opencode": "allow",
                     "core-*": "allow",
@@ -999,6 +1001,7 @@
                 },
                 "skill": {
                     "*": "deny",
+                    "document-workflow": "allow",
                     "graphify": "allow",
                     "customize-opencode": "allow",
                     "core-*": "allow",

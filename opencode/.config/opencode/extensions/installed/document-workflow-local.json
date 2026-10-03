@@ -1,0 +1,13 @@
+{
+    "schemaVersion": 1,
+    "installationId": "document-workflow-local",
+    "componentType": "skill",
+    "targetPath": "~/.config/opencode/skills/document-workflow/SKILL.md",
+    "scope": "global",
+    "riskClassification": "medium",
+    "installedAt": "2026-10-03T00:00:00+08:00",
+    "backupRevision": null,
+    "backupPath": null,
+    "governed": true,
+    "notes": "First-party portable document workflow, migrated from local core-* rules. No third-party skill copied. Canonical source is the dotfiles skill directory; Cherry Studio imports are exports. GenOffice adapter is documentation only, without runtime approval or activation. Legacy skills remain active pending shadow validation."
+}
