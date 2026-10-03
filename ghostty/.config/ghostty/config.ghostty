@@ -1,1 +1,4 @@
 theme = TokyoNight
+
+# Slow touchpad scrolling while keeping the default mouse wheel multiplier.
+mouse-scroll-multiplier = precision:0.5,discrete:3
