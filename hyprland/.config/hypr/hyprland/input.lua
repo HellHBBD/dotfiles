@@ -35,6 +35,12 @@ hl.config({
 	},
 })
 
+-- Increase this touchpad's pointer speed independently of external mice.
+hl.device({
+	name = 'elan0522:01-04f3:31c3-touchpad',
+	sensitivity = 0.3,
+})
+
 -- Three-finger swipe: move the active window.
 hl.gesture({
 	fingers = 3,
