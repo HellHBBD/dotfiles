@@ -1024,6 +1024,12 @@
             },
         },
     },
+    "compaction": {
+        "auto": true,
+        "prune": true,
+        "preserve_recent_tokens": 15000,
+        "reserved": 20000,
+    },
     "mcp": {
         "playwright": {
             "type": "local",
