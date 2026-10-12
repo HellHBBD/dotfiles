@@ -120,3 +120,5 @@ export PATH
 if command -v zen-browser >/dev/null 2>&1; then
     export BROWSER=zen-browser
 fi
+
+export MANPAGER='nvim +Man!'
