@@ -34,9 +34,14 @@ ensure_tmux_session() {
     tmux select-window -t "${session_name}:${first_window}"
 }
 
+project() {
+    local project_directory="${1%/}"
+    local session_name="${project_directory##*/}"
+
+    ensure_tmux_session "$session_name" "$project_directory" "Code" "Build"
+}
+
 ensure_tmux_session "backend" "$HOME" "Backend Process"
 ensure_tmux_session "home" "$HOME"
-ensure_tmux_session "dotfiles" "$HOME/dotfiles" "Code" "Build"
-# ensure_tmux_session "bom" "$HOME/bom" "Code" "Build"
-# ensure_tmux_session "website" "$HOME/website" "Code" "Build"
-ensure_tmux_session "codetrial" "$HOME/codetrial" "Code" "Build"
+
+project "$HOME/dotfiles"
