@@ -507,9 +507,15 @@ ALLOW queries for routine checks; request ASK-only diagnostics only when their
 broader output or possible blocking behavior is necessary to answer the user's
 question. Never use an ASK form to reach a denied operation.
 
-When a privileged action or diagnostic is needed, show one exact command in a
-fenced `bash` block, explain why, and wait for the user to provide its complete
-output and exit status. Never claim that a suggested command ran.
+Complete all independent, non-privileged read-only checks before requesting
+privileged diagnostics. Explain why elevation is needed and present all
+remaining independent privileged read-only commands together in one fenced
+`bash` block for the user to run. Request their complete outputs, errors, and
+individual exit statuses in one reply, then interpret the evidence together.
+Split requests only when a later command depends on an earlier result or that
+result may change the remaining checks. Never execute privileged commands or
+claim that a suggested command ran. If a state-changing privileged action is
+needed, explain the blocker rather than include it in a read-only batch.
 
 ## Checks
 
@@ -529,23 +535,29 @@ traverse and read its boot artifacts. Run `findmnt`, `df`, `uname`, `pacman -Q`,
 read `/boot` unprivileged and do not interpret `Permission denied` as a missing
 artifact.
 
-For the following two required, read-only checks, explain why elevation is
-needed, show one command at a time, and wait for the user's complete output and
-exit status. Never run or construct `sudo` yourself:
+After completing the non-privileged checks, explain why elevation is needed
+and present the following three required, independent read-only commands
+together. Ask the user to execute all three and return their complete outputs,
+errors, and individual exit statuses in one reply. These checks do not depend
+on each other's results: do not wait for `stat` to pass before requesting the
+UKI version checks. Display these commands only; never execute them yourself:
 
 ```bash
-sudo stat /boot/vmlinuz-linux /boot/EFI/Linux/arch-linux.efi /boot/EFI/Linux/arch-linux-fallback.efi
-```
+sudo stat \
+  /boot/vmlinuz-linux \
+  /boot/EFI/Linux/arch-linux.efi \
+  /boot/EFI/Linux/arch-linux-fallback.efi
 
-After the artifact check passes, request the UKI version check:
+sudo objdump -s -j .uname /boot/EFI/Linux/arch-linux.efi
 
-```bash
-sudo objdump -s -j .uname /boot/EFI/Linux/arch-linux.efi /boot/EFI/Linux/arch-linux-fallback.efi
+sudo objdump -s -j .uname /boot/EFI/Linux/arch-linux-fallback.efi
 ```
 
 UKIs are PE/COFF binaries, so use `objdump`, not `readelf`. Do not recommend
-rebooting unless both privileged checks and every required reboot-gate and
-desktop-preflight check pass.
+rebooting unless all three privileged commands and every required reboot-gate
+and desktop-preflight check pass. Until all required evidence is available,
+report the reboot gate as `NOT ASSESSED`, identify the pending checks, and do
+not infer success from commands merely suggested to the user.
 
 ### Desktop preflight before reboot
 
@@ -604,7 +616,8 @@ normally warnings when current behavior is healthy.
 
 For complete pre, post, quick, AUR, and full scopes, end with these sections in
 this order: Overall, Reboot gate, Blocking failures, Warnings, Passed checks,
-Manual tests, Suggested commands. Use only `PASS`, `WARN`, and `FAIL` statuses.
+Manual tests, Suggested commands. Use only `PASS`, `WARN`, and `FAIL` for check
+statuses; use `NOT ASSESSED` for a reboot gate awaiting required evidence.
 Only `FAIL` may produce `DO NOT REBOOT`. Focused scopes may use the same
 sections but must label untested gates as out of scope and use `NOT ASSESSED`
 for reboot status unless direct evidence supports a decision.
