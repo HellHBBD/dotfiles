@@ -1,0 +1,76 @@
+matches:
+  - trigger: ";2u453"
+    replace: "台中市西區五權五街246巷15弄42號"
+
+  - trigger: ";nj453"
+    replace: "台南市東區勝利路65巷1號之一"
+
+  - trigger: ";2u04u.6"
+    replace: "paulyu602@gmail.com"
+
+  - trigger: ";dk vu4"
+    replace: "資訊工程研究所"
+
+  - trigger: ";ru8 2u04"
+    replace: "0423718558"
+
+  - trigger: ";vu/62u04"
+    replace: "0905116716"
+
+  - trigger: ";vm,6cl4"
+    replace: "P76151204"
+
+  - trigger: ";vm,6u.6"
+    replace: "p76151204@gs.ncku.edu.tw"
+
+  - trigger: ";5/4cl4"
+    replace: "B123775002"
+
+  - trigger: ";y93rm4"
+    replace: "/EH33JJ5"
+
+  - trigger: ";fb"
+    replace: "https://www.facebook.com/profile.php?id=100030501438429"
+
+  - trigger: ";ru041l3"
+    replace: "000052693566"
+
+  - trigger: ";espanso"
+    replace: "Hi there!"
+
+  - regex: ';ssh\(\s*(?P<user>[^,\s]+)\s*,\s*(?P<repo>[^)\s]+)\s*\)'
+    replace: 'git@github.com:{{user}}/{{repo}}.git'
+
+  - regex: ';clone\(\s*(?P<user>[^,\s]+)\s*,\s*(?P<repo>[^)\s]+)\s*\)'
+    replace: 'git clone git@github.com:{{user}}/{{repo}}.git'
+
+  - regex: ';github\(\s*(?P<user>[A-Za-z0-9-]+)\s*,\s*(?P<repo>[A-Za-z0-9._-]+)\s*\)'
+    replace: "{{output}}"
+    vars:
+      - name: action
+        type: choice
+        params:
+          values:
+            - label: "Git clone"
+              id: "clone"
+            - label: "SSH URL"
+              id: "ssh"
+            - label: "GitHub URL"
+              id: "url"
+
+      - name: output
+        type: shell
+        params:
+          shell: bash
+          cmd: |
+            case "{{action}}" in
+              clone)
+                printf 'git clone git@github.com:{{user}}/{{repo}}.git'
+                ;;
+              ssh)
+                printf 'git@github.com:{{user}}/{{repo}}.git'
+                ;;
+              url)
+                printf 'https://github.com/{{user}}/{{repo}}'
+                ;;
+            esac
