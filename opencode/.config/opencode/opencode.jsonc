@@ -20,6 +20,7 @@
             "*/.config/gcloud/**": "deny",
             ".config/gh/**": "deny",
             "*/.config/gh/**": "deny",
+            "*/.config/mcp-secrets/**": "deny",
             ".local/share/opencode/auth.json": "deny",
             "*/.local/share/opencode/auth.json": "deny",
         },
@@ -35,10 +36,14 @@
             "~/.azure/**": "deny",
             "~/.config/gcloud/**": "deny",
             "~/.config/gh/**": "deny",
+            "~/.config/mcp-secrets/**": "deny",
             "~/.local/share/opencode/**": "deny",
         },
         "doom_loop": "ask",
         "playwright_*": "deny",
+        "zhtw_*": "deny",
+        "hackmd_*": "deny",
+        "moodle_*": "deny",
         "ui_screenshot": "deny",
         "ui_window_list": "deny",
         "ui_window_match": "deny",
@@ -586,6 +591,9 @@
         "skill": {
             "*": "ask",
             "document-workflow": "allow",
+            "zhtw": "allow",
+            "hackmd": "allow",
+            "moodle": "allow",
             "core-*": "allow",
             "project-*": "allow",
             "vendor-*": "ask",
@@ -880,6 +888,9 @@
                 "skill": {
                     "*": "ask",
                     "document-workflow": "allow",
+                    "zhtw": "allow",
+                    "hackmd": "allow",
+                    "moodle": "allow",
                     "graphify": "allow",
                     "customize-opencode": "allow",
                     "core-*": "allow",
@@ -1031,6 +1042,52 @@
         "reserved": 20000,
     },
     "mcp": {
+        "zhtw": {
+            "type": "local",
+            "command": [
+                "/usr/bin/python3",
+                "-I",
+                "/home/hellhbbd/dotfiles/opencode/.config/opencode/scripts/knowledge-mcp-launcher.py",
+                "zhtw",
+            ],
+            "environment": {
+                "ZHTW_NO_NETWORK": "1",
+            },
+            "enabled": true,
+            "timeout": 30000,
+        },
+        "hackmd": {
+            "type": "local",
+            "command": [
+                "/usr/bin/python3",
+                "-I",
+                "/home/hellhbbd/dotfiles/opencode/.config/opencode/scripts/knowledge-mcp-launcher.py",
+                "hackmd",
+            ],
+            "environment": {
+                "HACKMD_API_TOKEN": "{file:~/.config/mcp-secrets/hackmd-token}",
+                "HACKMD_API_URL": "https://api.hackmd.io/v1",
+                "HACKMD_MCP_WORKSPACE_ROOT": "/home/hellhbbd/obsidian/HackMD",
+            },
+            "enabled": true,
+            "timeout": 30000,
+        },
+        "moodle": {
+            "type": "local",
+            "command": [
+                "/usr/bin/python3",
+                "-I",
+                "/home/hellhbbd/dotfiles/opencode/.config/opencode/scripts/knowledge-mcp-launcher.py",
+                "moodle",
+            ],
+            "environment": {
+                "MOODLE_URL": "https://moodle.ncku.edu.tw",
+                "MOODLE_TOKEN": "{file:~/.config/mcp-secrets/moodle-token}",
+                "MOODLE_READ_ONLY": "1",
+            },
+            "enabled": true,
+            "timeout": 30000,
+        },
         "playwright": {
             "type": "local",
             "command": [

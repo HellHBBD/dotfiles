@@ -1,0 +1,24 @@
+{
+    "schemaVersion": 1,
+    "installationId": "update-mcp-command-local",
+    "componentType": "command",
+    "origin": "First-party command for four approved managed MCP integrations, including the Playwright/browser bundle; no upstream command copied.",
+    "targetPath": "~/.config/opencode/commands/update-mcp.md",
+    "scope": "global",
+    "agent": "build",
+    "subtask": false,
+    "servers": ["zhtw", "hackmd", "moodle", "playwright"],
+    "managedRecords": [
+        "vendor-sysprog21-zhtw-mcp-0485df42b26e.json",
+        "vendor-sysprog21-hackmd-mcp-2951aab8ba18.json",
+        "vendor-g36maid-moodle-mcp-0.1.4.json",
+        "vendor-microsoft-playwright-mcp-0.0.79.json"
+    ],
+    "installedAt": "2026-10-19",
+    "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
+    "backupPath": null,
+    "riskClassification": "medium",
+    "governed": true,
+    "notes": "Default check-only prompt. Candidate-specific conversational approval precedes disk staging/activation. Keeps stable installation records, versioned old runtimes and scoped MCP permissions. Playwright updates include the exact production npm closure and matching Chromium revision, preserve the UI guard, and distinguish protocol from browser verification. Does not grant tools, relax Bash policy, implement a transactional updater, or authorize upstream make/Cargo/npm/install scripts. Package acquisition and updates remain reviewed operations.",
+    "verification": "PASS: OpenCode 1.19.3 discovers /update-mcp with four-server selection, separate native/Playwright launchers and browser guard requirements; four managed record references resolve; 11 resolved Playwright permission decisions preserve scoped UI access; Prettier and whitespace checks pass. Static prompt review only: no candidate version check, update, rollback, MCP launch, browser action or API call invoked. Existing Playwright runtime captured as a baseline separately."
+}

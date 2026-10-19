@@ -11,8 +11,11 @@
   "scope": "global",
   "riskClassification": "medium",
   "installedAt": "2026-08-12T00:00:00+08:00",
-  "backupRevision": null,
-  "backupPath": null,
+  "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
+  "backupPath": "~/.local/share/opencode-extension-manager/backups/vendor-microsoft-playwright-mcp-0.0.79/baseline-20261019-d18d72fa/runtime",
+  "backupBundlePath": "~/.local/share/opencode-extension-manager/backups/vendor-microsoft-playwright-mcp-0.0.79/baseline-20261019-d18d72fa",
+  "backupContents": ["runtime/", "launcher.js", "artifact-guard.js", "ui-inspector.md", "ui-review.md", "manifest.before.json", "manifest.json", "receipt.json"],
+  "backupVerification": "PASS: complete current runtime plus launcher, artifact guard, ui-inspector and ui-review compared to baseline with git diff --no-index. Runtime comparison disabled external diff/textconv and global attributes/line-ending conversion. Captured current installed state on 2026-10-19; not a new upstream-content verification. The pre-update record is manifest.before.json; manifest.json is the baseline record after backup metadata was added.",
   "governed": true,
   "packages": [
     {
@@ -39,5 +42,5 @@
     "retrievedIntegrity": "sha512-zmqkBoA6dC/1R6NdwNNHV7u0kOx2IWtOXU7NTG/1ZQxEFYH0f4la05A7UycZ57aki7dHHSvMtmUWI1s6ySnKAQ==",
     "upstreamIntegrity": null
   },
-  "notes": "Installed from registry tarballs after integrity verification. Production closure is exactly @playwright/mcp, playwright, and playwright-core; source lockfile entries outside this closure are dev-only. Chromium archive lacks an upstream published digest, so the recorded digest is retrieval evidence rather than an expected upstream checksum. Launcher uses a user-owned 0700 runtime artifact directory and allows only loopback application origins plus exact static-resource origins https://fonts.googleapis.com, https://fonts.gstatic.com, and https://cdn.jsdelivr.net. Globally denied pending scoped ui-inspector activation; the first-party guard rejects agent-selected artifact filenames and non-loopback navigation."
+  "notes": "Installed from registry tarballs after integrity verification. Production closure is exactly @playwright/mcp, playwright, and playwright-core; source lockfile entries outside this closure are dev-only. Chromium archive lacks an upstream published digest, so the recorded digest is retrieval evidence rather than an expected upstream checksum. Launcher uses a user-owned 0700 runtime artifact directory and allows only loopback application origins plus exact static-resource origins https://fonts.googleapis.com, https://fonts.gstatic.com, and https://cdn.jsdelivr.net. Tools remain globally denied with exact ui-inspector overrides; the first-party guard rejects agent-selected artifact filenames and non-loopback navigation. Managed by /update-mcp playwright: source, production packages, Chromium and guard compatibility require review together. Baseline is a snapshot of the existing installation, not proof of original artifact authenticity."
 }

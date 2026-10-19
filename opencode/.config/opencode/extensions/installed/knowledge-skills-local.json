@@ -1,0 +1,19 @@
+{
+    "schemaVersion": 1,
+    "installationId": "knowledge-skills-local",
+    "componentType": "skills-and-scoped-agents",
+    "origin": "First-party local guidance split from the local knowledge-reader integration; no upstream skill or agent copied.",
+    "scope": "global skill discovery with per-agent MCP isolation",
+    "components": [
+        {"skill": "zhtw", "targetPath": "~/.config/opencode/skills/zhtw/SKILL.md", "agentPath": "~/.config/opencode/agents/zhtw-reviewer.md", "runtimeRecord": "vendor-sysprog21-zhtw-mcp-0485df42b26e.json"},
+        {"skill": "hackmd", "targetPath": "~/.config/opencode/skills/hackmd/SKILL.md", "agentPath": "~/.config/opencode/agents/hackmd-reader.md", "runtimeRecord": "vendor-sysprog21-hackmd-mcp-2951aab8ba18.json"},
+        {"skill": "moodle", "targetPath": "~/.config/opencode/skills/moodle/SKILL.md", "agentPath": "~/.config/opencode/agents/moodle-reader.md", "runtimeRecord": "vendor-g36maid-moodle-mcp-0.1.4.json"}
+    ],
+    "retiredPaths": ["~/.config/opencode/agents/knowledge-reader.md", "~/.config/opencode/commands/knowledge-read.md"],
+    "installedAt": "2026-10-19",
+    "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
+    "backupPath": null,
+    "governed": true,
+    "notes": "Only skill guidance and agent/routing scopes changed. Skill loading does not grant MCP or Task rights. Exact per-agent overrides isolate the three globally denied MCP families. External translation, runtime pins and credentials keep their existing configuration.",
+    "verification": "PASS: all three skills and agents discovered by OpenCode 1.19.3; 112 resolved permission decisions confirm Build loading/delegation, exact per-agent skill/tool isolation, blocked mutations/fallbacks and global Build/Plan MCP denial. Combined agent/command absent from resolved config. Runtime activation and external-translation setting preserved. Natural-language selection and live delegated tool calls have not been tested."
+}
