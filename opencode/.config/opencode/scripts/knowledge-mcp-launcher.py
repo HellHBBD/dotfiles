@@ -26,11 +26,6 @@ SERVERS = {
         "faaeaa3be53bfc2d2743a55c0c0069f8a768e987e436a2822b32ba7e07eaa469",
     ),
 }
-MOODLE_DISABLED = (
-    "fetch_file,download_file,get_forum_discussions,get_discussion_posts,"
-    "get_notifications,get_conversations,get_quiz_attempts,get_user,"
-    "search_users,list_functions"
-)
 
 
 def private_directory(path):
@@ -125,8 +120,8 @@ def launch(name):
                 {
                     "MOODLE_URL": "https://moodle.ncku.edu.tw",
                     "MOODLE_TOKEN": token("MOODLE_TOKEN"),
-                    "MOODLE_READ_ONLY": "1",
-                    "MOODLE_DISABLE_TOOLS": MOODLE_DISABLED,
+                    "MOODLE_READ_ONLY": "0",
+                    "MOODLE_DISABLE_TOOLS": "",
                     "MOODLE_TIMEZONE": "Asia/Taipei",
                     "MOODLE_TIMEOUT_SECS": "30",
                 }

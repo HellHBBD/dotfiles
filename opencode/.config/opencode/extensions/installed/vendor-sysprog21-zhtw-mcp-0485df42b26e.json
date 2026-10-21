@@ -19,16 +19,22 @@
     "namespaceOverride": "User explicitly requested MCP key zhtw; runtime retains vendor-sysprog21 namespace.",
     "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
     "backupPath": "Original ~/.local/bin/zhtw-mcp retained; no previous managed runtime.",
-    "reviewedAt": "2026-10-19",
+    "reviewedAt": "2026-10-20",
     "riskClassification": "medium",
     "governed": true,
     "securityReview": {
-        "scope": "Startup/config discovery, tool dispatcher, translate egress guard, sampling/cache behavior, build script, feature and dependency pins; launcher integrity/env isolation.",
-        "controls": ["ZHTW_NO_NETWORK=1 enforced by launcher", "Explicit first-party project config and private state/home", "Only zhtw_zhtw allowed in zhtw-reviewer; only the zhtw skill may be loaded", "No CLI, hooks or installer execution at startup"],
-        "limitations": ["Not an OS sandbox", "Judgment/cache state may be written", "MCP sampling can ask the host model when supported; no independent provider key is configured", "No fresh registry vulnerability scan or reproducible-build verification performed", "Source build.rs installs Git hooks when compiled in a checkout; no build/install scripts were executed during integration"]
+        "scope": "Existing startup/config/dispatcher/egress/sampling/cache/build/pin review, plus all 28 input parameter definitions, fix tiers, report/gate serialization, UTF-8 patch rendering, conversion coordinate handling and local handoff guidance. No upstream build or installation executed.",
+        "controls": ["ZHTW_NO_NETWORK=1 enforced by launcher", "Explicit first-party project config and private state/home", "Only zhtw_zhtw allowed in zhtw-reviewer; only the zhtw skill may be loaded", "Local lint/fix/gate guidance covers all advertised parameters; persistence goes through Build or the appropriate manager and a recheck of actual saved text", "No CLI, hooks or installer execution at startup; no new providers or resource permissions"],
+        "limitations": ["Not an OS sandbox", "Judgment/cache state may be written", "MCP sampling can ask the host model when supported; no independent provider key is configured; ZHTW_NO_NETWORK disables Google Translate rather than host sampling", "Automatic Simplified-to-Traditional conversion can change returned text and coordinates even in lint-only mode", "Pinned fix_output=patch implementation emits UTF-8 byte-offset TSV despite upstream JSON-array wording; failed gates return a valid report with MCP isError=true", "ignore_terms downgrades findings to Info but does not necessarily prevent automatic fixes; glossary.proper_nouns suppresses matching findings", "Generic reference resources/prompts and CLI-only configuration/hooks are not integrated into the scoped agent", "No fresh registry vulnerability scan or reproducible-build verification performed", "Source build.rs installs Git hooks when compiled in a checkout; no build/install scripts were executed during integration"]
     },
     "hostRuntime": {"python": "3.14.8-1", "glibc": "2.44+r50+g1848099f063e-1", "gcc-libs": "16.2.1+r23+gd564253eb6c8-1"},
     "nativeDependencies": ["libgcc_s.so.1", "libc.so.6", "system ELF interpreter"],
     "updatePolicy": "Manual source/dependency/binary diff review and launcher pin change; no automatic downloads, builds or updates. Runtime copies are local artifacts, not included by Stow.",
-    "verification": "PASS: pinned binary integrity; MCP 2025-11-25 handshake and exact 1-tool catalog; OpenCode 1.19.3 mcp list --pure connected. Launcher: 12 cases passed. Skill split: discovery/routing and 112 resolved permission decisions passed. No business tool calls, model sampling or external verification calls performed; no retained MCP process after connection checks."
+    "verification": "Historical integration baseline: pinned binary integrity; MCP 2025-11-25 handshake and exact 1-tool catalog; OpenCode 1.19.3 mcp list --pure connected; 12 launcher cases and 112 split permission decisions passed before local-rule workflow expansion.",
+    "scopeUpdate": {
+        "updatedAt": "2026-10-20",
+        "backupRevision": "82ed74910be91a96c9511e5f3668e12c17534437",
+        "authorization": "User approved full local-rule parameter guidance and review-fix-save-recheck workflow; external translation disabled and runtime/source/dependency pins retained.",
+        "verification": "PASS: OpenCode 1.19.3 reviewer/skill discovery and 23 resolved permission decisions; actual pinned launcher integrity, stdio handshake, exact one-tool catalog and documentation of all 28 parameters. Fifty synthetic calls pass across four fix tiers, Simplified conversion, gates, exact UTF-8 TSV reconstruction, search/replace, temporary-file save/recheck, code/quote protection, glossary/ignore/consistency, all tested policy enum values, style/metrics/output modes and invalid-input/size/conflicting-output rejections. verify=true is rejected as network_disabled before scanning. No sampling capability advertised, credentials supplied, external verification or remote-note writes; MCP process stopped. Host-model sampling, natural-language routing and live delegated persistence NOT TESTED."
+    }
 }

@@ -19,20 +19,26 @@
     "binaryProvenance": "Managed runtime uses the digest-verified official v0.1.4 Linux asset, not the existing Cargo-installed binary whose installation receipt omits dependency resolution. Tag, crates.io trusted-publishing SHA and local registry VCS metadata agree on resolvedCommit. Digest verification is not reproducible-build verification.",
     "configPath": "~/.config/opencode/opencode.jsonc#mcp.moodle",
     "launcherPath": "~/.config/opencode/scripts/knowledge-mcp-launcher.py",
-    "scope": "global runtime, moodle-reader-only tool access via the moodle skill",
+    "scope": "global runtime, all 22 pinned tools available only in moodle-manager via the moodle skill",
     "namespaceOverride": "User explicitly requested MCP key moodle; runtime retains vendor-g36maid namespace.",
     "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
     "backupPath": "Original ~/.cargo/bin/moodle-mcp retained; no previous managed runtime.",
-    "reviewedAt": "2026-10-19",
-    "riskClassification": "medium",
+    "reviewedAt": "2026-10-20",
+    "riskClassification": "high",
     "governed": true,
     "securityReview": {
-        "scope": "Startup/config, fixed REST client, whoami/course/assignment/grades/schedule read paths, tool disabling/dispatch, release workflow and tagged dependency pins; launcher integrity/env isolation.",
-        "controls": ["Fixed HTTPS Moodle site https://moodle.ncku.edu.tw", "MOODLE_READ_ONLY=1 enforced by launcher", "File fetching/conversion/downloads and additional unapproved tools removed from server router", "Only six exact read tools allowed in moodle-reader; only the moodle skill may be loaded", "Explicit Asia/Taipei timezone avoids the startup preference API request", "Minimal env; no browser/auth CLI invocation"],
-        "limitations": ["Not an OS sandbox", "Redirect confinement in upstream checks hostname, not full origin/scheme/port; fixed trusted site is required", "Read tools expose private courses/submissions/grades", "No fresh registry vulnerability scan, reproducible-build verification or exact feature-pruned build graph verification performed", "Dependency evidence pins the full source lockfile superset rather than proving every compiled crate from the binary"]
+        "scope": "Existing startup/config/REST/read/release/dependency review, plus source review of all 22 tool contracts, file conversion/download/upload, forum writes, submission save/finalization, messaging writes and raw Web Services dispatch. No upstream build or installation executed.",
+        "controls": ["Fixed HTTPS Moodle site https://moodle.ncku.edu.tw", "Launcher forces MOODLE_READ_ONLY=0 and empty MOODLE_DISABLE_TOOLS for the user-approved full catalog", "Only 22 exact current tools allowed in moodle-manager; only the moodle skill may be loaded; no shell/filesystem/browser/Task fallback", "Global moodle_* denial retained; unknown future tools denied", "Explicit Asia/Taipei timezone avoids the startup preference API request", "Minimal env, hash/owner/mode-checked runtime; no browser/auth CLI invocation", "Skill distinguishes drafts/submission/finalization and requires intended targets/content for writes; Build handles local preparation"],
+        "limitations": ["Not an OS sandbox; file tools can read/write any OS-accessible path and do not enforce a workspace root; direct-tool denial and skill guidance do not confine MCP filesystem access", "Downloads truncate existing destinations; failed streams can remove the destination or leave a partial file", "File URLs can target external hosts; redirect confinement locks hostname rather than full origin/scheme/port and is not SSRF confinement", "Raw Web Services calls can perform any operation the Moodle token permits; the local name allowlist check is skipped if the discovered function list is empty", "Submissions, forum posts, messages and uploads act as the token owner; writes can partially succeed and retries can duplicate effects", "Document conversion processes untrusted files; no conversion or transfer workload was executed in this scope expansion", "Read tools expose private courses/submissions/grades/messages/users", "No fresh registry vulnerability scan, reproducible-build verification or exact feature-pruned build graph verification performed", "Dependency evidence pins the full source lockfile superset rather than proving every compiled crate from the binary"]
     },
     "hostRuntime": {"python": "3.14.8-1", "glibc": "2.44+r50+g1848099f063e-1", "gcc-libs": "16.2.1+r23+gd564253eb6c8-1", "ca-certificates": "20240618-1"},
     "nativeDependencies": ["libgcc_s.so.1", "libm.so.6", "libc.so.6", "system ELF interpreter"],
     "updatePolicy": "Manual pinned source/dependency/release-artifact review and launcher pin change; no package manager at startup. Runtime copies are local artifacts, not included by Stow.",
-    "verification": "PASS: pinned binary integrity; MCP 2025-11-25 handshake and exact 6-tool catalog; OpenCode 1.19.3 mcp list --pure connected. Launcher: 12 cases passed. Skill split: discovery/routing and 112 resolved permission decisions passed. Token validity and remote course reads NOT TESTED; no business tool calls or retained MCP process after connection checks."
+    "verification": "Historical read-only baseline: pinned binary integrity; MCP 2025-11-25 handshake and exact 6-tool catalog; OpenCode 1.19.3 mcp list --pure connected; 12 launcher cases and 112 split permission decisions passed. Token validity and remote course reads were not tested.",
+    "scopeUpdate": {
+        "updatedAt": "2026-10-20",
+        "backupRevision": "82ed74910be91a96c9511e5f3668e12c17534437",
+        "authorization": "User explicitly approved expansion from six read tools to all 22 pinned Moodle MCP tools; current runtime/source/dependency pins retained.",
+        "verification": "PASS: OpenCode 1.19.3 discovery/routing and 214 resolved permission decisions across Moodle/HackMD/Build/Plan/zhtw agents. Ten launcher fixture cases cover isolated/forced environments for three MCPs, invalid credentials and changed executable refusal. Actual pinned launcher integrity, stdio handshake and exact 22-tool Moodle catalog/allowlist parity pass; HackMD retains its 14-tool catalog. Catalogs used dummy credentials with no tools/call, remote API or model calls; test MCP processes stopped. Token validity, remote reads/writes, file transfer/conversion and live delegated workflows NOT TESTED."
+    }
 }

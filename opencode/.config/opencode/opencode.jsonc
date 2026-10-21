@@ -1083,7 +1083,8 @@
             "environment": {
                 "MOODLE_URL": "https://moodle.ncku.edu.tw",
                 "MOODLE_TOKEN": "{file:~/.config/mcp-secrets/moodle-token}",
-                "MOODLE_READ_ONLY": "1",
+                "MOODLE_READ_ONLY": "0",
+                "MOODLE_DISABLE_TOOLS": "",
             },
             "enabled": true,
             "timeout": 30000,

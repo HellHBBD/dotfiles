@@ -6,14 +6,32 @@
     "scope": "global skill discovery with per-agent MCP isolation",
     "components": [
         {"skill": "zhtw", "targetPath": "~/.config/opencode/skills/zhtw/SKILL.md", "agentPath": "~/.config/opencode/agents/zhtw-reviewer.md", "runtimeRecord": "vendor-sysprog21-zhtw-mcp-0485df42b26e.json"},
-        {"skill": "hackmd", "targetPath": "~/.config/opencode/skills/hackmd/SKILL.md", "agentPath": "~/.config/opencode/agents/hackmd-reader.md", "runtimeRecord": "vendor-sysprog21-hackmd-mcp-2951aab8ba18.json"},
-        {"skill": "moodle", "targetPath": "~/.config/opencode/skills/moodle/SKILL.md", "agentPath": "~/.config/opencode/agents/moodle-reader.md", "runtimeRecord": "vendor-g36maid-moodle-mcp-0.1.4.json"}
+        {"skill": "hackmd", "targetPath": "~/.config/opencode/skills/hackmd/SKILL.md", "agentPath": "~/.config/opencode/agents/hackmd-manager.md", "runtimeRecord": "vendor-sysprog21-hackmd-mcp-2951aab8ba18.json"},
+        {"skill": "moodle", "targetPath": "~/.config/opencode/skills/moodle/SKILL.md", "agentPath": "~/.config/opencode/agents/moodle-manager.md", "runtimeRecord": "vendor-g36maid-moodle-mcp-0.1.4.json"}
     ],
-    "retiredPaths": ["~/.config/opencode/agents/knowledge-reader.md", "~/.config/opencode/commands/knowledge-read.md"],
+    "retiredPaths": ["~/.config/opencode/agents/knowledge-reader.md", "~/.config/opencode/commands/knowledge-read.md", "~/.config/opencode/agents/hackmd-reader.md", "~/.config/opencode/agents/moodle-reader.md"],
     "installedAt": "2026-10-19",
     "backupRevision": "d18d72faecd1a05afa75439834ae54fa30526d31",
     "backupPath": null,
     "governed": true,
-    "notes": "Only skill guidance and agent/routing scopes changed. Skill loading does not grant MCP or Task rights. Exact per-agent overrides isolate the three globally denied MCP families. External translation, runtime pins and credentials keep their existing configuration.",
-    "verification": "PASS: all three skills and agents discovered by OpenCode 1.19.3; 112 resolved permission decisions confirm Build loading/delegation, exact per-agent skill/tool isolation, blocked mutations/fallbacks and global Build/Plan MCP denial. Combined agent/command absent from resolved config. Runtime activation and external-translation setting preserved. Natural-language selection and live delegated tool calls have not been tested."
+    "notes": "Skill loading does not grant MCP or Task rights. Exact per-agent overrides isolate the three globally denied MCP families. HackMD and Moodle managers expose their full pinned tool catalogs; the Moodle launcher also removes its previous router restrictions. External translation, runtime pins and credentials keep their existing configuration.",
+    "verification": "Historical read-only baseline: all three skills and agents discovered by OpenCode 1.19.3; 112 resolved permission decisions passed before HackMD full-tool expansion. Natural-language selection and live delegated tool calls have not been tested.",
+    "scopeUpdate": {
+        "updatedAt": "2026-10-20",
+        "backupRevision": "82ed74910be91a96c9511e5f3668e12c17534437",
+        "scope": "User approved all 14 pinned HackMD tools in hackmd-manager; Build handles local Markdown edits between delegated sync calls. Exact per-agent permissions retain global MCP denial.",
+        "verification": "PASS: OpenCode 1.19.3 resolves hackmd-manager and the updated hackmd skill; retired hackmd-reader absent. 89 resolved permission decisions cover all 14 tools, Build delegation, Plan denial, other MCP agents and blocked fallback/future tools. Pinned launcher stdio handshake and exact 14-tool catalog match the manager allowlist. Catalog check used a dummy credential and no tools/call. Remote business operations, natural-language selection and live delegated workflows NOT TESTED."
+    },
+    "moodleScopeUpdate": {
+        "updatedAt": "2026-10-20",
+        "backupRevision": "82ed74910be91a96c9511e5f3668e12c17534437",
+        "scope": "User approved all 22 pinned Moodle tools in moodle-manager, including writes, file transfers/conversion and raw Web Services. Global MCP denial and exact agent allowlists retained; Build handles local preparation.",
+        "verification": "PASS: OpenCode 1.19.3 resolves moodle-manager/hackmd-manager and both full-function skills; retired readers absent. 214 resolved permission decisions cover both exact catalogs, Build delegation, Plan isolation and denied fallback/future tools. Ten launcher fixture cases pass. Pinned Moodle 22-tool and HackMD 14-tool stdio catalogs exactly match their allowlists. Dummy credentials only for catalog tests; no tools/call or model calls; test MCP processes stopped. Real-token remote operations and natural-language/live delegated workflows NOT TESTED."
+    },
+    "zhtwScopeUpdate": {
+        "updatedAt": "2026-10-20",
+        "backupRevision": "82ed74910be91a96c9511e5f3668e12c17534437",
+        "scope": "User approved full local lint/fix/gate parameter guidance and read-review-save-recheck handoffs. zhtw-reviewer retains its single tool and returns edits to Build or the appropriate manager. Google Translate verification remains disabled; no new provider, generic resource rights or upstream prompt installation.",
+        "verification": "PASS: OpenCode 1.19.3 discovers the updated reviewer/skill; 23 resolved permission decisions preserve exact tool, Build routing and Plan/cross-agent/fallback isolation. Pinned runtime advertises one tool and all 28 parameters are documented. Fifty synthetic tool calls cover local modes/policy enums, guards, report formats and a temporary-file save/recheck. Google verification is refused with network_disabled; no sampling capability, API credentials, external verification or remote-note writes used. MCP process stopped. Natural-language/live model-delegated persistence and host sampling NOT TESTED."
+    }
 }
